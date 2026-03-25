@@ -775,3 +775,4 @@ button:focus-visible {
   font-size: 48px;
   opacity: 0.3;
 }
+.library__word-text[title] { cursor: help; text-decoration: underline dotted var(--border); }

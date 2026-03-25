@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState, useRef } from 'react';
 import { useStore } from './store';
-import { drawRandomWords, loadUserData, addUserWord } from './data/wordEngine';
+import { drawRandomWords, loadUserData, addUserWord, getAllWords, deleteUserWord } from './data/wordEngine';
 import { db } from './db';
 import type { Genre, Word, WordSet } from './types';
 import { GENRE_COLORS, FICTION_GENRES } from './types';
@@ -188,7 +188,6 @@ export default function App() {
   // Library words
   useEffect(() => {
     if (store.activeTab === 'library') {
-      const { getAllWords } = require('./data/wordEngine');
       setAllWordsForLib(getAllWords());
     }
   }, [store.activeTab]);
@@ -397,12 +396,12 @@ export default function App() {
             <div className="library__list">
               {filteredLibWords.slice(0, 200).map(w => (
                 <div key={w.id} className="library__word-row">
-                  <span className="library__word-text">{w.text}</span>
+                  <span className="library__word-text" title={w.explanation}>{w.text}</span>
                   <span className="library__word-explanation">{w.explanation || ''}</span>
                   <span className="library__word-genre" style={{ background: GENRE_COLORS[w.genre] }}>{w.genre}</span>
                   {w.source === 'user' && (
                     <button className="btn btn--sm btn--ghost" style={{ color: 'var(--danger)' }}
-                      onClick={() => { require('./data/wordEngine').deleteUserWord(w.id); setAllWordsForLib(require('./data/wordEngine').getAllWords()); }}>
+                      onClick={() => { deleteUserWord(w.id); setAllWordsForLib(getAllWords()); }}>
                       删除
                     </button>
                   )}
@@ -492,7 +491,6 @@ export default function App() {
         showToast('✅ 词条已添加');
         setShowAddWord(false);
         if (store.activeTab === 'library') {
-          const { getAllWords } = require('./data/wordEngine');
           setAllWordsForLib(getAllWords());
         }
       }} />}
