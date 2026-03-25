@@ -25,7 +25,7 @@
     "id": "w0003",
     "text": "戴森球",
     "explanation": "包裹恒星以获取全部能量的巨型结构",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -58,7 +58,7 @@
     "id": "w0006",
     "text": "脑机接口",
     "explanation": "连接大脑与计算机的通信系统",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -92,7 +92,7 @@
     "id": "w0009",
     "text": "克隆",
     "explanation": "通过无性繁殖产生基因相同的个体",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -114,7 +114,7 @@
     "id": "w0011",
     "text": "太空电梯",
     "explanation": "从地面直达太空的运输系统",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -224,7 +224,7 @@
     "id": "w0021",
     "text": "超新星",
     "explanation": "恒星爆发时释放巨大能量的天文事件",
-    "category": "典故",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -269,7 +269,7 @@
     "id": "w0025",
     "text": "记忆移植",
     "explanation": "将一个人的记忆植入另一个人大脑",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -302,7 +302,7 @@
     "id": "w0028",
     "text": "星门",
     "explanation": "连接不同星系的传送门",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -364,7 +364,7 @@
   {
     "id": "w0034",
     "text": "穹顶",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -474,7 +474,7 @@
   {
     "id": "w0045",
     "text": "赛博",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -494,7 +494,7 @@
   {
     "id": "w0047",
     "text": "数据流",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -504,7 +504,7 @@
   {
     "id": "w0048",
     "text": "矩阵",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -514,7 +514,7 @@
   {
     "id": "w0049",
     "text": "代码",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -524,7 +524,7 @@
   {
     "id": "w0050",
     "text": "病毒",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -534,7 +534,7 @@
   {
     "id": "w0051",
     "text": "防火墙",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -544,7 +544,7 @@
   {
     "id": "w0052",
     "text": "虚拟现实",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -554,7 +554,7 @@
   {
     "id": "w0053",
     "text": "增强现实",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -564,7 +564,7 @@
   {
     "id": "w0054",
     "text": "全息",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -574,7 +574,7 @@
   {
     "id": "w0055",
     "text": "变异",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -584,7 +584,7 @@
   {
     "id": "w0056",
     "text": "进化",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -594,7 +594,7 @@
   {
     "id": "w0057",
     "text": "突变",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -604,7 +604,7 @@
   {
     "id": "w0058",
     "text": "辐射",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -614,7 +614,7 @@
   {
     "id": "w0059",
     "text": "污染",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "科幻"
     ],
@@ -634,7 +634,7 @@
   {
     "id": "w0061",
     "text": "重启",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -644,7 +644,7 @@
   {
     "id": "w0062",
     "text": "信号",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -654,7 +654,7 @@
   {
     "id": "w0063",
     "text": "频率",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -674,7 +674,7 @@
   {
     "id": "w0065",
     "text": "平行宇宙",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -684,7 +684,7 @@
   {
     "id": "w0066",
     "text": "时间线",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -694,7 +694,7 @@
   {
     "id": "w0067",
     "text": "超导体",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -704,7 +704,7 @@
   {
     "id": "w0068",
     "text": "磁悬浮",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -714,7 +714,7 @@
   {
     "id": "w0069",
     "text": "核聚变",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -724,7 +724,7 @@
   {
     "id": "w0070",
     "text": "粒子加速器",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -734,7 +734,7 @@
   {
     "id": "w0071",
     "text": "太阳帆",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -744,7 +744,7 @@
   {
     "id": "w0072",
     "text": "离子推进",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -754,7 +754,7 @@
   {
     "id": "w0073",
     "text": "反重力",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -764,7 +764,7 @@
   {
     "id": "w0074",
     "text": "超光速",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -784,7 +784,7 @@
   {
     "id": "w0076",
     "text": "人造器官",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -794,7 +794,7 @@
   {
     "id": "w0077",
     "text": "义体",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -804,7 +804,7 @@
   {
     "id": "w0078",
     "text": "神经网络",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -814,7 +814,7 @@
   {
     "id": "w0079",
     "text": "深度学习",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -824,7 +824,7 @@
   {
     "id": "w0080",
     "text": "奇点",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -854,7 +854,7 @@
   {
     "id": "w0083",
     "text": "第一类接触",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "科幻"
     ],
@@ -874,7 +874,7 @@
   {
     "id": "w0085",
     "text": "德雷克方程",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "科幻"
     ],
@@ -884,7 +884,7 @@
   {
     "id": "w0086",
     "text": "宜居带",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "科幻"
     ],
@@ -894,7 +894,7 @@
   {
     "id": "w0087",
     "text": "类地行星",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "科幻"
     ],
@@ -904,7 +904,7 @@
   {
     "id": "w0088",
     "text": "太空垃圾",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -944,7 +944,7 @@
   {
     "id": "w0092",
     "text": "小行星",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -964,7 +964,7 @@
   {
     "id": "w0094",
     "text": "脉冲星",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -974,7 +974,7 @@
   {
     "id": "w0095",
     "text": "中子星",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -984,7 +984,7 @@
   {
     "id": "w0096",
     "text": "白矮星",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -994,7 +994,7 @@
   {
     "id": "w0097",
     "text": "红巨星",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1004,7 +1004,7 @@
   {
     "id": "w0098",
     "text": "冬眠舱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1014,7 +1014,7 @@
   {
     "id": "w0099",
     "text": "逃生舱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1024,7 +1024,7 @@
   {
     "id": "w0100",
     "text": "指挥舱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1034,7 +1034,7 @@
   {
     "id": "w0101",
     "text": "实验舱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1054,7 +1054,7 @@
   {
     "id": "w0103",
     "text": "导航",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1064,7 +1064,7 @@
   {
     "id": "w0104",
     "text": "坐标",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -1074,7 +1074,7 @@
   {
     "id": "w0105",
     "text": "跃迁",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1084,7 +1084,7 @@
   {
     "id": "w0106",
     "text": "折叠",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1094,7 +1094,7 @@
   {
     "id": "w0107",
     "text": "压缩",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1104,7 +1104,7 @@
   {
     "id": "w0108",
     "text": "生态圈",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -1124,7 +1124,7 @@
   {
     "id": "w0110",
     "text": "循环利用",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1134,7 +1134,7 @@
   {
     "id": "w0111",
     "text": "人工重力",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "科幻"
     ],
@@ -1144,7 +1144,7 @@
   {
     "id": "w0112",
     "text": "气闸",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1154,7 +1154,7 @@
   {
     "id": "w0113",
     "text": "舱外活动",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1164,7 +1164,7 @@
   {
     "id": "w0114",
     "text": "太空行走",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1174,7 +1174,7 @@
   {
     "id": "w0115",
     "text": "电磁脉冲",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1204,7 +1204,7 @@
   {
     "id": "w0118",
     "text": "宇宙射线",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1274,7 +1274,7 @@
   {
     "id": "w0125",
     "text": "氧气发生器",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1464,7 +1464,7 @@
   {
     "id": "w0144",
     "text": "外骨骼",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1485,7 +1485,7 @@
   {
     "id": "w0146",
     "text": "轨道炮",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1495,7 +1495,7 @@
   {
     "id": "w0147",
     "text": "电磁炮",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1505,7 +1505,7 @@
   {
     "id": "w0148",
     "text": "深空",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "科幻"
     ],
@@ -1635,7 +1635,7 @@
   {
     "id": "w0161",
     "text": "行星发动机",
-    "category": "动作",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -1705,7 +1705,7 @@
   {
     "id": "w0168",
     "text": "复制",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1735,7 +1735,7 @@
   {
     "id": "w0171",
     "text": "融合",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1755,7 +1755,7 @@
   {
     "id": "w0173",
     "text": "编译",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1765,7 +1765,7 @@
   {
     "id": "w0174",
     "text": "解码",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1775,7 +1775,7 @@
   {
     "id": "w0175",
     "text": "加密",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1785,7 +1785,7 @@
   {
     "id": "w0176",
     "text": "传输",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -1925,7 +1925,7 @@
   {
     "id": "w0190",
     "text": "接口",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -2056,7 +2056,7 @@
   {
     "id": "w0203",
     "text": "幻觉",
-    "category": "意象",
+    "category": "感官",
     "genres": [
       "科幻",
       "奇幻"
@@ -2147,7 +2147,7 @@
   {
     "id": "w0212",
     "text": "消亡",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "科幻",
       "恐怖"
@@ -2209,7 +2209,7 @@
     "id": "w0218",
     "text": "饕餮",
     "explanation": "传说中贪吃的凶兽，比喻贪婪之人",
-    "category": "典故",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -2220,7 +2220,7 @@
     "id": "w0219",
     "text": "缜密",
     "explanation": "周密细致，不疏忽",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -2231,7 +2231,7 @@
     "id": "w0220",
     "text": "诡谲",
     "explanation": "奇异多变，难以捉摸",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -2242,7 +2242,7 @@
     "id": "w0221",
     "text": "蛛丝马迹",
     "explanation": "比喻隐约可寻的线索",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "悬疑",
       "言情"
@@ -2254,7 +2254,7 @@
     "id": "w0222",
     "text": "草蛇灰线",
     "explanation": "比喻事物留下隐约可寻的线索和迹象",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "悬疑",
       "言情"
@@ -2266,7 +2266,7 @@
     "id": "w0223",
     "text": "管窥蠡测",
     "explanation": "比喻对事物的观察和了解很狭窄浅薄",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "悬疑"
     ],
@@ -2306,7 +2306,7 @@
   {
     "id": "w0227",
     "text": "指纹",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2316,7 +2316,7 @@
   {
     "id": "w0228",
     "text": "血迹",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "恐怖"
@@ -2327,7 +2327,7 @@
   {
     "id": "w0229",
     "text": "脚印",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2337,7 +2337,7 @@
   {
     "id": "w0230",
     "text": "刀痕",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "武侠"
@@ -2348,7 +2348,7 @@
   {
     "id": "w0231",
     "text": "弹孔",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2358,7 +2358,7 @@
   {
     "id": "w0232",
     "text": "绳索",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2368,7 +2368,7 @@
   {
     "id": "w0233",
     "text": "手套",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2428,7 +2428,7 @@
   {
     "id": "w0239",
     "text": "警探",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -2438,7 +2438,7 @@
   {
     "id": "w0240",
     "text": "法医",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -2458,7 +2458,7 @@
   {
     "id": "w0242",
     "text": "检察官",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -2468,7 +2468,7 @@
   {
     "id": "w0243",
     "text": "陪审团",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -2478,7 +2478,7 @@
   {
     "id": "w0244",
     "text": "不在场证明",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2498,7 +2498,7 @@
   {
     "id": "w0246",
     "text": "犯罪现场",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "悬疑"
     ],
@@ -2508,7 +2508,7 @@
   {
     "id": "w0247",
     "text": "尸检报告",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "恐怖"
@@ -2519,7 +2519,7 @@
   {
     "id": "w0248",
     "text": "监控录像",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2529,7 +2529,7 @@
   {
     "id": "w0249",
     "text": "通话记录",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2539,7 +2539,7 @@
   {
     "id": "w0250",
     "text": "银行流水",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2549,7 +2549,7 @@
   {
     "id": "w0251",
     "text": "暗号",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "恐怖"
@@ -2560,7 +2560,7 @@
   {
     "id": "w0252",
     "text": "密码",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2580,7 +2580,7 @@
   {
     "id": "w0254",
     "text": "遗书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2590,7 +2590,7 @@
   {
     "id": "w0255",
     "text": "匿名信",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2600,7 +2600,7 @@
   {
     "id": "w0256",
     "text": "恐吓信",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2610,7 +2610,7 @@
   {
     "id": "w0257",
     "text": "勒索",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -2620,7 +2620,7 @@
   {
     "id": "w0258",
     "text": "敲诈",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -2640,7 +2640,7 @@
   {
     "id": "w0260",
     "text": "失踪",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -2650,7 +2650,7 @@
   {
     "id": "w0261",
     "text": "伪装",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -2660,7 +2660,7 @@
   {
     "id": "w0262",
     "text": "易容",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -2670,7 +2670,7 @@
   {
     "id": "w0263",
     "text": "替身",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -2680,7 +2680,7 @@
   {
     "id": "w0264",
     "text": "双胞胎",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -2700,7 +2700,7 @@
   {
     "id": "w0266",
     "text": "面具",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2710,7 +2710,7 @@
   {
     "id": "w0267",
     "text": "谎言",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -2730,7 +2730,7 @@
   {
     "id": "w0269",
     "text": "阴谋",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -2740,7 +2740,7 @@
   {
     "id": "w0270",
     "text": "陷阱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2760,7 +2760,7 @@
   {
     "id": "w0272",
     "text": "砒霜",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2770,7 +2770,7 @@
   {
     "id": "w0273",
     "text": "氰化物",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -2790,7 +2790,7 @@
   {
     "id": "w0275",
     "text": "注射",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -2800,7 +2800,7 @@
   {
     "id": "w0276",
     "text": "中毒",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -2810,7 +2810,7 @@
   {
     "id": "w0277",
     "text": "窒息",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -2830,7 +2830,7 @@
   {
     "id": "w0279",
     "text": "坠落",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -2840,7 +2840,7 @@
   {
     "id": "w0280",
     "text": "撞击",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -2850,7 +2850,7 @@
   {
     "id": "w0281",
     "text": "暗室",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "悬疑",
       "恐怖"
@@ -2901,7 +2901,7 @@
   {
     "id": "w0286",
     "text": "废弃工厂",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "悬疑"
     ],
@@ -2911,7 +2911,7 @@
   {
     "id": "w0287",
     "text": "荒屋",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "悬疑"
     ],
@@ -2921,7 +2921,7 @@
   {
     "id": "w0288",
     "text": "旧宅",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "悬疑"
     ],
@@ -2931,7 +2931,7 @@
   {
     "id": "w0289",
     "text": "庄园",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "悬疑"
     ],
@@ -3001,7 +3001,7 @@
   {
     "id": "w0296",
     "text": "停电",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3011,7 +3011,7 @@
   {
     "id": "w0297",
     "text": "熄灯",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3021,7 +3021,7 @@
   {
     "id": "w0298",
     "text": "寂静",
-    "category": "意象",
+    "category": "感官",
     "genres": [
       "悬疑"
     ],
@@ -3051,7 +3051,7 @@
   {
     "id": "w0301",
     "text": "尸体",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "恐怖"
@@ -3062,7 +3062,7 @@
   {
     "id": "w0302",
     "text": "骸骨",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3072,7 +3072,7 @@
   {
     "id": "w0303",
     "text": "血泊",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "恐怖"
@@ -3083,7 +3083,7 @@
   {
     "id": "w0304",
     "text": "弹壳",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3103,7 +3103,7 @@
   {
     "id": "w0306",
     "text": "证物",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3113,7 +3113,7 @@
   {
     "id": "w0307",
     "text": "线索",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3123,7 +3123,7 @@
   {
     "id": "w0308",
     "text": "痕迹",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3133,7 +3133,7 @@
   {
     "id": "w0309",
     "text": "DNA样本",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3143,7 +3143,7 @@
   {
     "id": "w0310",
     "text": "毛发",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3153,7 +3153,7 @@
   {
     "id": "w0311",
     "text": "追踪",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3163,7 +3163,7 @@
   {
     "id": "w0312",
     "text": "跟踪",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3173,7 +3173,7 @@
   {
     "id": "w0313",
     "text": "监视",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3183,7 +3183,7 @@
   {
     "id": "w0314",
     "text": "窃听",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3193,7 +3193,7 @@
   {
     "id": "w0315",
     "text": "偷拍",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3213,7 +3213,7 @@
   {
     "id": "w0317",
     "text": "入侵",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3233,7 +3233,7 @@
   {
     "id": "w0319",
     "text": "解密",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3243,7 +3243,7 @@
   {
     "id": "w0320",
     "text": "推理",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3263,7 +3263,7 @@
   {
     "id": "w0322",
     "text": "仇恨",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3273,7 +3273,7 @@
   {
     "id": "w0323",
     "text": "贪婪",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3283,7 +3283,7 @@
   {
     "id": "w0324",
     "text": "报复",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3303,7 +3303,7 @@
   {
     "id": "w0326",
     "text": "欺骗",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3313,7 +3313,7 @@
   {
     "id": "w0327",
     "text": "隐瞒",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3323,7 +3323,7 @@
   {
     "id": "w0328",
     "text": "否认",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3333,7 +3333,7 @@
   {
     "id": "w0329",
     "text": "自首",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3343,7 +3343,7 @@
   {
     "id": "w0330",
     "text": "忏悔",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3353,7 +3353,7 @@
   {
     "id": "w0331",
     "text": "悬赏",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3363,7 +3363,7 @@
   {
     "id": "w0332",
     "text": "通缉",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3373,7 +3373,7 @@
   {
     "id": "w0333",
     "text": "逮捕",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3383,7 +3383,7 @@
   {
     "id": "w0334",
     "text": "审讯",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3393,7 +3393,7 @@
   {
     "id": "w0335",
     "text": "拘留",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3433,7 +3433,7 @@
   {
     "id": "w0339",
     "text": "上诉",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3453,7 +3453,7 @@
   {
     "id": "w0341",
     "text": "共犯",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -3463,7 +3463,7 @@
   {
     "id": "w0342",
     "text": "主谋",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -3473,7 +3473,7 @@
   {
     "id": "w0343",
     "text": "帮凶",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -3483,7 +3483,7 @@
   {
     "id": "w0344",
     "text": "内鬼",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑",
       "恐怖"
@@ -3494,7 +3494,7 @@
   {
     "id": "w0345",
     "text": "卧底",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -3524,7 +3524,7 @@
   {
     "id": "w0348",
     "text": "逃犯",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "悬疑"
     ],
@@ -3554,7 +3554,7 @@
   {
     "id": "w0351",
     "text": "保险箱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3564,7 +3564,7 @@
   {
     "id": "w0352",
     "text": "保险柜",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3584,7 +3584,7 @@
   {
     "id": "w0354",
     "text": "地窖",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "悬疑"
     ],
@@ -3594,7 +3594,7 @@
   {
     "id": "w0355",
     "text": "暗格",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "恐怖"
@@ -3605,7 +3605,7 @@
   {
     "id": "w0356",
     "text": "夹层",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3635,7 +3635,7 @@
   {
     "id": "w0359",
     "text": "陷阱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3645,7 +3645,7 @@
   {
     "id": "w0360",
     "text": "暗门",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "悬疑",
       "恐怖"
@@ -3706,7 +3706,7 @@
   {
     "id": "w0366",
     "text": "走私",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3716,7 +3716,7 @@
   {
     "id": "w0367",
     "text": "贩卖",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "悬疑"
     ],
@@ -3798,7 +3798,7 @@
   {
     "id": "w0375",
     "text": "偏执",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3808,7 +3808,7 @@
   {
     "id": "w0376",
     "text": "妄想",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3828,7 +3828,7 @@
   {
     "id": "w0378",
     "text": "创伤",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -3949,7 +3949,7 @@
   {
     "id": "w0390",
     "text": "监控",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3959,7 +3959,7 @@
   {
     "id": "w0391",
     "text": "拼图",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3969,7 +3969,7 @@
   {
     "id": "w0392",
     "text": "碎片",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3979,7 +3979,7 @@
   {
     "id": "w0393",
     "text": "残页",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -3999,7 +3999,7 @@
   {
     "id": "w0395",
     "text": "录音",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -4009,7 +4009,7 @@
   {
     "id": "w0396",
     "text": "视频",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -4029,7 +4029,7 @@
   {
     "id": "w0398",
     "text": "账本",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -4039,7 +4039,7 @@
   {
     "id": "w0399",
     "text": "清单",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -4049,7 +4049,7 @@
   {
     "id": "w0400",
     "text": "名单",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑"
     ],
@@ -4059,7 +4059,7 @@
   {
     "id": "w0401",
     "text": "死亡时间",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "科幻",
@@ -4071,7 +4071,7 @@
   {
     "id": "w0402",
     "text": "死因",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "悬疑",
       "恐怖"
@@ -4163,7 +4163,7 @@
     "id": "w0411",
     "text": "饕餮纹",
     "explanation": "青铜器上常见的兽面纹饰",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "奇幻"
     ],
@@ -4174,7 +4174,7 @@
     "id": "w0412",
     "text": "鸩酒",
     "explanation": "用鸩鸟羽毛浸泡的毒酒",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "奇幻"
     ],
@@ -4196,7 +4196,7 @@
     "id": "w0414",
     "text": "混沌",
     "explanation": "天地未分时的原始状态",
-    "category": "状态",
+    "category": "抽象",
     "genres": [
       "奇幻"
     ],
@@ -4207,7 +4207,7 @@
     "id": "w0415",
     "text": "须弥",
     "explanation": "佛教中世界中心的神山",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "奇幻",
       "言情"
@@ -4229,7 +4229,7 @@
   {
     "id": "w0417",
     "text": "龙",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4239,7 +4239,7 @@
   {
     "id": "w0418",
     "text": "凤",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4249,7 +4249,7 @@
   {
     "id": "w0419",
     "text": "麒麟",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4259,7 +4259,7 @@
   {
     "id": "w0420",
     "text": "白泽",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4269,7 +4269,7 @@
   {
     "id": "w0421",
     "text": "饕餮",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4279,7 +4279,7 @@
   {
     "id": "w0422",
     "text": "穷奇",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4289,7 +4289,7 @@
   {
     "id": "w0423",
     "text": "梼杌",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4299,7 +4299,7 @@
   {
     "id": "w0424",
     "text": "混沌",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "奇幻"
     ],
@@ -4309,7 +4309,7 @@
   {
     "id": "w0425",
     "text": "鲲鹏",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4319,7 +4319,7 @@
   {
     "id": "w0426",
     "text": "九尾狐",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4369,7 +4369,7 @@
   {
     "id": "w0431",
     "text": "地精",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4379,7 +4379,7 @@
   {
     "id": "w0432",
     "text": "哥布林",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4389,7 +4389,7 @@
   {
     "id": "w0433",
     "text": "巨魔",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4399,7 +4399,7 @@
   {
     "id": "w0434",
     "text": "美人鱼",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4409,7 +4409,7 @@
   {
     "id": "w0435",
     "text": "独角兽",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4419,7 +4419,7 @@
   {
     "id": "w0436",
     "text": "狮鹫",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -4439,7 +4439,7 @@
   {
     "id": "w0438",
     "text": "咒语",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4449,7 +4449,7 @@
   {
     "id": "w0439",
     "text": "符文",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4459,7 +4459,7 @@
   {
     "id": "w0440",
     "text": "法阵",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4469,7 +4469,7 @@
   {
     "id": "w0441",
     "text": "结界",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4479,7 +4479,7 @@
   {
     "id": "w0442",
     "text": "禁咒",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4489,7 +4489,7 @@
   {
     "id": "w0443",
     "text": "元素",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "奇幻"
     ],
@@ -4499,7 +4499,7 @@
   {
     "id": "w0444",
     "text": "灵力",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "奇幻"
     ],
@@ -4509,7 +4509,7 @@
   {
     "id": "w0445",
     "text": "魔力",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "奇幻"
     ],
@@ -4519,7 +4519,7 @@
   {
     "id": "w0446",
     "text": "法杖",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4620,7 +4620,7 @@
   {
     "id": "w0456",
     "text": "死亡",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻",
       "恐怖"
@@ -4661,7 +4661,7 @@
   {
     "id": "w0460",
     "text": "权杖",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4671,7 +4671,7 @@
   {
     "id": "w0461",
     "text": "王冠",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4692,7 +4692,7 @@
   {
     "id": "w0463",
     "text": "魔戒",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4702,7 +4702,7 @@
   {
     "id": "w0464",
     "text": "护符",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4712,7 +4712,7 @@
   {
     "id": "w0465",
     "text": "卷轴",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4722,7 +4722,7 @@
   {
     "id": "w0466",
     "text": "魔典",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -4792,7 +4792,7 @@
   {
     "id": "w0473",
     "text": "天界",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "奇幻"
     ],
@@ -4802,7 +4802,7 @@
   {
     "id": "w0474",
     "text": "冥界",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "奇幻"
     ],
@@ -4812,7 +4812,7 @@
   {
     "id": "w0475",
     "text": "仙境",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "奇幻"
     ],
@@ -4832,7 +4832,7 @@
   {
     "id": "w0477",
     "text": "预言",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "奇幻"
     ],
@@ -4842,7 +4842,7 @@
   {
     "id": "w0478",
     "text": "占卜",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -4852,7 +4852,7 @@
   {
     "id": "w0479",
     "text": "天命",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "奇幻"
     ],
@@ -4862,7 +4862,7 @@
   {
     "id": "w0480",
     "text": "诅咒",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻",
       "恐怖"
@@ -4873,7 +4873,7 @@
   {
     "id": "w0481",
     "text": "祝福",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -4883,7 +4883,7 @@
   {
     "id": "w0482",
     "text": "契约",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻",
       "言情"
@@ -4894,7 +4894,7 @@
   {
     "id": "w0483",
     "text": "誓言",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻",
       "言情"
@@ -4905,7 +4905,7 @@
   {
     "id": "w0484",
     "text": "禁忌",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻"
     ],
@@ -4925,7 +4925,7 @@
   {
     "id": "w0486",
     "text": "献祭",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5086,7 +5086,7 @@
   {
     "id": "w0502",
     "text": "附魔",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5096,7 +5096,7 @@
   {
     "id": "w0503",
     "text": "驱魔",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5106,7 +5106,7 @@
   {
     "id": "w0504",
     "text": "封印",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5116,7 +5116,7 @@
   {
     "id": "w0505",
     "text": "解封",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5136,7 +5136,7 @@
   {
     "id": "w0507",
     "text": "精灵之森",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "奇幻"
     ],
@@ -5156,7 +5156,7 @@
   {
     "id": "w0509",
     "text": "龙巢",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "奇幻"
     ],
@@ -5186,7 +5186,7 @@
   {
     "id": "w0512",
     "text": "神庙",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "奇幻"
     ],
@@ -5216,7 +5216,7 @@
   {
     "id": "w0515",
     "text": "秘境",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "奇幻"
     ],
@@ -5226,7 +5226,7 @@
   {
     "id": "w0516",
     "text": "异界",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "奇幻"
     ],
@@ -5277,7 +5277,7 @@
   {
     "id": "w0521",
     "text": "天使",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -5287,7 +5287,7 @@
   {
     "id": "w0522",
     "text": "恶魔",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -5297,7 +5297,7 @@
   {
     "id": "w0523",
     "text": "半神",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -5307,7 +5307,7 @@
   {
     "id": "w0524",
     "text": "古神",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -5317,7 +5317,7 @@
   {
     "id": "w0525",
     "text": "邪神",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -5327,7 +5327,7 @@
   {
     "id": "w0526",
     "text": "守护神",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
@@ -5347,7 +5347,7 @@
   {
     "id": "w0528",
     "text": "史诗",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "奇幻"
     ],
@@ -5377,7 +5377,7 @@
   {
     "id": "w0531",
     "text": "预言书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -5387,7 +5387,7 @@
   {
     "id": "w0532",
     "text": "编年史",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -5397,7 +5397,7 @@
   {
     "id": "w0533",
     "text": "族谱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -5407,7 +5407,7 @@
   {
     "id": "w0534",
     "text": "血脉",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "奇幻",
       "恐怖"
@@ -5418,7 +5418,7 @@
   {
     "id": "w0535",
     "text": "传承",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻"
     ],
@@ -5438,7 +5438,7 @@
   {
     "id": "w0537",
     "text": "铸造",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5458,7 +5458,7 @@
   {
     "id": "w0539",
     "text": "附魔",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5468,7 +5468,7 @@
   {
     "id": "w0540",
     "text": "祝圣",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5478,7 +5478,7 @@
   {
     "id": "w0541",
     "text": "洗礼",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "奇幻"
     ],
@@ -5488,7 +5488,7 @@
   {
     "id": "w0542",
     "text": "净化",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻"
     ],
@@ -5498,7 +5498,7 @@
   {
     "id": "w0543",
     "text": "腐化",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻"
     ],
@@ -5508,7 +5508,7 @@
   {
     "id": "w0544",
     "text": "堕落",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻"
     ],
@@ -5518,7 +5518,7 @@
   {
     "id": "w0545",
     "text": "升华",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻"
     ],
@@ -5528,7 +5528,7 @@
   {
     "id": "w0546",
     "text": "超越",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "奇幻"
     ],
@@ -5660,7 +5660,7 @@
   {
     "id": "w0559",
     "text": "隐身斗篷",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -5670,7 +5670,7 @@
   {
     "id": "w0560",
     "text": "时间沙漏",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "奇幻",
       "科幻"
@@ -5822,7 +5822,7 @@
     "id": "w0575",
     "text": "辗转反侧",
     "explanation": "形容心中有事翻来覆去睡不着",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "言情"
     ],
@@ -5833,7 +5833,7 @@
     "id": "w0576",
     "text": "青梅竹马",
     "explanation": "形容男女小时候天真无邪地在一起玩耍",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "言情"
     ],
@@ -5855,7 +5855,7 @@
     "id": "w0578",
     "text": "暗送秋波",
     "explanation": "暗中传情示意",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "言情",
       "恐怖"
@@ -5888,7 +5888,7 @@
   {
     "id": "w0581",
     "text": "初恋",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -5909,7 +5909,7 @@
   {
     "id": "w0583",
     "text": "单恋",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -5919,7 +5919,7 @@
   {
     "id": "w0584",
     "text": "热恋",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -5929,7 +5929,7 @@
   {
     "id": "w0585",
     "text": "失恋",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -5939,7 +5939,7 @@
   {
     "id": "w0586",
     "text": "复合",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -5949,7 +5949,7 @@
   {
     "id": "w0587",
     "text": "表白",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -5959,7 +5959,7 @@
   {
     "id": "w0588",
     "text": "告白",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -5969,7 +5969,7 @@
   {
     "id": "w0589",
     "text": "拒绝",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -5979,7 +5979,7 @@
   {
     "id": "w0590",
     "text": "等待",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -6039,7 +6039,7 @@
   {
     "id": "w0596",
     "text": "拥抱",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6049,7 +6049,7 @@
   {
     "id": "w0597",
     "text": "亲吻",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6069,7 +6069,7 @@
   {
     "id": "w0599",
     "text": "对视",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6089,7 +6089,7 @@
   {
     "id": "w0601",
     "text": "情书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6099,7 +6099,7 @@
   {
     "id": "w0602",
     "text": "玫瑰",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6109,7 +6109,7 @@
   {
     "id": "w0603",
     "text": "巧克力",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6119,7 +6119,7 @@
   {
     "id": "w0604",
     "text": "戒指",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6129,7 +6129,7 @@
   {
     "id": "w0605",
     "text": "项链",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6159,7 +6159,7 @@
   {
     "id": "w0608",
     "text": "礼物",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6179,7 +6179,7 @@
   {
     "id": "w0610",
     "text": "誓言",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -6210,7 +6210,7 @@
   {
     "id": "w0613",
     "text": "公园",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "言情"
     ],
@@ -6220,7 +6220,7 @@
   {
     "id": "w0614",
     "text": "海边",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "言情"
     ],
@@ -6240,7 +6240,7 @@
   {
     "id": "w0616",
     "text": "天台",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "言情"
     ],
@@ -6250,7 +6250,7 @@
   {
     "id": "w0617",
     "text": "阳台",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "言情"
     ],
@@ -6290,7 +6290,7 @@
   {
     "id": "w0621",
     "text": "邂逅",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6300,7 +6300,7 @@
   {
     "id": "w0622",
     "text": "重逢",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6310,7 +6310,7 @@
   {
     "id": "w0623",
     "text": "离别",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6320,7 +6320,7 @@
   {
     "id": "w0624",
     "text": "思念",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -6330,7 +6330,7 @@
   {
     "id": "w0625",
     "text": "守候",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -6340,7 +6340,7 @@
   {
     "id": "w0626",
     "text": "追求",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6350,7 +6350,7 @@
   {
     "id": "w0627",
     "text": "逃避",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6360,7 +6360,7 @@
   {
     "id": "w0628",
     "text": "犹豫",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -6470,7 +6470,7 @@
   {
     "id": "w0639",
     "text": "争吵",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6480,7 +6480,7 @@
   {
     "id": "w0640",
     "text": "和解",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6490,7 +6490,7 @@
   {
     "id": "w0641",
     "text": "校服",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6500,7 +6500,7 @@
   {
     "id": "w0642",
     "text": "白衬衫",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6530,7 +6530,7 @@
   {
     "id": "w0645",
     "text": "围巾",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6570,7 +6570,7 @@
   {
     "id": "w0649",
     "text": "纸条",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6650,7 +6650,7 @@
   {
     "id": "w0657",
     "text": "车站",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "言情"
     ],
@@ -6660,7 +6660,7 @@
   {
     "id": "w0658",
     "text": "机场",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "言情"
     ],
@@ -6680,7 +6680,7 @@
   {
     "id": "w0660",
     "text": "站台",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "言情"
     ],
@@ -6700,7 +6700,7 @@
   {
     "id": "w0662",
     "text": "婚纱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6720,7 +6720,7 @@
   {
     "id": "w0664",
     "text": "喜糖",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "言情"
     ],
@@ -6760,7 +6760,7 @@
   {
     "id": "w0668",
     "text": "厨房",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "言情"
     ],
@@ -6790,7 +6790,7 @@
   {
     "id": "w0671",
     "text": "前任",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6800,7 +6800,7 @@
   {
     "id": "w0672",
     "text": "闺蜜",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6810,7 +6810,7 @@
   {
     "id": "w0673",
     "text": "兄弟",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6820,7 +6820,7 @@
   {
     "id": "w0674",
     "text": "父母",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6840,7 +6840,7 @@
   {
     "id": "w0676",
     "text": "邻居",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6850,7 +6850,7 @@
   {
     "id": "w0677",
     "text": "同事",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6870,7 +6870,7 @@
   {
     "id": "w0679",
     "text": "同学",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6880,7 +6880,7 @@
   {
     "id": "w0680",
     "text": "室友",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6890,7 +6890,7 @@
   {
     "id": "w0681",
     "text": "暧昧",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -6900,7 +6900,7 @@
   {
     "id": "w0682",
     "text": "试探",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "言情"
     ],
@@ -6930,7 +6930,7 @@
   {
     "id": "w0685",
     "text": "心动",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -6940,7 +6940,7 @@
   {
     "id": "w0686",
     "text": "感动",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -6950,7 +6950,7 @@
   {
     "id": "w0687",
     "text": "冲动",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -7001,7 +7001,7 @@
   {
     "id": "w0692",
     "text": "谎言",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -7061,7 +7061,7 @@
   {
     "id": "w0698",
     "text": "疏离",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -7071,7 +7071,7 @@
   {
     "id": "w0699",
     "text": "亲密",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "言情"
     ],
@@ -7492,7 +7492,7 @@
     "id": "w0741",
     "text": "踔厉奋发",
     "explanation": "形容精神振奋、意气风发",
-    "category": "状态",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -7503,7 +7503,7 @@
     "id": "w0742",
     "text": "高屋建瓴",
     "explanation": "居高临下，势不可挡",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -7514,7 +7514,7 @@
     "id": "w0743",
     "text": "运筹帷幄",
     "explanation": "在帐幕中谋划军机",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -7525,7 +7525,7 @@
     "id": "w0744",
     "text": "一诺千金",
     "explanation": "一个承诺价值千金",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -7536,7 +7536,7 @@
     "id": "w0745",
     "text": "快意恩仇",
     "explanation": "痛快地报恩报仇",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -7587,7 +7587,7 @@
   {
     "id": "w0750",
     "text": "棍",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -7617,7 +7617,7 @@
   {
     "id": "w0753",
     "text": "戟",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -7637,7 +7637,7 @@
   {
     "id": "w0755",
     "text": "钩",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -7647,7 +7647,7 @@
   {
     "id": "w0756",
     "text": "叉",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -7668,7 +7668,7 @@
   {
     "id": "w0758",
     "text": "毒针",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -7678,7 +7678,7 @@
   {
     "id": "w0759",
     "text": "飞镖",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -7688,7 +7688,7 @@
   {
     "id": "w0760",
     "text": "铁蒺藜",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -7748,7 +7748,7 @@
   {
     "id": "w0766",
     "text": "绳镖",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -7758,7 +7758,7 @@
   {
     "id": "w0767",
     "text": "内力",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -7768,7 +7768,7 @@
   {
     "id": "w0768",
     "text": "真气",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -7778,7 +7778,7 @@
   {
     "id": "w0769",
     "text": "气海",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -7788,7 +7788,7 @@
   {
     "id": "w0770",
     "text": "丹田",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -7798,7 +7798,7 @@
   {
     "id": "w0771",
     "text": "经脉",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -7818,7 +7818,7 @@
   {
     "id": "w0773",
     "text": "任督",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -7828,7 +7828,7 @@
   {
     "id": "w0774",
     "text": "奇经八脉",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -7838,7 +7838,7 @@
   {
     "id": "w0775",
     "text": "周天",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -7858,7 +7858,7 @@
   {
     "id": "w0777",
     "text": "点穴",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -7868,7 +7868,7 @@
   {
     "id": "w0778",
     "text": "卸骨",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -7878,7 +7878,7 @@
   {
     "id": "w0779",
     "text": "擒拿",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -7888,7 +7888,7 @@
   {
     "id": "w0780",
     "text": "摔跤",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -7968,7 +7968,7 @@
   {
     "id": "w0788",
     "text": "缩地成寸",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -7978,7 +7978,7 @@
   {
     "id": "w0789",
     "text": "踏雪无痕",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -7988,7 +7988,7 @@
   {
     "id": "w0790",
     "text": "凌波微步",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -7998,7 +7998,7 @@
   {
     "id": "w0791",
     "text": "壁虎游墙",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -8008,7 +8008,7 @@
   {
     "id": "w0792",
     "text": "蜻蜓点水",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -8018,7 +8018,7 @@
   {
     "id": "w0793",
     "text": "燕子翻身",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "武侠"
     ],
@@ -8038,7 +8038,7 @@
   {
     "id": "w0795",
     "text": "庙堂",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8048,7 +8048,7 @@
   {
     "id": "w0796",
     "text": "门派",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8058,7 +8058,7 @@
   {
     "id": "w0797",
     "text": "帮会",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8068,7 +8068,7 @@
   {
     "id": "w0798",
     "text": "盟主",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "武侠"
     ],
@@ -8078,7 +8078,7 @@
   {
     "id": "w0799",
     "text": "掌门",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "武侠"
     ],
@@ -8088,7 +8088,7 @@
   {
     "id": "w0800",
     "text": "长老",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "武侠"
     ],
@@ -8098,7 +8098,7 @@
   {
     "id": "w0801",
     "text": "弟子",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "武侠"
     ],
@@ -8108,7 +8108,7 @@
   {
     "id": "w0802",
     "text": "叛徒",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "武侠"
     ],
@@ -8118,7 +8118,7 @@
   {
     "id": "w0803",
     "text": "卧底",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "武侠"
     ],
@@ -8128,7 +8128,7 @@
   {
     "id": "w0804",
     "text": "少林",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8138,7 +8138,7 @@
   {
     "id": "w0805",
     "text": "武当",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8148,7 +8148,7 @@
   {
     "id": "w0806",
     "text": "峨眉",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8168,7 +8168,7 @@
   {
     "id": "w0808",
     "text": "昆仑",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8178,7 +8178,7 @@
   {
     "id": "w0809",
     "text": "崆峒",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8198,7 +8198,7 @@
   {
     "id": "w0811",
     "text": "点苍",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8208,7 +8208,7 @@
   {
     "id": "w0812",
     "text": "丐帮",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8218,7 +8218,7 @@
   {
     "id": "w0813",
     "text": "明教",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8268,7 +8268,7 @@
   {
     "id": "w0818",
     "text": "当铺",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8278,7 +8278,7 @@
   {
     "id": "w0819",
     "text": "赌坊",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8298,7 +8298,7 @@
   {
     "id": "w0821",
     "text": "药铺",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8308,7 +8308,7 @@
   {
     "id": "w0822",
     "text": "铁匠铺",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8328,7 +8328,7 @@
   {
     "id": "w0824",
     "text": "大漠",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8338,7 +8338,7 @@
   {
     "id": "w0825",
     "text": "戈壁",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8378,7 +8378,7 @@
   {
     "id": "w0829",
     "text": "悬崖",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8388,7 +8388,7 @@
   {
     "id": "w0830",
     "text": "峭壁",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8398,7 +8398,7 @@
   {
     "id": "w0831",
     "text": "密林",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8408,7 +8408,7 @@
   {
     "id": "w0832",
     "text": "竹海",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8508,7 +8508,7 @@
   {
     "id": "w0842",
     "text": "枭雄",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "武侠"
     ],
@@ -8518,7 +8518,7 @@
   {
     "id": "w0843",
     "text": "奸雄",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "武侠"
     ],
@@ -8528,7 +8528,7 @@
   {
     "id": "w0844",
     "text": "武林大会",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8558,7 +8558,7 @@
   {
     "id": "w0847",
     "text": "夺宝",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -8568,7 +8568,7 @@
   {
     "id": "w0848",
     "text": "寻仇",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -8578,7 +8578,7 @@
   {
     "id": "w0849",
     "text": "报恩",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -8618,7 +8618,7 @@
   {
     "id": "w0853",
     "text": "闭关",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -8628,7 +8628,7 @@
   {
     "id": "w0854",
     "text": "秘籍",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8648,7 +8648,7 @@
   {
     "id": "w0856",
     "text": "绝学",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8669,7 +8669,7 @@
   {
     "id": "w0858",
     "text": "口诀",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8679,7 +8679,7 @@
   {
     "id": "w0859",
     "text": "招式",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8689,7 +8689,7 @@
   {
     "id": "w0860",
     "text": "套路",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8699,7 +8699,7 @@
   {
     "id": "w0861",
     "text": "残篇",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8709,7 +8709,7 @@
   {
     "id": "w0862",
     "text": "拓本",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8719,7 +8719,7 @@
   {
     "id": "w0863",
     "text": "竹简",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8729,7 +8729,7 @@
   {
     "id": "w0864",
     "text": "毒",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8749,7 +8749,7 @@
   {
     "id": "w0866",
     "text": "蛊",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8779,7 +8779,7 @@
   {
     "id": "w0869",
     "text": "膏",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8789,7 +8789,7 @@
   {
     "id": "w0870",
     "text": "散",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8799,7 +8799,7 @@
   {
     "id": "w0871",
     "text": "汤",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "武侠"
     ],
@@ -8839,7 +8839,7 @@
   {
     "id": "w0875",
     "text": "仁",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -8849,7 +8849,7 @@
   {
     "id": "w0876",
     "text": "信",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -8859,7 +8859,7 @@
   {
     "id": "w0877",
     "text": "勇",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -8869,7 +8869,7 @@
   {
     "id": "w0878",
     "text": "忠",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -8879,7 +8879,7 @@
   {
     "id": "w0879",
     "text": "孝",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -8889,7 +8889,7 @@
   {
     "id": "w0880",
     "text": "节",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -8899,7 +8899,7 @@
   {
     "id": "w0881",
     "text": "礼",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -8909,7 +8909,7 @@
   {
     "id": "w0882",
     "text": "智",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -8919,7 +8919,7 @@
   {
     "id": "w0883",
     "text": "廉",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "武侠"
     ],
@@ -9230,7 +9230,7 @@
     "id": "w0914",
     "text": "内卷",
     "explanation": "过度竞争导致个体收益降低",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -9241,7 +9241,7 @@
     "id": "w0915",
     "text": "躺平",
     "explanation": "放弃竞争，追求低欲望生活",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -9286,7 +9286,7 @@
     "id": "w0919",
     "text": "YYDS",
     "explanation": "永远的神，表示极高赞美",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -9316,7 +9316,7 @@
   {
     "id": "w0922",
     "text": "公交",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9326,7 +9326,7 @@
   {
     "id": "w0923",
     "text": "出租车",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9336,7 +9336,7 @@
   {
     "id": "w0924",
     "text": "外卖",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9346,7 +9346,7 @@
   {
     "id": "w0925",
     "text": "快递",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9356,7 +9356,7 @@
   {
     "id": "w0926",
     "text": "便利店",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -9376,7 +9376,7 @@
   {
     "id": "w0928",
     "text": "商场",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -9386,7 +9386,7 @@
   {
     "id": "w0929",
     "text": "菜市场",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -9396,7 +9396,7 @@
   {
     "id": "w0930",
     "text": "加班",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -9406,7 +9406,7 @@
   {
     "id": "w0931",
     "text": "996",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -9416,7 +9416,7 @@
   {
     "id": "w0932",
     "text": "打卡",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9426,7 +9426,7 @@
   {
     "id": "w0933",
     "text": "会议",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9436,7 +9436,7 @@
   {
     "id": "w0934",
     "text": "PPT",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9446,7 +9446,7 @@
   {
     "id": "w0935",
     "text": "KPI",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9456,7 +9456,7 @@
   {
     "id": "w0936",
     "text": "绩效",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9466,7 +9466,7 @@
   {
     "id": "w0937",
     "text": "年终奖",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9476,7 +9476,7 @@
   {
     "id": "w0938",
     "text": "跳槽",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9486,7 +9486,7 @@
   {
     "id": "w0939",
     "text": "裁员",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9496,7 +9496,7 @@
   {
     "id": "w0940",
     "text": "房贷",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9506,7 +9506,7 @@
   {
     "id": "w0941",
     "text": "车贷",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9516,7 +9516,7 @@
   {
     "id": "w0942",
     "text": "信用卡",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9536,7 +9536,7 @@
   {
     "id": "w0944",
     "text": "理财",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9546,7 +9546,7 @@
   {
     "id": "w0945",
     "text": "股票",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9566,7 +9566,7 @@
   {
     "id": "w0947",
     "text": "保险",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9576,7 +9576,7 @@
   {
     "id": "w0948",
     "text": "税",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9586,7 +9586,7 @@
   {
     "id": "w0949",
     "text": "社保",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9596,7 +9596,7 @@
   {
     "id": "w0950",
     "text": "租房",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9616,7 +9616,7 @@
   {
     "id": "w0952",
     "text": "搬家",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9626,7 +9626,7 @@
   {
     "id": "w0953",
     "text": "装修",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9636,7 +9636,7 @@
   {
     "id": "w0954",
     "text": "邻居",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "都市"
     ],
@@ -9646,7 +9646,7 @@
   {
     "id": "w0955",
     "text": "物业",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9656,7 +9656,7 @@
   {
     "id": "w0956",
     "text": "快递柜",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9666,7 +9666,7 @@
   {
     "id": "w0957",
     "text": "电梯",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9676,7 +9676,7 @@
   {
     "id": "w0958",
     "text": "停车位",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -9686,7 +9686,7 @@
   {
     "id": "w0959",
     "text": "门禁",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9696,7 +9696,7 @@
   {
     "id": "w0960",
     "text": "相亲",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -9706,7 +9706,7 @@
   {
     "id": "w0961",
     "text": "约会",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市",
       "言情"
@@ -9717,7 +9717,7 @@
   {
     "id": "w0962",
     "text": "恋爱",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市",
       "言情"
@@ -9728,7 +9728,7 @@
   {
     "id": "w0963",
     "text": "结婚",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市",
       "言情"
@@ -9739,7 +9739,7 @@
   {
     "id": "w0964",
     "text": "离婚",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市",
       "言情"
@@ -9750,7 +9750,7 @@
   {
     "id": "w0965",
     "text": "单身",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -9760,7 +9760,7 @@
   {
     "id": "w0966",
     "text": "独居",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -9770,7 +9770,7 @@
   {
     "id": "w0967",
     "text": "养猫",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9780,7 +9780,7 @@
   {
     "id": "w0968",
     "text": "养狗",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "都市"
     ],
@@ -9910,7 +9910,7 @@
   {
     "id": "w0981",
     "text": "奶茶",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9940,7 +9940,7 @@
   {
     "id": "w0984",
     "text": "外卖",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -9950,7 +9950,7 @@
   {
     "id": "w0985",
     "text": "深夜食堂",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -9960,7 +9960,7 @@
   {
     "id": "w0986",
     "text": "路边摊",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -9970,7 +9970,7 @@
   {
     "id": "w0987",
     "text": "大排档",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -9980,7 +9980,7 @@
   {
     "id": "w0988",
     "text": "网红店",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -10000,7 +10000,7 @@
   {
     "id": "w0990",
     "text": "焦虑",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10010,7 +10010,7 @@
   {
     "id": "w0991",
     "text": "失眠",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10020,7 +10020,7 @@
   {
     "id": "w0992",
     "text": "抑郁",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10030,7 +10030,7 @@
   {
     "id": "w0993",
     "text": "压力",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10040,7 +10040,7 @@
   {
     "id": "w0994",
     "text": "疲惫",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10070,7 +10070,7 @@
   {
     "id": "w0997",
     "text": "挣扎",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10100,7 +10100,7 @@
   {
     "id": "w1000",
     "text": "创业",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10150,7 +10150,7 @@
   {
     "id": "w1005",
     "text": "破产",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10160,7 +10160,7 @@
   {
     "id": "w1006",
     "text": "负债",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10170,7 +10170,7 @@
   {
     "id": "w1007",
     "text": "翻身",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10180,7 +10180,7 @@
   {
     "id": "w1008",
     "text": "逆袭",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市"
     ],
@@ -10200,7 +10200,7 @@
   {
     "id": "w1010",
     "text": "老板",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "都市"
     ],
@@ -10210,7 +10210,7 @@
   {
     "id": "w1011",
     "text": "同事",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "都市"
     ],
@@ -10230,7 +10230,7 @@
   {
     "id": "w1013",
     "text": "甲方",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "都市"
     ],
@@ -10240,7 +10240,7 @@
   {
     "id": "w1014",
     "text": "乙方",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "都市"
     ],
@@ -10250,7 +10250,7 @@
   {
     "id": "w1015",
     "text": "实习生",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "都市"
     ],
@@ -10270,7 +10270,7 @@
   {
     "id": "w1017",
     "text": "前辈",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "都市"
     ],
@@ -10300,7 +10300,7 @@
   {
     "id": "w1020",
     "text": "辞职信",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -10310,7 +10310,7 @@
   {
     "id": "w1021",
     "text": "简历",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -10400,7 +10400,7 @@
   {
     "id": "w1030",
     "text": "公园",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -10410,7 +10410,7 @@
   {
     "id": "w1031",
     "text": "广场",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -10490,7 +10490,7 @@
   {
     "id": "w1039",
     "text": "天台",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "都市"
     ],
@@ -10510,7 +10510,7 @@
   {
     "id": "w1041",
     "text": "电脑",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -10520,7 +10520,7 @@
   {
     "id": "w1042",
     "text": "充电宝",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -10550,7 +10550,7 @@
   {
     "id": "w1045",
     "text": "信号",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "都市"
     ],
@@ -10570,7 +10570,7 @@
   {
     "id": "w1047",
     "text": "密码",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市",
       "悬疑"
@@ -10651,7 +10651,7 @@
   {
     "id": "w1055",
     "text": "罚单",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -10661,7 +10661,7 @@
   {
     "id": "w1056",
     "text": "驾照",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "都市"
     ],
@@ -10801,7 +10801,7 @@
   {
     "id": "w1070",
     "text": "父母",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "都市"
     ],
@@ -10811,7 +10811,7 @@
   {
     "id": "w1071",
     "text": "催婚",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "都市",
       "言情"
@@ -10903,7 +10903,7 @@
     "id": "w1080",
     "text": "社稷",
     "explanation": "古代帝王所祭祀的土神和谷神，代指国家",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "历史"
     ],
@@ -10914,7 +10914,7 @@
     "id": "w1081",
     "text": "庙堂",
     "explanation": "指朝廷，古代最高权力机构所在",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -10925,7 +10925,7 @@
     "id": "w1082",
     "text": "谥号",
     "explanation": "古代帝王和大臣死后追封的称号",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "历史",
       "恐怖"
@@ -10937,7 +10937,7 @@
     "id": "w1083",
     "text": "金榜题名",
     "explanation": "科举考试中进士",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "历史"
     ],
@@ -10959,7 +10959,7 @@
     "id": "w1085",
     "text": "鸿门宴",
     "explanation": "暗藏杀机的宴会",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "历史",
       "恐怖"
@@ -10970,7 +10970,7 @@
   {
     "id": "w1086",
     "text": "朝代",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "历史"
     ],
@@ -10990,7 +10990,7 @@
   {
     "id": "w1088",
     "text": "太子",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11000,7 +11000,7 @@
   {
     "id": "w1089",
     "text": "皇后",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11050,7 +11050,7 @@
   {
     "id": "w1094",
     "text": "宫女",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11060,7 +11060,7 @@
   {
     "id": "w1095",
     "text": "侍卫",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11070,7 +11070,7 @@
   {
     "id": "w1096",
     "text": "龙袍",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史",
       "奇幻"
@@ -11081,7 +11081,7 @@
   {
     "id": "w1097",
     "text": "玉玺",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11091,7 +11091,7 @@
   {
     "id": "w1098",
     "text": "凤冠",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11101,7 +11101,7 @@
   {
     "id": "w1099",
     "text": "朝珠",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11111,7 +11111,7 @@
   {
     "id": "w1100",
     "text": "官帽",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11121,7 +11121,7 @@
   {
     "id": "w1101",
     "text": "蟒袍",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11141,7 +11141,7 @@
   {
     "id": "w1103",
     "text": "战旗",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11151,7 +11151,7 @@
   {
     "id": "w1104",
     "text": "令牌",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11161,7 +11161,7 @@
   {
     "id": "w1105",
     "text": "虎符",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史",
       "奇幻"
@@ -11172,7 +11172,7 @@
   {
     "id": "w1106",
     "text": "科举",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11182,7 +11182,7 @@
   {
     "id": "w1107",
     "text": "殿试",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11192,7 +11192,7 @@
   {
     "id": "w1108",
     "text": "状元",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11202,7 +11202,7 @@
   {
     "id": "w1109",
     "text": "榜眼",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11242,7 +11242,7 @@
   {
     "id": "w1113",
     "text": "秀才",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11252,7 +11252,7 @@
   {
     "id": "w1114",
     "text": "落第",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "历史"
     ],
@@ -11262,7 +11262,7 @@
   {
     "id": "w1115",
     "text": "中举",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "历史"
     ],
@@ -11312,7 +11312,7 @@
   {
     "id": "w1120",
     "text": "骑兵",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11322,7 +11322,7 @@
   {
     "id": "w1121",
     "text": "步兵",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11362,7 +11362,7 @@
   {
     "id": "w1125",
     "text": "战车",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11382,7 +11382,7 @@
   {
     "id": "w1127",
     "text": "城墙",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11392,7 +11392,7 @@
   {
     "id": "w1128",
     "text": "护城河",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11412,7 +11412,7 @@
   {
     "id": "w1130",
     "text": "粮仓",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11422,7 +11422,7 @@
   {
     "id": "w1131",
     "text": "军营",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11432,7 +11432,7 @@
   {
     "id": "w1132",
     "text": "驿站",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11442,7 +11442,7 @@
   {
     "id": "w1133",
     "text": "关隘",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11472,7 +11472,7 @@
   {
     "id": "w1136",
     "text": "丝绸之路",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11492,7 +11492,7 @@
   {
     "id": "w1138",
     "text": "大运河",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11532,7 +11532,7 @@
   {
     "id": "w1142",
     "text": "商路",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11542,7 +11542,7 @@
   {
     "id": "w1143",
     "text": "贡品",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11552,7 +11552,7 @@
   {
     "id": "w1144",
     "text": "朝贡",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11602,7 +11602,7 @@
   {
     "id": "w1149",
     "text": "丝绸",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11632,7 +11632,7 @@
   {
     "id": "w1152",
     "text": "指南针",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11642,7 +11642,7 @@
   {
     "id": "w1153",
     "text": "印刷",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11652,7 +11652,7 @@
   {
     "id": "w1154",
     "text": "造纸",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11662,7 +11662,7 @@
   {
     "id": "w1155",
     "text": "算盘",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11672,7 +11672,7 @@
   {
     "id": "w1156",
     "text": "诏书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11682,7 +11682,7 @@
   {
     "id": "w1157",
     "text": "奏折",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11692,7 +11692,7 @@
   {
     "id": "w1158",
     "text": "圣旨",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11702,7 +11702,7 @@
   {
     "id": "w1159",
     "text": "檄文",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11712,7 +11712,7 @@
   {
     "id": "w1160",
     "text": "国书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11722,7 +11722,7 @@
   {
     "id": "w1161",
     "text": "盟约",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史",
       "言情"
@@ -11733,7 +11733,7 @@
   {
     "id": "w1162",
     "text": "条约",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史",
       "言情"
@@ -11744,7 +11744,7 @@
   {
     "id": "w1163",
     "text": "降书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11754,7 +11754,7 @@
   {
     "id": "w1164",
     "text": "密函",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11764,7 +11764,7 @@
   {
     "id": "w1165",
     "text": "遗诏",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11784,7 +11784,7 @@
   {
     "id": "w1167",
     "text": "改革",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11794,7 +11794,7 @@
   {
     "id": "w1168",
     "text": "政变",
-    "category": "典故",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11804,7 +11804,7 @@
   {
     "id": "w1169",
     "text": "篡位",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11814,7 +11814,7 @@
   {
     "id": "w1170",
     "text": "禅让",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11824,7 +11824,7 @@
   {
     "id": "w1171",
     "text": "复辟",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11834,7 +11834,7 @@
   {
     "id": "w1172",
     "text": "中兴",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "历史"
     ],
@@ -11844,7 +11844,7 @@
   {
     "id": "w1173",
     "text": "鼎革",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "历史"
     ],
@@ -11854,7 +11854,7 @@
   {
     "id": "w1174",
     "text": "革命",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11874,7 +11874,7 @@
   {
     "id": "w1176",
     "text": "忠臣",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11884,7 +11884,7 @@
   {
     "id": "w1177",
     "text": "奸臣",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11894,7 +11894,7 @@
   {
     "id": "w1178",
     "text": "权臣",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11904,7 +11904,7 @@
   {
     "id": "w1179",
     "text": "佞臣",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11914,7 +11914,7 @@
   {
     "id": "w1180",
     "text": "清官",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11924,7 +11924,7 @@
   {
     "id": "w1181",
     "text": "贪官",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11934,7 +11934,7 @@
   {
     "id": "w1182",
     "text": "外戚",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11954,7 +11954,7 @@
   {
     "id": "w1184",
     "text": "诸侯",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11964,7 +11964,7 @@
   {
     "id": "w1185",
     "text": "封疆大吏",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11974,7 +11974,7 @@
   {
     "id": "w1186",
     "text": "田地",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11984,7 +11984,7 @@
   {
     "id": "w1187",
     "text": "赋税",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11994,7 +11994,7 @@
   {
     "id": "w1188",
     "text": "徭役",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12004,7 +12004,7 @@
   {
     "id": "w1189",
     "text": "户籍",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12014,7 +12014,7 @@
   {
     "id": "w1190",
     "text": "编户",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12024,7 +12024,7 @@
   {
     "id": "w1191",
     "text": "均田",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -12034,7 +12034,7 @@
   {
     "id": "w1192",
     "text": "井田",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12044,7 +12044,7 @@
   {
     "id": "w1193",
     "text": "租庸调",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12064,7 +12064,7 @@
   {
     "id": "w1195",
     "text": "漕运",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -12074,7 +12074,7 @@
   {
     "id": "w1196",
     "text": "祭祀",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -12084,7 +12084,7 @@
   {
     "id": "w1197",
     "text": "太庙",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -12094,7 +12094,7 @@
   {
     "id": "w1198",
     "text": "社稷坛",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -12104,7 +12104,7 @@
   {
     "id": "w1199",
     "text": "天坛",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -12114,7 +12114,7 @@
   {
     "id": "w1200",
     "text": "祈年",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -12124,7 +12124,7 @@
   {
     "id": "w1201",
     "text": "郊祀",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -12134,7 +12134,7 @@
   {
     "id": "w1202",
     "text": "册封",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -12144,7 +12144,7 @@
   {
     "id": "w1203",
     "text": "大典",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -12164,7 +12164,7 @@
   {
     "id": "w1205",
     "text": "廷议",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -12174,7 +12174,7 @@
   {
     "id": "w1206",
     "text": "竹简",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12184,7 +12184,7 @@
   {
     "id": "w1207",
     "text": "帛书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12194,7 +12194,7 @@
   {
     "id": "w1208",
     "text": "碑刻",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12204,7 +12204,7 @@
   {
     "id": "w1209",
     "text": "拓片",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12214,7 +12214,7 @@
   {
     "id": "w1210",
     "text": "典籍",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12224,7 +12224,7 @@
   {
     "id": "w1211",
     "text": "史书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12234,7 +12234,7 @@
   {
     "id": "w1212",
     "text": "方志",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12244,7 +12244,7 @@
   {
     "id": "w1213",
     "text": "族谱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12254,7 +12254,7 @@
   {
     "id": "w1214",
     "text": "年表",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -12374,7 +12374,7 @@
   {
     "id": "w1226",
     "text": "商贾",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -12384,7 +12384,7 @@
   {
     "id": "w1227",
     "text": "工匠",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -12394,7 +12394,7 @@
   {
     "id": "w1228",
     "text": "农夫",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -12404,7 +12404,7 @@
   {
     "id": "w1229",
     "text": "渔夫",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -12414,7 +12414,7 @@
   {
     "id": "w1230",
     "text": "猎户",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -12424,7 +12424,7 @@
   {
     "id": "w1231",
     "text": "僧侣",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -12444,7 +12444,7 @@
   {
     "id": "w1233",
     "text": "儒生",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -12575,7 +12575,7 @@
     "id": "w1246",
     "text": "魑魅魍魉",
     "explanation": "传说中山泽间害人的鬼怪",
-    "category": "典故",
+    "category": "人物",
     "genres": [
       "恐怖"
     ],
@@ -12586,7 +12586,7 @@
     "id": "w1247",
     "text": "毛骨悚然",
     "explanation": "形容十分恐惧",
-    "category": "状态",
+    "category": "典故",
     "genres": [
       "恐怖"
     ],
@@ -12608,7 +12608,7 @@
     "id": "w1249",
     "text": "夜半三更",
     "explanation": "深夜时分",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "恐怖"
     ],
@@ -12619,7 +12619,7 @@
     "id": "w1250",
     "text": "草木皆兵",
     "explanation": "形容神经过敏，疑神疑鬼",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "恐怖"
     ],
@@ -12630,7 +12630,7 @@
     "id": "w1251",
     "text": "如坐针毡",
     "explanation": "形容心神不安",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "恐怖",
       "言情"
@@ -12641,7 +12641,7 @@
   {
     "id": "w1252",
     "text": "鬼",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖"
     ],
@@ -12651,7 +12651,7 @@
   {
     "id": "w1253",
     "text": "怨灵",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖"
     ],
@@ -12661,7 +12661,7 @@
   {
     "id": "w1254",
     "text": "亡魂",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖",
       "奇幻"
@@ -12672,7 +12672,7 @@
   {
     "id": "w1255",
     "text": "幽魂",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖",
       "奇幻"
@@ -12683,7 +12683,7 @@
   {
     "id": "w1256",
     "text": "厉鬼",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖"
     ],
@@ -12693,7 +12693,7 @@
   {
     "id": "w1257",
     "text": "冤魂",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖",
       "奇幻"
@@ -12704,7 +12704,7 @@
   {
     "id": "w1258",
     "text": "恶鬼",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖"
     ],
@@ -12714,7 +12714,7 @@
   {
     "id": "w1259",
     "text": "游魂",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖",
       "奇幻"
@@ -12725,7 +12725,7 @@
   {
     "id": "w1260",
     "text": "孤魂",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖",
       "奇幻"
@@ -12736,7 +12736,7 @@
   {
     "id": "w1261",
     "text": "野鬼",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖"
     ],
@@ -12746,7 +12746,7 @@
   {
     "id": "w1262",
     "text": "诅咒",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖",
       "奇幻"
@@ -12757,7 +12757,7 @@
   {
     "id": "w1263",
     "text": "封印",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "恐怖"
     ],
@@ -12767,7 +12767,7 @@
   {
     "id": "w1264",
     "text": "祭品",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -12777,7 +12777,7 @@
   {
     "id": "w1265",
     "text": "符咒",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖",
       "奇幻"
@@ -12788,7 +12788,7 @@
   {
     "id": "w1266",
     "text": "灵牌",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -12808,7 +12808,7 @@
   {
     "id": "w1268",
     "text": "纸钱",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -12818,7 +12818,7 @@
   {
     "id": "w1269",
     "text": "香烛",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -12828,7 +12828,7 @@
   {
     "id": "w1270",
     "text": "骨灰",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -12838,7 +12838,7 @@
   {
     "id": "w1271",
     "text": "棺材",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -12858,7 +12858,7 @@
   {
     "id": "w1273",
     "text": "老宅",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -12868,7 +12868,7 @@
   {
     "id": "w1274",
     "text": "古墓",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -12898,7 +12898,7 @@
   {
     "id": "w1277",
     "text": "电梯",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -12908,7 +12908,7 @@
   {
     "id": "w1278",
     "text": "走廊",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -12938,7 +12938,7 @@
   {
     "id": "w1281",
     "text": "楼梯",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -13108,7 +13108,7 @@
   {
     "id": "w1298",
     "text": "幻觉",
-    "category": "意象",
+    "category": "感官",
     "genres": [
       "恐怖",
       "奇幻"
@@ -13371,7 +13371,7 @@
   {
     "id": "w1324",
     "text": "疯狂",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -13381,7 +13381,7 @@
   {
     "id": "w1325",
     "text": "崩溃",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -13391,7 +13391,7 @@
   {
     "id": "w1326",
     "text": "窒息",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -13481,7 +13481,7 @@
   {
     "id": "w1335",
     "text": "五芒星",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13521,7 +13521,7 @@
   {
     "id": "w1339",
     "text": "邪灵",
-    "category": "意象",
+    "category": "人物",
     "genres": [
       "恐怖"
     ],
@@ -13531,7 +13531,7 @@
   {
     "id": "w1340",
     "text": "附身",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "恐怖"
     ],
@@ -13541,7 +13541,7 @@
   {
     "id": "w1341",
     "text": "驱魔",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "恐怖",
       "奇幻"
@@ -13552,7 +13552,7 @@
   {
     "id": "w1342",
     "text": "人偶",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13562,7 +13562,7 @@
   {
     "id": "w1343",
     "text": "面具",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13572,7 +13572,7 @@
   {
     "id": "w1344",
     "text": "蜡像",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13582,7 +13582,7 @@
   {
     "id": "w1345",
     "text": "标本",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13592,7 +13592,7 @@
   {
     "id": "w1346",
     "text": "画像",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13612,7 +13612,7 @@
   {
     "id": "w1348",
     "text": "录像带",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13723,7 +13723,7 @@
   {
     "id": "w1359",
     "text": "锁链",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13733,7 +13733,7 @@
   {
     "id": "w1360",
     "text": "手铐",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13743,7 +13743,7 @@
   {
     "id": "w1361",
     "text": "脚镣",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -13753,7 +13753,7 @@
   {
     "id": "w1362",
     "text": "禁忌",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -13763,7 +13763,7 @@
   {
     "id": "w1363",
     "text": "诡异",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -13884,7 +13884,7 @@
   {
     "id": "w1375",
     "text": "灵异事件",
-    "category": "典故",
+    "category": "意象",
     "genres": [
       "恐怖"
     ],
@@ -13964,7 +13964,7 @@
   {
     "id": "w1383",
     "text": "废校",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -13974,7 +13974,7 @@
   {
     "id": "w1384",
     "text": "停尸房",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -13984,7 +13984,7 @@
   {
     "id": "w1385",
     "text": "太平间",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -14014,7 +14014,7 @@
   {
     "id": "w1388",
     "text": "坟场",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -14054,7 +14054,7 @@
   {
     "id": "w1392",
     "text": "失踪",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -14064,7 +14064,7 @@
   {
     "id": "w1393",
     "text": "死亡",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -14074,7 +14074,7 @@
   {
     "id": "w1394",
     "text": "复活",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "恐怖"
     ],
@@ -14094,7 +14094,7 @@
   {
     "id": "w1396",
     "text": "转世",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "恐怖"
     ],
@@ -14115,7 +14115,7 @@
   {
     "id": "w1398",
     "text": "招魂",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "恐怖",
       "奇幻"
@@ -14126,7 +14126,7 @@
   {
     "id": "w1399",
     "text": "通灵",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "恐怖"
     ],
@@ -14136,7 +14136,7 @@
   {
     "id": "w1400",
     "text": "降灵",
-    "category": "意象",
+    "category": "动作",
     "genres": [
       "恐怖"
     ],
@@ -14156,7 +14156,7 @@
   {
     "id": "w1402",
     "text": "密码",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖",
       "悬疑"
@@ -14167,7 +14167,7 @@
   {
     "id": "w1403",
     "text": "暗号",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖",
       "悬疑"
@@ -14178,7 +14178,7 @@
   {
     "id": "w1404",
     "text": "血书",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "恐怖"
     ],
@@ -14218,7 +14218,7 @@
   {
     "id": "w1408",
     "text": "惊悚",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -14228,7 +14228,7 @@
   {
     "id": "w1409",
     "text": "阴森",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -14259,7 +14259,7 @@
     "id": "w1412",
     "text": "踽踽独行",
     "explanation": "形容一个人孤独地走路",
-    "category": "状态",
+    "category": "典故",
     "genres": [
       "通用"
     ],
@@ -14270,7 +14270,7 @@
     "id": "w1413",
     "text": "浮光掠影",
     "explanation": "比喻印象不深，好像水面的光和掠过的影子一样",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "通用"
     ],
@@ -14281,7 +14281,7 @@
     "id": "w1414",
     "text": "白驹过隙",
     "explanation": "比喻时间过得很快",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "通用",
       "科幻"
@@ -14293,7 +14293,7 @@
     "id": "w1415",
     "text": "南柯一梦",
     "explanation": "比喻一场空欢喜",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "通用"
     ],
@@ -14304,7 +14304,7 @@
     "id": "w1416",
     "text": "沧海桑田",
     "explanation": "比喻世事变迁巨大",
-    "category": "意象",
+    "category": "典故",
     "genres": [
       "通用"
     ],
@@ -14315,7 +14315,7 @@
     "id": "w1417",
     "text": "刻舟求剑",
     "explanation": "比喻拘泥成规不知变通",
-    "category": "实物",
+    "category": "典故",
     "genres": [
       "通用",
       "武侠"
@@ -14719,7 +14719,7 @@
   {
     "id": "w1457",
     "text": "信",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "通用"
     ],
@@ -15410,7 +15410,7 @@
   {
     "id": "w1526",
     "text": "焦虑",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "通用"
     ],
@@ -15461,7 +15461,7 @@
   {
     "id": "w1531",
     "text": "谎言",
-    "category": "意象",
+    "category": "状态",
     "genres": [
       "通用"
     ],
@@ -15553,7 +15553,7 @@
   {
     "id": "w1540",
     "text": "指南针",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "通用"
     ],
@@ -15633,7 +15633,7 @@
   {
     "id": "w1548",
     "text": "面具",
-    "category": "意象",
+    "category": "实物",
     "genres": [
       "通用"
     ],
@@ -16084,7 +16084,7 @@
   {
     "id": "w1593",
     "text": "坊",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "通用"
     ],
@@ -16344,7 +16344,7 @@
   {
     "id": "w1619",
     "text": "缘分",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "通用",
       "言情"
@@ -16365,7 +16365,7 @@
   {
     "id": "w1621",
     "text": "因果",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "通用"
     ],
@@ -16375,7 +16375,7 @@
   {
     "id": "w1622",
     "text": "巧合",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "通用"
     ],
@@ -16385,7 +16385,7 @@
   {
     "id": "w1623",
     "text": "必然",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "通用"
     ],
@@ -16395,7 +16395,7 @@
   {
     "id": "w1624",
     "text": "偶然",
-    "category": "意象",
+    "category": "抽象",
     "genres": [
       "通用"
     ],
@@ -16515,7 +16515,7 @@
   {
     "id": "w1636",
     "text": "悬崖",
-    "category": "意象",
+    "category": "地名",
     "genres": [
       "通用"
     ],
