@@ -53,10 +53,16 @@ interface AppState {
   updateStreak: () => void;
 
   // Editor
+  editorTitle: string;
+  setEditorTitle: (t: string) => void;
   editorContent: string;
   setEditorContent: (c: string) => void;
   currentWordSetId: string | null;
   setCurrentWordSetId: (id: string | null) => void;
+  currentDraftId: string | null;
+  setCurrentDraftId: (id: string | null) => void;
+  isCurrentWordSetFavorite: boolean;
+  setIsCurrentWordSetFavorite: (fav: boolean) => void;
 
   // Font size
   fontSize: 'small' | 'medium' | 'large';
@@ -123,10 +129,16 @@ export const useStore = create<AppState>()(
         });
       },
 
+      editorTitle: '',
+      setEditorTitle: (t) => set({ editorTitle: t }),
       editorContent: '',
       setEditorContent: (c) => set({ editorContent: c }),
       currentWordSetId: null,
       setCurrentWordSetId: (id) => set({ currentWordSetId: id }),
+      currentDraftId: null,
+      setCurrentDraftId: (id) => set({ currentDraftId: id }),
+      isCurrentWordSetFavorite: false,
+      setIsCurrentWordSetFavorite: (fav) => set({ isCurrentWordSetFavorite: fav }),
 
       fontSize: 'medium',
       setFontSize: (s) => set({ fontSize: s }),
@@ -143,6 +155,12 @@ export const useStore = create<AppState>()(
         streak: s.streak,
         lastActiveDate: s.lastActiveDate,
         fontSize: s.fontSize,
+        editorTitle: s.editorTitle,
+        editorContent: s.editorContent,
+        currentWordSetId: s.currentWordSetId,
+        currentDraftId: s.currentDraftId,
+        isCurrentWordSetFavorite: s.isCurrentWordSetFavorite,
+        currentWords: s.currentWords,    // auto-save drawn words too
       }),
     }
   )

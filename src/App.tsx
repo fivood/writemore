@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from './store';
 import { drawRandomWords, loadUserData } from './data/wordEngine';
-import { db } from './db';
-import type { Genre, Word, WordSet } from './types';
+import { saveDraftToDb, toggleFavoriteWordSet } from './data/draftEngine';
+import type { Genre, Word } from './types';
+import MDEditor from '@uiw/react-md-editor';
+import HistoryPage from './components/HistoryPage';
+import FavoritesPage from './components/FavoritesPage';
 
 export default function App() {
   const store = useStore();
@@ -40,7 +43,7 @@ export default function App() {
 
       if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
-        handleSaveDraft();
+        handleSave();
         return;
       }
       if (inEditor) return;
@@ -49,51 +52,83 @@ export default function App() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [store.currentWords, store.selectedGenres, store.wordCount, store.lockedIndices]);
+  }, [store.currentWords, store.selectedGenres, store.wordCount, store.lockedIndices, store.editorContent, store.editorTitle]);
 
-  function handleDraw() {
+  async function handleDraw() {
+    // Auto-save existing work if any
+    if (store.editorContent.trim() || store.editorTitle.trim()) {
+      await handleSave();
+    }
+    
+    // Clear the current editor for fresh ideas
+    store.setEditorTitle('');
+    store.setEditorContent('');
+    store.setCurrentWordSetId(null);
+    store.setCurrentDraftId(null);
+    store.setIsCurrentWordSetFavorite(false);
+
     const locked = new Map<number, Word>();
     store.lockedIndices.forEach(i => {
       if (store.currentWords[i]) locked.set(i, store.currentWords[i]);
     });
     const words = drawRandomWords(store.wordCount, store.selectedGenres, locked);
     store.setCurrentWords(words);
-
-    const ws: WordSet = {
-      id: `ws_${Date.now()}`,
-      words,
-      genre: store.selectedGenres.join(',') || '全部',
-      createdAt: new Date(),
-      isFavorite: false,
-      hasWritten: false,
-    };
-    db.wordSets.add(ws);
-    store.setCurrentWordSetId(ws.id);
-    store.setEditorContent('');
+    store.updateStreak();
   }
 
-  async function handleSaveDraft() {
-    if (!store.currentWordSetId || !store.editorContent.trim()) return;
-    const content = store.editorContent;
-    const wordCount = content.replace(/\s/g, '').length;
-    await db.drafts.put({
-      id: `draft_${store.currentWordSetId}`,
-      wordSetId: store.currentWordSetId,
-      content,
-      wordCount,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    await db.wordSets.update(store.currentWordSetId, { hasWritten: true });
-    showToast(`💾 已保存 (${wordCount}字)`);
+  async function handleToggleFavorite() {
+    if (store.currentWords.length === 0) return;
+    try {
+      const { wordSetId, isFavorite } = await toggleFavoriteWordSet(
+        store.currentWords,
+        store.currentWordSetId,
+        store.isCurrentWordSetFavorite
+      );
+      store.setCurrentWordSetId(wordSetId);
+      store.setIsCurrentWordSetFavorite(isFavorite);
+      showToast(isFavorite ? '⭐ 已收藏本组词条' : '取消收藏');
+    } catch (e) {
+      console.error('Failed to toggle favorite', e);
+    }
+  }
+
+  async function handleSave() {
+    if (!store.editorContent.trim() && !store.editorTitle.trim()) return;
+    
+    try {
+      const { wordSetId, draftId } = await saveDraftToDb(
+        store.editorTitle || '未命名灵感',
+        store.editorContent,
+        store.currentWords,
+        store.currentWordSetId,
+        store.currentDraftId
+      );
+      store.setCurrentWordSetId(wordSetId);
+      store.setCurrentDraftId(draftId);
+      showToast(`💾 已保存 (${store.editorContent.replace(/\s/g, '').length}字)`);
+    } catch (e) {
+      console.error('Failed to save draft', e);
+    }
+  }
+
+  function handleExport() {
+    const title = store.editorTitle || '未命名灵感';
+    const content = `# ${title}\n\n${store.editorContent}`;
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   // Auto-save
   useEffect(() => {
-    if (!store.editorContent.trim()) return;
-    const timer = setTimeout(handleSaveDraft, 30000);
+    if (!store.editorContent.trim() && !store.editorTitle.trim()) return;
+    const timer = setTimeout(handleSave, 30000);
     return () => clearTimeout(timer);
-  }, [store.editorContent]);
+  }, [store.editorContent, store.editorTitle]);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -174,9 +209,6 @@ export default function App() {
             </div>
           </nav>
           <div className="pt-4 space-y-3">
-            <button onClick={handleDraw} className="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 rounded-md font-label text-xs uppercase tracking-widest font-semibold shadow-sm hover:opacity-90 transition-opacity">
-              开始抽取
-            </button>
             <button onClick={() => store.toggleSidebar()} className="w-full py-2 flex items-center justify-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors text-xs font-label border border-transparent hover:border-stone-200 rounded">
               <span className="material-symbols-outlined text-sm">keyboard_double_arrow_left</span>
               <span>收起侧边栏</span>
@@ -199,8 +231,8 @@ export default function App() {
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-label text-[10px] uppercase tracking-[0.2em] text-outline">每日灵感</span>
                   <div className="flex space-x-1">
-                    <button className="p-1 hover:bg-stone-200/50 rounded group transition-all" title="收藏">
-                      <span className="material-symbols-outlined text-[18px] text-stone-400 group-hover:text-amber-500 transition-colors">star</span>
+                    <button onClick={handleToggleFavorite} className="p-1 hover:bg-stone-200/50 rounded group transition-all" title="收藏">
+                      <span className={`material-symbols-outlined text-[18px] transition-colors ${store.isCurrentWordSetFavorite ? 'text-amber-500' : 'text-stone-400 group-hover:text-amber-500'}`} style={store.isCurrentWordSetFavorite ? { fontVariationSettings: "'FILL' 1" } : {}}>star</span>
                     </button>
                     <button className="p-1 hover:bg-stone-200/50 rounded group transition-all" title="抽取 (Space)" onClick={handleDraw}>
                       <span className="material-symbols-outlined text-[18px] text-stone-400 group-hover:text-primary transition-colors">casino</span>
@@ -240,16 +272,42 @@ export default function App() {
               
               <div className="max-w-3xl mx-auto pt-24 pb-32 px-12 min-h-full flex flex-col">
                 <div className="mb-12">
-                  <div className="text-outline text-xs font-label mb-2">{dateStr}</div>
-                  <input className="w-full bg-transparent border-none focus:ring-0 font-headline text-4xl font-black text-on-surface placeholder:text-surface-dim outline-none" placeholder="给你的灵感起个名字..." type="text" />
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-outline text-xs font-label">{dateStr}</div>
+                    <div className="flex space-x-2">
+                      <button onClick={handleSave} className="flex items-center space-x-1 px-3 py-1.5 bg-stone-100 text-[#8a5038] hover:bg-stone-200 rounded-md transition-colors text-xs font-label font-medium">
+                        <span className="material-symbols-outlined text-[16px]">save</span>
+                        <span>存入历史</span>
+                      </button>
+                      <button onClick={handleExport} className="flex items-center space-x-1 px-3 py-1.5 bg-[#8a5038] text-white hover:bg-[#7c442d] rounded-md transition-colors text-xs font-label font-medium shadow-sm">
+                        <span className="material-symbols-outlined text-[16px]">download</span>
+                        <span>导出 .md</span>
+                      </button>
+                    </div>
+                  </div>
+                  <input 
+                    className="w-full bg-transparent border-none focus:ring-0 font-headline text-4xl font-black text-on-surface placeholder:text-surface-dim outline-none mb-6" 
+                    placeholder="给你的灵感起个名字..." 
+                    type="text" 
+                    value={store.editorTitle}
+                    onChange={(e) => store.setEditorTitle(e.target.value)}
+                  />
                 </div>
-                <textarea 
-                  ref={editorRef}
-                  value={store.editorContent}
-                  onChange={e => store.setEditorContent(e.target.value)}
-                  className="flex-1 w-full bg-transparent border-none focus:ring-0 font-headline text-xl leading-loose resize-none text-on-surface outline-none placeholder:text-surface-dim" 
-                  placeholder="在这里开始你的故事..."
-                />
+                
+                <div className="flex-1 w-full relative -mx-4 overflow-visible markdown-editor-container">
+                  <MDEditor
+                    value={store.editorContent}
+                    onChange={(val) => store.setEditorContent(val || '')}
+                    preview="edit"
+                    height="100%"
+                    visibleDragbar={false}
+                    className="w-full h-full bg-transparent font-headline text-xl leading-loose border-none shadow-none text-on-surface outline-none"
+                    textareaProps={{
+                      placeholder: "在这里开始你的故事（支持 Markdown 格式）..."
+                    }}
+                    style={{ backgroundColor: 'transparent', boxShadow: 'none' }}
+                  />
+                </div>
               </div>
               
               {/* Zen Toolbar */}
@@ -257,7 +315,7 @@ export default function App() {
                 <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-white hover:text-primary transition-all" title="限时挑战" onClick={() => { store.setTimerActive(!store.timerActive); if (store.timerActive) store.setTimerSeconds(0); }}>
                   <span className={`material-symbols-outlined ${store.timerActive ? 'text-primary' : ''}`}>timelapse</span>
                 </button>
-                <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-white hover:text-primary transition-all" title="保存草稿 (Ctrl+S)" onClick={handleSaveDraft}>
+                <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-white hover:text-primary transition-all" title="保存草稿 (Ctrl+S)" onClick={handleSave}>
                   <span className="material-symbols-outlined">save</span>
                 </button>
                 <div className="h-px w-6 bg-outline-variant/20 mx-auto"></div>
@@ -269,10 +327,14 @@ export default function App() {
               </div>
             </main>
           </>
+        ) : store.activeTab === 'history' ? (
+          <HistoryPage />
+        ) : store.activeTab === 'favorites' ? (
+          <FavoritesPage />
         ) : (
           <main className="flex-1 bg-surface relative overflow-y-auto p-12">
             <h2 className="font-headline text-3xl font-black mb-8 text-on-surface">
-              {store.activeTab === 'library' ? '📚 我的词库' : store.activeTab === 'favorites' ? '⭐ 收藏夹' : '📋 写作历史'}
+              📚 我的词库
             </h2>
             <div className="text-stone-500 font-label italic">模块正在重构接入新样式，请先回到 ✦ 词条 体验全新的写作界面...</div>
             <button className="mt-6 px-4 py-2 bg-primary text-white rounded-md font-label text-sm" onClick={() => store.setActiveTab('inspire')}>返回创作</button>

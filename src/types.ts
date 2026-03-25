@@ -24,6 +24,7 @@ export interface WordSet {
 export interface Draft {
   id: string;
   wordSetId: string;
+  title: string;
   content: string;
   wordCount: number;
   createdAt: Date;
