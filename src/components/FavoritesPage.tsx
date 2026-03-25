@@ -1,13 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { db } from '../db';
 import { useStore } from '../store';
 import type { WordSet } from '../types';
 import { toggleFavoriteWordSet } from '../data/draftEngine';
 
+type SortMode = 'date' | 'genre';
+
 export default function FavoritesPage() {
   const store = useStore();
   const [favorites, setFavorites] = useState<WordSet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortMode, setSortMode] = useState<SortMode>('date');
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchFavorites();
@@ -24,14 +30,43 @@ export default function FavoritesPage() {
     }
   }
 
+  // Filtered & sorted results
+  const displayed = useMemo(() => {
+    let result = favorites;
+
+    // Search
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter(ws =>
+        ws.words.some(w => w.text.toLowerCase().includes(q)) ||
+        ws.genre.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
+    if (sortMode === 'genre') {
+      result = [...result].sort((a, b) => a.genre.localeCompare(b.genre, 'zh'));
+    }
+    // 'date' is already reverse-chronological from fetch
+
+    return result;
+  }, [favorites, searchQuery, sortMode]);
+
+  // Genre stats
+  const genreStats = useMemo(() => {
+    const map = new Map<string, number>();
+    favorites.forEach(ws => {
+      map.set(ws.genre, (map.get(ws.genre) || 0) + 1);
+    });
+    return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+  }, [favorites]);
+
   const handleUsePrompt = (ws: WordSet) => {
     if (store.editorContent.trim() || store.editorTitle.trim()) {
       if (!confirm('使用这组灵感前，当前编辑器内容（如果未手动保存）将被清空，是否继续？')) {
         return;
       }
     }
-    
-    // Clear and setup for writing with this prompt
     store.setEditorTitle('');
     store.setEditorContent('');
     store.setCurrentDraftId(null);
@@ -45,75 +80,224 @@ export default function FavoritesPage() {
     e.stopPropagation();
     await toggleFavoriteWordSet(ws.words, ws.id, true);
     setFavorites(prev => prev.filter(item => item.id !== ws.id));
-    
-    // Sycn state if we are currently looking at this wordset
     if (store.currentWordSetId === ws.id) {
       store.setIsCurrentWordSetFavorite(false);
     }
   };
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const handleBatchUnfavorite = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`确定要取消收藏选中的 ${selectedIds.size} 组灵感吗？`)) return;
+
+    for (const id of selectedIds) {
+      const ws = favorites.find(f => f.id === id);
+      if (ws) {
+        await toggleFavoriteWordSet(ws.words, ws.id, true);
+        if (store.currentWordSetId === ws.id) {
+          store.setIsCurrentWordSetFavorite(false);
+        }
+      }
+    }
+    setFavorites(prev => prev.filter(f => !selectedIds.has(f.id)));
+    setSelectedIds(new Set());
+    setSelectMode(false);
+  };
+
   return (
-    <main className="flex-1 bg-surface relative overflow-y-auto p-12">
-      <div className="max-w-4xl mx-auto pb-20">
-        <h2 className="font-headline text-3xl font-black mb-8 text-on-surface flex items-center space-x-3">
-          <span className="material-symbols-outlined text-[32px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-          <span>收藏夹</span>
-        </h2>
-        
+    <main className="flex-1 bg-surface relative overflow-y-auto p-8 md:p-12">
+      <div className="max-w-5xl mx-auto pb-20">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-headline text-3xl font-black text-on-surface flex items-center space-x-3">
+            <span className="material-symbols-outlined text-[32px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+            <span>收藏夹</span>
+          </h2>
+          {favorites.length > 0 && (
+            <button
+              onClick={() => { setSelectMode(!selectMode); setSelectedIds(new Set()); }}
+              className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium transition-all ${selectMode ? 'bg-amber-500 text-white' : 'bg-surface-container text-stone-600 hover:bg-stone-200/60'}`}
+            >
+              <span className="material-symbols-outlined text-[16px]">{selectMode ? 'close' : 'checklist'}</span>
+              <span>{selectMode ? '退出选择' : '批量管理'}</span>
+            </button>
+          )}
+        </div>
+
+        {/* Stats bar */}
+        {favorites.length > 0 && (
+          <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
+            <div className="flex items-center space-x-2 text-sm font-label text-stone-600">
+              <span className="material-symbols-outlined text-[18px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>collections_bookmark</span>
+              <span className="font-bold text-on-surface">{favorites.length}</span>
+              <span>组收藏</span>
+            </div>
+            <div className="h-4 w-px bg-outline-variant/30" />
+            <div className="flex flex-wrap gap-1.5">
+              {genreStats.map(([genre, count]) => (
+                <span key={genre} className="px-2 py-0.5 bg-amber-50 text-amber-800 text-[10px] font-label font-semibold rounded border border-amber-100 tracking-wide">
+                  {genre} ×{count}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Search & Sort toolbar */}
+        {favorites.length > 0 && (
+          <div className="flex items-center gap-3 mb-6">
+            <div className="relative flex-1">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-[18px]">search</span>
+              <input
+                type="text"
+                placeholder="搜索词条关键词..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-white rounded-lg border border-stone-200/80 text-sm font-label text-on-surface placeholder:text-stone-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-300 hover:text-stone-500">
+                  <span className="material-symbols-outlined text-[16px]">close</span>
+                </button>
+              )}
+            </div>
+            <div className="flex bg-white rounded-lg border border-stone-200/80 overflow-hidden">
+              <button
+                onClick={() => setSortMode('date')}
+                className={`px-3 py-2 text-[11px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'date' ? 'bg-amber-500 text-white' : 'text-stone-500 hover:bg-stone-50'}`}
+              >
+                <span className="material-symbols-outlined text-[14px]">schedule</span>
+                <span>按时间</span>
+              </button>
+              <button
+                onClick={() => setSortMode('genre')}
+                className={`px-3 py-2 text-[11px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'genre' ? 'bg-amber-500 text-white' : 'text-stone-500 hover:bg-stone-50'}`}
+              >
+                <span className="material-symbols-outlined text-[14px]">category</span>
+                <span>按类型</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Batch action bar */}
+        {selectMode && selectedIds.size > 0 && (
+          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between animate-[fadeIn_0.2s_ease-out]">
+            <span className="text-sm font-label text-amber-800">
+              已选择 <span className="font-bold">{selectedIds.size}</span> 项
+            </span>
+            <button
+              onClick={handleBatchUnfavorite}
+              className="flex items-center space-x-1 px-4 py-1.5 bg-red-500 text-white text-xs font-label font-medium rounded-md hover:bg-red-600 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[14px]">star_border</span>
+              <span>批量取消收藏</span>
+            </button>
+          </div>
+        )}
+
+        {/* Main content */}
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-8 h-8 rounded-full border-4 border-amber-500/30 border-t-amber-500 animate-spin"></div>
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="w-8 h-8 rounded-full border-4 border-amber-500/30 border-t-amber-500 animate-spin" />
+            <p className="mt-4 text-stone-400 text-sm font-label">加载中...</p>
           </div>
         ) : favorites.length === 0 ? (
-          <div className="text-center py-20 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
-            <span className="material-symbols-outlined text-4xl text-stone-300 mb-4">stars</span>
-            <p className="text-stone-500 font-label">你还没有收藏过任何灵感词组组合。</p>
-            <p className="text-stone-400 text-sm mt-2">在「词条」页面看到喜欢的组合时，点击小星星收藏吧！</p>
-            <button className="mt-6 px-6 py-2.5 bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-lg font-label text-sm font-medium custom-shadow" onClick={() => store.setActiveTab('inspire')}>去寻找灵感</button>
+          <div className="text-center py-24 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
+            <span className="material-symbols-outlined text-5xl text-stone-200 mb-4">stars</span>
+            <p className="text-stone-500 font-label text-lg mb-1">空空如也</p>
+            <p className="text-stone-400 text-sm mt-2 max-w-sm mx-auto leading-relaxed">
+              在「✦ 词条」页面看到喜欢的灵感组合时，点击 <span className="inline-block text-amber-500 align-text-bottom"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span></span> 收藏吧！
+            </p>
+            <button
+              className="mt-8 px-8 py-3 bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-lg font-label text-sm font-medium custom-shadow"
+              onClick={() => store.setActiveTab('inspire')}
+            >
+              去寻找灵感
+            </button>
+          </div>
+        ) : displayed.length === 0 ? (
+          <div className="text-center py-16">
+            <span className="material-symbols-outlined text-4xl text-stone-200 mb-4">search_off</span>
+            <p className="text-stone-500 font-label">
+              没有找到包含「<span className="font-medium text-amber-600">{searchQuery}</span>」的收藏
+            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {favorites.map((ws) => (
-              <div 
-                key={ws.id} 
-                className="bg-white p-6 rounded-xl border border-stone-100/80 hover:border-amber-500/30 custom-shadow group transition-all duration-300 flex flex-col relative"
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {displayed.map((ws) => (
+              <div
+                key={ws.id}
+                className={`bg-white p-5 rounded-xl border hover:border-amber-500/30 custom-shadow group transition-all duration-300 hover:-translate-y-0.5 flex flex-col relative ${
+                  selectMode && selectedIds.has(ws.id) ? 'border-amber-500 ring-2 ring-amber-200' : 'border-stone-100/80'
+                }`}
+                onClick={() => selectMode && toggleSelect(ws.id)}
               >
-                <div className="text-xs font-label text-outline mb-4 flex items-center justify-between">
+                {/* Select checkbox */}
+                {selectMode && (
+                  <div className="absolute top-3 left-3 z-10">
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                      selectedIds.has(ws.id) ? 'bg-amber-500 border-amber-500 text-white' : 'border-stone-300 bg-white'
+                    }`}>
+                      {selectedIds.has(ws.id) && <span className="material-symbols-outlined text-[14px]">check</span>}
+                    </div>
+                  </div>
+                )}
+
+                {/* Meta row */}
+                <div className={`text-xs font-label text-outline mb-3 flex items-center justify-between ${selectMode ? 'pl-7' : ''}`}>
                   <span>{new Date(ws.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'numeric', day: 'numeric' })}</span>
                   <div className="flex items-center space-x-2">
                     <span className="bg-amber-50 text-amber-700 font-bold px-2 py-0.5 rounded tracking-widest text-[10px] uppercase border border-amber-100">
                       {ws.genre}
                     </span>
-                    <button 
-                      onClick={(e) => handleUnfavorite(e, ws)}
-                      className="text-amber-500 hover:text-stone-400 transition-colors"
-                      title="取消收藏"
-                    >
-                      <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="flex-1">
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {ws.words.length > 0 ? ws.words.map((w, idx) => (
-                      <span key={idx} className="px-3 py-1.5 bg-surface-container-low text-on-surface font-headline font-bold text-sm rounded-md border border-stone-200/60 shadow-sm">
-                        {w.text}
-                      </span>
-                    )) : (
-                      <span className="text-stone-400 italic text-sm">空的词组组合</span>
+                    {!selectMode && (
+                      <button
+                        onClick={(e) => handleUnfavorite(e, ws)}
+                        className="text-amber-500 hover:text-stone-400 transition-colors"
+                        title="取消收藏"
+                      >
+                        <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      </button>
                     )}
                   </div>
                 </div>
-                
-                <button 
-                  onClick={() => handleUsePrompt(ws)}
-                  className="w-full mt-4 py-2 border border-amber-500/20 text-amber-700 font-label text-xs font-semibold rounded-md hover:bg-amber-50 transition-colors flex items-center justify-center space-x-1"
-                >
-                  <span className="material-symbols-outlined text-[14px]">edit</span>
-                  <span>使用此灵感创作</span>
-                </button>
-                
+
+                {/* Word chips */}
+                <div className="flex-1">
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {ws.words.length > 0 ? ws.words.map((w, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1.5 bg-surface-container-low text-on-surface font-headline font-bold text-sm rounded-md border border-stone-200/60 shadow-sm cursor-default"
+                        title={w.explanation || undefined}
+                      >
+                        {w.text}
+                        {w.explanation && <span className="ml-1 text-stone-300 text-[10px]">释</span>}
+                      </span>
+                    )) : (
+                      <span className="text-stone-400 italic text-sm">空的词组</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Use button */}
+                {!selectMode && (
+                  <button
+                    onClick={() => handleUsePrompt(ws)}
+                    className="w-full mt-3 py-2 border border-amber-500/20 text-amber-700 font-label text-xs font-semibold rounded-md hover:bg-amber-50 transition-colors flex items-center justify-center space-x-1"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">edit</span>
+                    <span>使用此灵感创作</span>
+                  </button>
+                )}
               </div>
             ))}
           </div>

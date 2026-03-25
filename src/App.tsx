@@ -6,6 +6,7 @@ import type { Genre, Word } from './types';
 import MDEditor from '@uiw/react-md-editor';
 import HistoryPage from './components/HistoryPage';
 import FavoritesPage from './components/FavoritesPage';
+import LibraryPage from './components/LibraryPage';
 
 export default function App() {
   const store = useStore();
@@ -332,13 +333,7 @@ export default function App() {
         ) : store.activeTab === 'favorites' ? (
           <FavoritesPage />
         ) : (
-          <main className="flex-1 bg-surface relative overflow-y-auto p-12">
-            <h2 className="font-headline text-3xl font-black mb-8 text-on-surface">
-              📚 我的词库
-            </h2>
-            <div className="text-stone-500 font-label italic">模块正在重构接入新样式，请先回到 ✦ 词条 体验全新的写作界面...</div>
-            <button className="mt-6 px-4 py-2 bg-primary text-white rounded-md font-label text-sm" onClick={() => store.setActiveTab('inspire')}>返回创作</button>
-          </main>
+          <LibraryPage />
         )}
       </div>
 

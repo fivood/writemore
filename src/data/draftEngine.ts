@@ -18,7 +18,7 @@ export async function saveDraftToDb(
     const wordSet: WordSet = {
       id: wordSetId,
       words: currentWords,
-      genre: currentWords[0]?.genre || '通用',
+      genre: currentWords[0]?.genres?.[0] || '通用',
       createdAt: now,
       isFavorite: false,
       hasWritten: true,
@@ -80,7 +80,7 @@ export async function toggleFavoriteWordSet(
     const wordSet: WordSet = {
       id: wordSetId,
       words: currentWords,
-      genre: currentWords[0]?.genre || '通用',
+      genre: currentWords[0]?.genres?.[0] || '通用',
       createdAt: new Date(),
       isFavorite: newFavoriteStatus,
       hasWritten: false,

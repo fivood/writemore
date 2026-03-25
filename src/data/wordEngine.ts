@@ -1,7 +1,18 @@
 import builtinWords from '../data/words.json';
 import type { Word, Genre } from '../types';
 
-let allWords: Word[] = [...(builtinWords as Word[])];
+// Migrate old-format words (single genre) to new format (category + genres[])
+function migrateWord(w: any): Word {
+  if (w.genres && Array.isArray(w.genres)) return w as Word;
+  // Legacy: single genre field → migrate
+  return {
+    ...w,
+    category: w.category || '意象',
+    genres: w.genre ? [w.genre] : ['通用'],
+  };
+}
+
+let allWords: Word[] = (builtinWords as any[]).map(migrateWord);
 
 export function getAllWords(): Word[] {
   return allWords;
@@ -9,7 +20,10 @@ export function getAllWords(): Word[] {
 
 export function getWordsByGenres(genres: Genre[]): Word[] {
   if (genres.length === 0) return allWords.filter(w => w.enabled !== false);
-  return allWords.filter(w => w.enabled !== false && (genres.includes(w.genre) || w.genre === '通用'));
+  return allWords.filter(w =>
+    w.enabled !== false &&
+    (w.genres.some(g => genres.includes(g)) || w.genres.includes('通用'))
+  );
 }
 
 export function drawRandomWords(count: number, genres: Genre[], locked: Map<number, Word>): Word[] {
@@ -87,8 +101,11 @@ export function loadUserData() {
   try {
     const userStr = localStorage.getItem('writemore_user_words');
     if (userStr) {
-      const userWords: Word[] = JSON.parse(userStr);
-      allWords = [...(builtinWords as Word[]), ...userWords];
+      const userWords: any[] = JSON.parse(userStr);
+      allWords = [
+        ...(builtinWords as any[]).map(migrateWord),
+        ...userWords.map(migrateWord),
+      ];
     }
     const disabledStr = localStorage.getItem('writemore_disabled_builtins');
     if (disabledStr) {
