@@ -1,25 +1,12 @@
-import { useEffect, useCallback, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStore } from './store';
-import { drawRandomWords, loadUserData, addUserWord, getAllWords, deleteUserWord } from './data/wordEngine';
+import { drawRandomWords, loadUserData } from './data/wordEngine';
 import { db } from './db';
 import type { Genre, Word, WordSet } from './types';
-import { GENRE_COLORS, FICTION_GENRES } from './types';
-
-function getSystemTheme() {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
 
 export default function App() {
   const store = useStore();
   const [toast, setToast] = useState('');
-  const [showAddWord, setShowAddWord] = useState(false);
-  const [favorites, setFavorites] = useState<WordSet[]>([]);
-  const [history, setHistory] = useState<WordSet[]>([]);
-  const [librarySearch, setLibrarySearch] = useState('');
-  const [libraryGenre, setLibraryGenre] = useState<Genre | ''>('');
-  const [allWordsForLib, setAllWordsForLib] = useState<Word[]>([]);
-  const resizeRef = useRef<HTMLDivElement>(null);
-  const isResizing = useRef(false);
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
   // Init
@@ -27,18 +14,7 @@ export default function App() {
     loadUserData();
     store.updateStreak();
     if (store.currentWords.length === 0) handleDraw();
-    loadRecords();
   }, []);
-
-  // Theme
-  useEffect(() => {
-    const t = store.theme === 'system' ? getSystemTheme() : store.theme;
-    document.documentElement.setAttribute('data-theme', t);
-  }, [store.theme]);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-font-size', store.fontSize);
-  }, [store.fontSize]);
 
   // Timer
   useEffect(() => {
@@ -67,40 +43,13 @@ export default function App() {
         handleSaveDraft();
         return;
       }
-      if (e.ctrlKey && e.shiftKey && e.key === 'F') {
-        e.preventDefault();
-        store.setFocusMode(!store.focusMode);
-        return;
-      }
-      if (e.ctrlKey && e.key === 'n') {
-        e.preventDefault();
-        setShowAddWord(true);
-        return;
-      }
-      if (e.ctrlKey && e.key === 'f') {
-        e.preventDefault();
-        store.setActiveTab('library');
-        return;
-      }
-      if (e.key === 'Escape') {
-        if (store.focusMode) { store.setFocusMode(false); return; }
-        if (showAddWord) { setShowAddWord(false); return; }
-      }
       if (inEditor) return;
       if (e.key === ' ') { e.preventDefault(); handleDraw(); }
-      if (e.key === 's' || e.key === 'S') { e.preventDefault(); handleFavorite(); }
       if (e.key === 'Enter') { e.preventDefault(); editorRef.current?.focus(); }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [store.focusMode, showAddWord, store.currentWords, store.selectedGenres, store.wordCount, store.lockedIndices]);
-
-  async function loadRecords() {
-    const favs = await db.wordSets.where('isFavorite').equals(1).reverse().sortBy('createdAt');
-    setFavorites(favs);
-    const hist = await db.wordSets.reverse().sortBy('createdAt');
-    setHistory(hist);
-  }
+  }, [store.currentWords, store.selectedGenres, store.wordCount, store.lockedIndices]);
 
   function handleDraw() {
     const locked = new Map<number, Word>();
@@ -110,7 +59,6 @@ export default function App() {
     const words = drawRandomWords(store.wordCount, store.selectedGenres, locked);
     store.setCurrentWords(words);
 
-    // Save to history
     const ws: WordSet = {
       id: `ws_${Date.now()}`,
       words,
@@ -119,18 +67,9 @@ export default function App() {
       isFavorite: false,
       hasWritten: false,
     };
-    db.wordSets.add(ws).then(loadRecords);
+    db.wordSets.add(ws);
     store.setCurrentWordSetId(ws.id);
     store.setEditorContent('');
-  }
-
-  async function handleFavorite() {
-    if (!store.currentWordSetId) return;
-    const ws = await db.wordSets.get(store.currentWordSetId);
-    if (!ws) return;
-    await db.wordSets.update(store.currentWordSetId, { isFavorite: ws.isFavorite ? 0 : 1 } as any);
-    showToast(ws.isFavorite ? '已取消收藏' : '✨ 已收藏');
-    loadRecords();
   }
 
   async function handleSaveDraft() {
@@ -147,7 +86,6 @@ export default function App() {
     });
     await db.wordSets.update(store.currentWordSetId, { hasWritten: true });
     showToast(`💾 已保存 (${wordCount}字)`);
-    loadRecords();
   }
 
   // Auto-save
@@ -162,375 +100,209 @@ export default function App() {
     setTimeout(() => setToast(''), 2500);
   }
 
-  // Resize handler
-  const handleMouseDown = useCallback(() => {
-    isResizing.current = true;
-    document.body.style.cursor = 'col-resize';
-    document.body.style.userSelect = 'none';
-    const onMove = (e: MouseEvent) => {
-      if (!isResizing.current || !resizeRef.current) return;
-      const parent = resizeRef.current.parentElement!;
-      const rect = parent.getBoundingClientRect();
-      const ratio = Math.max(0.2, Math.min(0.7, (e.clientX - rect.left) / rect.width));
-      store.setSplitRatio(ratio);
-    };
-    const onUp = () => {
-      isResizing.current = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
-    };
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-  }, []);
-
-  // Library words
-  useEffect(() => {
-    if (store.activeTab === 'library') {
-      setAllWordsForLib(getAllWords());
-    }
-  }, [store.activeTab]);
-
-  const filteredLibWords = allWordsForLib.filter(w => {
-    if (libraryGenre && w.genre !== libraryGenre) return false;
-    if (librarySearch && !w.text.includes(librarySearch) && !(w.explanation || '').includes(librarySearch)) return false;
-    return true;
-  });
-
   const wordCount = store.editorContent.replace(/\s/g, '').length;
-  const timerPct = store.timerActive ? (store.timerSeconds / (store.timerDuration * 60)) * 100 : 0;
-  const timerRemain = store.timerDuration * 60 - store.timerSeconds;
-  const timerMin = Math.floor(timerRemain / 60);
-  const timerSec = timerRemain % 60;
-
-  const isFav = favorites.some(f => f.id === store.currentWordSetId);
-
-  const tabs = [
-    { id: 'inspire', label: '✦ 词条' },
-    { id: 'library', label: '📚 词库' },
-    { id: 'favorites', label: '⭐ 收藏' },
-    { id: 'history', label: '📋 历史' },
-  ];
+  
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 · 星期${['日', '一', '二', '三', '四', '五', '六'][today.getDay()]}`;
 
   return (
-    <div className={`app ${store.focusMode ? 'focus-mode' : ''}`}>
-      {/* Top Bar */}
-      <div className="topbar">
-        <div className="topbar__logo">每日写作灵感</div>
-        <div className="topbar__tabs">
-          {tabs.map(t => (
-            <button
-              key={t.id}
-              className={`topbar__tab ${store.activeTab === t.id ? 'topbar__tab--active' : ''}`}
-              onClick={() => store.setActiveTab(t.id)}
-            >{t.label}</button>
-          ))}
+    <div className="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+      {/* TopNavBar */}
+      <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-[#fbf9f5]/70 flex justify-between items-center px-8 py-4 max-w-full">
+        <div className="text-xl font-bold text-[#8a5038] italic font-headline">每日写作灵感</div>
+        <nav className="flex space-x-8 items-center font-headline text-base tracking-tight">
+          <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('inspire')}>✦ 词条</button>
+          <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'library' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('library')}>📚 词库</button>
+          <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'favorites' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('favorites')}>⭐ 收藏</button>
+          <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'history' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('history')}>📋 历史</button>
+        </nav>
+        <div className="flex items-center space-x-4">
         </div>
-        <div className="topbar__actions">
-          <button className="topbar__btn" title="添加词条 (Ctrl+N)" onClick={() => setShowAddWord(true)}>＋</button>
-          <button className="topbar__btn" title={store.theme === 'dark' ? '浅色模式' : store.theme === 'light' ? '深色模式' : '跟随系统'}
-            onClick={() => store.setTheme(store.theme === 'light' ? 'dark' : store.theme === 'dark' ? 'system' : 'light')}>
-            {store.theme === 'dark' ? '🌙' : store.theme === 'light' ? '☀️' : '🌗'}
-          </button>
-          <select
-            style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '4px 8px', fontSize: '12px', color: 'var(--text-secondary)' }}
-            value={store.fontSize}
-            onChange={e => store.setFontSize(e.target.value as any)}
-          >
-            <option value="small">小</option>
-            <option value="medium">中</option>
-            <option value="large">大</option>
-          </select>
-        </div>
-      </div>
+      </header>
 
-      <div className="main">
-        {/* Sidebar */}
-        <div className={`sidebar ${store.sidebarCollapsed ? 'sidebar--collapsed' : ''}`}>
-          <div className="sidebar__section">
-            <div className="sidebar__title">小说类型</div>
-            <div className="sidebar__genre-list">
-              {FICTION_GENRES.map(g => (
-                <button
-                  key={g}
-                  className={`sidebar__genre ${store.selectedGenres.includes(g) ? 'sidebar__genre--active' : ''}`}
-                  onClick={() => store.toggleGenre(g)}
-                >
-                  <span className="sidebar__genre-dot" style={{ background: GENRE_COLORS[g] }} />
-                  {g}
-                </button>
-              ))}
-            </div>
+      <div className="flex h-screen pt-[72px] pb-[45px]">
+        {/* SideNavBar */}
+        <aside className={`transition-all duration-300 ${store.sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'w-64 glass-panel bg-[#f5f4ef]/70 flex flex-col p-6 border-r border-[#b2b2ad]/15 shrink-0'}`}>
+          <div className="mb-6">
+            <h2 className="font-headline text-lg font-semibold text-stone-800">灵感分类</h2>
+            <p className="text-[10px] font-label uppercase tracking-widest text-stone-500 mt-1">选择你需要的灵感类型</p>
           </div>
-          <div className="sidebar__section">
-            <div className="sidebar__title">词条数量</div>
-            <div className="sidebar__wordcount">
-              {([3, 4, 5] as const).map(n => (
-                <button
-                  key={n}
-                  className={`sidebar__wordcount-btn ${store.wordCount === n ? 'sidebar__wordcount-btn--active' : ''}`}
-                  onClick={() => store.setWordCount(n)}
-                >{n}</button>
-              ))}
-            </div>
-          </div>
-          <div className="sidebar__section">
-            <div className="sidebar__title">限时写作</div>
-            <div className="sidebar__wordcount">
-              {([10, 15, 20, 30] as const).map(n => (
-                <button
-                  key={n}
-                  className={`sidebar__wordcount-btn ${store.timerDuration === n ? 'sidebar__wordcount-btn--active' : ''}`}
-                  onClick={() => store.setTimerDuration(n)}
-                >{n}分</button>
-              ))}
-            </div>
-          </div>
-          <div className="sidebar__section">
-            <button className="btn btn--secondary" style={{ width: '100%' }}
-              onClick={() => store.toggleSidebar()}>
-              收起侧边栏
-            </button>
-          </div>
-        </div>
+          <nav className="space-y-1 flex-1 overflow-y-auto pr-2">
+            {[
+              { id: '科幻', icon: 'rocket_launch', color: 'bg-blue-300', en: 'Sci-fi' },
+              { id: '悬疑', icon: 'search', color: 'bg-purple-300', en: 'Mystery' },
+              { id: '奇幻', icon: 'auto_stories', color: 'bg-green-300', en: 'Fantasy' },
+              { id: '言情', icon: 'favorite', color: 'bg-red-300', en: 'Romance' },
+              { id: '历史', icon: 'history_edu', color: 'bg-amber-300', en: 'Historical' },
+              { id: '武侠', icon: 'swords', color: 'bg-orange-300', en: 'Wuxia' },
+              { id: '都市', icon: 'location_city', color: 'bg-teal-300', en: 'Urban' },
+              { id: '恐怖', icon: 'sentiment_very_dissatisfied', color: 'bg-rose-300', en: 'Horror' },
+            ].map(g => (
+              <button key={g.id} 
+                onClick={() => store.toggleGenre(g.id as Genre)}
+                className={`w-full flex items-center space-x-3 px-3 py-2 transition-transform duration-200 ${store.selectedGenres.includes(g.id as Genre) ? 'bg-[#ffffff] text-[#8a5038] rounded-lg shadow-sm active:scale-95 active:opacity-90' : 'text-stone-600 hover:bg-stone-200/50 hover:translate-x-1'}`}>
+                <span className={`w-2 h-2 rounded-full ${g.color}`}></span>
+                <span className="material-symbols-outlined text-sm">{g.icon || 'category'}</span>
+                <span className="font-label text-xs uppercase tracking-widest flex-1 text-left">{g.id}</span>
+              </button>
+            ))}
 
-        {/* Main content area */}
-        {store.activeTab === 'inspire' ? (
-          <div className="content">
-            {/* Words Panel */}
-            <div className="words-panel" style={{ width: `${store.splitRatio * 100}%` }}>
-              <div className="words-panel__header">
-                <div className="words-panel__title">灵感词条</div>
-                <div className="words-panel__actions">
-                  <button className="btn btn--sm btn--ghost" onClick={handleFavorite}>
-                    {isFav ? '⭐' : '☆'} {isFav ? '已收藏' : '收藏'}
+            {/* Word Count Selector */}
+            <div className="pt-6 pb-2">
+              <h3 className="font-headline text-[13px] font-semibold text-stone-700 mb-3">词条数量</h3>
+              <div className="flex space-x-2">
+                {[3, 4, 5].map(n => (
+                  <button key={n} onClick={() => store.setWordCount(n as any)} 
+                    className={`flex-1 py-1.5 rounded text-xs font-label transition-colors ${store.wordCount === n ? 'bg-primary text-white' : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50'}`}>
+                    {n}
                   </button>
-                  <button className="btn btn--sm btn--primary" onClick={handleDraw}>
-                    🎲 抽取
-                  </button>
-                </div>
-              </div>
-              <div className="words-panel__cards">
-                {store.currentWords.map((w, i) => (
-                  <div key={`${w.id}_${i}`} className={`word-card ${store.lockedIndices.has(i) ? 'word-card--locked' : ''}`}>
-                    <div className="word-card__header">
-                      <span className="word-card__text">{w.text}</span>
-                      <button
-                        className={`word-card__lock ${store.lockedIndices.has(i) ? 'word-card__lock--active' : ''}`}
-                        onClick={() => store.toggleLock(i)}
-                        title={store.lockedIndices.has(i) ? '解锁' : '锁定'}
-                      >
-                        {store.lockedIndices.has(i) ? '🔒' : '🔓'}
-                      </button>
-                    </div>
-                    <span className="word-card__genre" style={{ background: GENRE_COLORS[w.genre] }}>
-                      {w.genre}
-                    </span>
-                    {w.explanation && (
-                      <div className="word-card__explanation">💡 {w.explanation}</div>
-                    )}
-                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Resize Handle */}
-            <div
-              ref={resizeRef}
-              className="resize-handle"
-              onMouseDown={handleMouseDown}
-            />
-
-            {/* Editor Panel */}
-            <div className="editor-panel">
-              <div className="editor-panel__header">
-                <div className="editor-panel__toolbar">
-                  <button className="editor-panel__toolbar-btn" title="全屏专注 (Ctrl+Shift+F)"
-                    onClick={() => store.setFocusMode(true)}>⛶</button>
-                  <button
-                    className={`editor-panel__toolbar-btn ${store.timerActive ? 'editor-panel__toolbar-btn--active' : ''}`}
-                    onClick={() => { store.setTimerActive(!store.timerActive); if (store.timerActive) store.setTimerSeconds(0); }}
-                    title="限时挑战"
-                  >⏱</button>
-                  <button className="editor-panel__toolbar-btn" onClick={handleSaveDraft} title="保存 (Ctrl+S)">💾</button>
-                </div>
-                <div className="editor-panel__stats">
-                  <span>{wordCount} 字</span>
-                  {store.timerActive && (
-                    <span className="timer__text">{timerMin}:{timerSec.toString().padStart(2, '0')}</span>
-                  )}
-                </div>
+            {/* Timed Writing Selector */}
+            <div className="pt-4 pb-4">
+              <h3 className="font-headline text-[13px] font-semibold text-stone-700 mb-3">限时写作</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {[10, 15, 20, 30].map(n => (
+                  <button key={n} onClick={() => store.setTimerDuration(n as any)}
+                    className={`py-1.5 rounded text-[10px] font-label transition-colors ${store.timerDuration === n ? 'bg-primary text-white' : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50'}`}>
+                    {n}分
+                  </button>
+                ))}
               </div>
+            </div>
+          </nav>
+          <div className="pt-4 space-y-3">
+            <button onClick={handleDraw} className="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 rounded-md font-label text-xs uppercase tracking-widest font-semibold shadow-sm hover:opacity-90 transition-opacity">
+              开始抽取
+            </button>
+            <button onClick={() => store.toggleSidebar()} className="w-full py-2 flex items-center justify-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors text-xs font-label border border-transparent hover:border-stone-200 rounded">
+              <span className="material-symbols-outlined text-sm">keyboard_double_arrow_left</span>
+              <span>收起侧边栏</span>
+            </button>
+          </div>
+        </aside>
+
+        {store.sidebarCollapsed && (
+          <button className="fixed left-0 top-1/2 -translate-y-1/2 z-40 p-2 bg-white/80 border border-[#b2b2ad]/15 rounded-r-md shadow-sm opacity-50 hover:opacity-100 transition-all text-stone-400 hover:text-[#8a5038]" onClick={() => store.toggleSidebar()}>
+            <span className="material-symbols-outlined">keyboard_double_arrow_right</span>
+          </button>
+        )}
+
+        {/* Main Content Area */}
+        {store.activeTab === 'inspire' ? (
+          <>
+            {/* Inspiration Panel */}
+            <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
+              <div className="mb-2">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-label text-[10px] uppercase tracking-[0.2em] text-outline">每日灵感</span>
+                  <div className="flex space-x-1">
+                    <button className="p-1 hover:bg-stone-200/50 rounded group transition-all" title="收藏">
+                      <span className="material-symbols-outlined text-[18px] text-stone-400 group-hover:text-amber-500 transition-colors">star</span>
+                    </button>
+                    <button className="p-1 hover:bg-stone-200/50 rounded group transition-all" title="抽取 (Space)" onClick={handleDraw}>
+                      <span className="material-symbols-outlined text-[18px] text-stone-400 group-hover:text-primary transition-colors">casino</span>
+                    </button>
+                  </div>
+                </div>
+                <h3 className="font-headline text-2xl text-on-surface">写作灵感</h3>
+              </div>
+              <div className="space-y-4">
+                {store.currentWords.map((w, i) => (
+                  <div key={`${w.id}_${i}`} className="bg-[#fcfaf7] p-6 custom-shadow rounded-lg border border-stone-100 relative overflow-hidden group">
+                    <div className="flex justify-between items-start mb-4 relative z-10">
+                      <span className="px-2 py-0.5 bg-amber-100 text-stone-800 text-[10px] font-bold font-label rounded tracking-wider ring-1 ring-amber-200/50 uppercase">
+                        {w.genre}
+                      </span>
+                      <button onClick={() => store.toggleLock(i)} className={`material-symbols-outlined text-sm transition-colors ${store.lockedIndices.has(i) ? 'text-primary' : 'text-stone-300 hover:text-stone-500'}`}>
+                        {store.lockedIndices.has(i) ? 'lock' : 'lock_open'}
+                      </button>
+                    </div>
+                    <h4 className="font-headline text-xl font-bold mb-3 text-stone-900 leading-tight relative z-10">{w.text}</h4>
+                    {w.explanation && (
+                      <p className="text-sm text-stone-800 leading-relaxed font-medium relative z-10">{w.explanation}</p>
+                    )}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Main Editor */}
+            <main className="flex-1 bg-surface relative overflow-y-auto">
               {store.timerActive && (
-                <div className="timer__bar" style={{ width: '100%', borderRadius: 0 }}>
-                  <div className="timer__progress" style={{ width: `${timerPct}%` }} />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-surface-dim">
+                  <div className="h-full bg-primary transition-all duration-1000 ease-linear" style={{ width: `${(store.timerSeconds / (store.timerDuration * 60)) * 100}%` }}></div>
                 </div>
               )}
-              <textarea
-                ref={editorRef}
-                className="editor-panel__textarea"
-                placeholder="在这里开始写作...&#10;让词条激发你的想象力，将它们编织成独一无二的故事。"
-                value={store.editorContent}
-                onChange={e => store.setEditorContent(e.target.value)}
-              />
-            </div>
-          </div>
-        ) : store.activeTab === 'library' ? (
-          <div className="library">
-            <div className="library__header">
-              <div className="library__search">
-                🔍
-                <input placeholder="搜索词条..." value={librarySearch} onChange={e => setLibrarySearch(e.target.value)} />
-              </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <select className="modal__select" style={{ width: 'auto' }} value={libraryGenre}
-                  onChange={e => setLibraryGenre(e.target.value as any)}>
-                  <option value="">全部类型</option>
-                  {FICTION_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
-                  <option value="通用">通用</option>
-                </select>
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{filteredLibWords.length} 条</span>
-              </div>
-            </div>
-            <div className="library__list">
-              {filteredLibWords.slice(0, 200).map(w => (
-                <div key={w.id} className="library__word-row">
-                  <span className="library__word-text" title={w.explanation}>{w.text}</span>
-                  <span className="library__word-explanation">{w.explanation || ''}</span>
-                  <span className="library__word-genre" style={{ background: GENRE_COLORS[w.genre] }}>{w.genre}</span>
-                  {w.source === 'user' && (
-                    <button className="btn btn--sm btn--ghost" style={{ color: 'var(--danger)' }}
-                      onClick={() => { deleteUserWord(w.id); setAllWordsForLib(getAllWords()); }}>
-                      删除
-                    </button>
-                  )}
+              
+              <div className="max-w-3xl mx-auto pt-24 pb-32 px-12 min-h-full flex flex-col">
+                <div className="mb-12">
+                  <div className="text-outline text-xs font-label mb-2">{dateStr}</div>
+                  <input className="w-full bg-transparent border-none focus:ring-0 font-headline text-4xl font-black text-on-surface placeholder:text-surface-dim outline-none" placeholder="给你的灵感起个名字..." type="text" />
                 </div>
-              ))}
-            </div>
-          </div>
-        ) : store.activeTab === 'favorites' ? (
-          <div className="records" style={{ flex: 1, overflow: 'auto' }}>
-            <div style={{ padding: '16px 0' }}>
-              <h3 style={{ fontFamily: 'var(--font-serif)', marginBottom: 16 }}>⭐ 收藏的词条组合 ({favorites.length})</h3>
-              {favorites.length === 0 && <div className="empty-state"><div className="empty-state__icon">⭐</div><p>还没有收藏哦</p><p>按 S 键快速收藏当前词条组合</p></div>}
-              {favorites.map(ws => (
-                <div key={ws.id} className="record-card">
-                  <div className="record-card__words">
-                    {ws.words.map((w, i) => <span key={i} className="record-card__word">{w.text}</span>)}
-                  </div>
-                  <div className="record-card__meta">
-                    <span>📅 {new Date(ws.createdAt).toLocaleDateString()}</span>
-                    <span>📂 {ws.genre || '全部'}</span>
-                    <span>{ws.hasWritten ? '✅ 已写作' : '📝 未动笔'}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="records" style={{ flex: 1, overflow: 'auto' }}>
-            <div style={{ padding: '16px 0' }}>
-              <h3 style={{ fontFamily: 'var(--font-serif)', marginBottom: 16 }}>📋 历史记录 ({history.length})</h3>
-              {history.length === 0 && <div className="empty-state"><div className="empty-state__icon">📋</div><p>还没有记录</p></div>}
-              {history.slice(0, 50).map(ws => (
-                <div key={ws.id} className="record-card">
-                  <div className="record-card__words">
-                    {ws.words.map((w, i) => <span key={i} className="record-card__word">{w.text}</span>)}
-                  </div>
-                  <div className="record-card__meta">
-                    <span>📅 {new Date(ws.createdAt).toLocaleDateString()}</span>
-                    <span>📂 {ws.genre || '全部'}</span>
-                    <span>{ws.hasWritten ? '✅ 已写作' : '📝 未动笔'}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Sidebar toggle when collapsed */}
-      {store.sidebarCollapsed && (
-        <button
-          style={{ position: 'fixed', left: 4, top: '50%', transform: 'translateY(-50%)', zIndex: 20, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '8px 4px', cursor: 'pointer' }}
-          onClick={() => store.toggleSidebar()}
-        >▶</button>
-      )}
-
-      {/* Status Bar */}
-      <div className="statusbar">
-        <div className="statusbar__item">
-          <span>🔥</span>
-          <span className="statusbar__streak">{store.streak} 天</span>
-        </div>
-        <div className="statusbar__divider" />
-        <div className="statusbar__item">
-          <span>✏️ 今日 {wordCount} 字</span>
-        </div>
-        {store.timerActive && (
-          <>
-            <div className="statusbar__divider" />
-            <div className="statusbar__item timer">
-              <span>⏱ {timerMin}:{timerSec.toString().padStart(2, '0')}</span>
-              <div className="timer__bar">
-                <div className="timer__progress" style={{ width: `${timerPct}%` }} />
+                <textarea 
+                  ref={editorRef}
+                  value={store.editorContent}
+                  onChange={e => store.setEditorContent(e.target.value)}
+                  className="flex-1 w-full bg-transparent border-none focus:ring-0 font-headline text-xl leading-loose resize-none text-on-surface outline-none placeholder:text-surface-dim" 
+                  placeholder="在这里开始你的故事..."
+                />
               </div>
-            </div>
+              
+              {/* Zen Toolbar */}
+              <div className="fixed right-12 top-1/2 -translate-y-1/2 flex flex-col space-y-4 p-2 glass-panel bg-surface-container-low/80 rounded-full custom-shadow">
+                <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-white hover:text-primary transition-all" title="限时挑战" onClick={() => { store.setTimerActive(!store.timerActive); if (store.timerActive) store.setTimerSeconds(0); }}>
+                  <span className={`material-symbols-outlined ${store.timerActive ? 'text-primary' : ''}`}>timelapse</span>
+                </button>
+                <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-white hover:text-primary transition-all" title="保存草稿 (Ctrl+S)" onClick={handleSaveDraft}>
+                  <span className="material-symbols-outlined">save</span>
+                </button>
+                <div className="h-px w-6 bg-outline-variant/20 mx-auto"></div>
+                <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-white hover:text-primary transition-all" title="全屏专注" onClick={() => {
+                  if (document.fullscreenElement) { document.exitFullscreen(); } else { document.documentElement.requestFullscreen(); }
+                }}>
+                  <span className="material-symbols-outlined">fullscreen</span>
+                </button>
+              </div>
+            </main>
           </>
+        ) : (
+          <main className="flex-1 bg-surface relative overflow-y-auto p-12">
+            <h2 className="font-headline text-3xl font-black mb-8 text-on-surface">
+              {store.activeTab === 'library' ? '📚 我的词库' : store.activeTab === 'favorites' ? '⭐ 收藏夹' : '📋 写作历史'}
+            </h2>
+            <div className="text-stone-500 font-label italic">模块正在重构接入新样式，请先回到 ✦ 词条 体验全新的写作界面...</div>
+            <button className="mt-6 px-4 py-2 bg-primary text-white rounded-md font-label text-sm" onClick={() => store.setActiveTab('inspire')}>返回创作</button>
+          </main>
         )}
-        <div style={{ flex: 1 }} />
-        <div className="statusbar__item" style={{ fontSize: 11 }}>
-          Space 抽取 · S 收藏 · Enter 写作 · Ctrl+S 保存 · Ctrl+Shift+F 专注
-        </div>
       </div>
 
-      {/* Add Word Modal */}
-      {showAddWord && <AddWordModal onClose={() => setShowAddWord(false)} onAdd={(w) => {
-        addUserWord(w);
-        showToast('✅ 词条已添加');
-        setShowAddWord(false);
-        if (store.activeTab === 'library') {
-          setAllWordsForLib(getAllWords());
-        }
-      }} />}
-
+      {/* Footer */}
+      <footer className="fixed bottom-0 left-0 right-0 z-50 bg-[#fbf9f5] flex justify-between items-center px-10 py-2 w-full border-t border-[#b2b2ad]/10 h-[45px]">
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-2">
+            <span className="material-symbols-outlined text-primary text-sm" style={{fontVariationSettings: "'FILL' 1"}}>local_fire_department</span>
+            <span className="font-label text-[11px] font-medium text-[#8a5038]">连续打卡: {store.streak} 天</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="material-symbols-outlined text-stone-400 text-sm">edit_note</span>
+            <span className="font-label text-[11px] font-medium text-stone-500">今日字数: {wordCount}</span>
+          </div>
+        </div>
+        <div className="flex items-center space-x-6 text-[11px] font-label font-medium text-stone-400">
+          <span className="text-stone-500">© 每日写作灵感小组</span>
+        </div>
+      </footer>
+      
       {/* Toast */}
-      {toast && <div className="toast">{toast}</div>}
-    </div>
-  );
-}
-
-function AddWordModal({ onClose, onAdd }: { onClose: () => void; onAdd: (w: { text: string; explanation?: string; genre: Genre }) => void }) {
-  const [text, setText] = useState('');
-  const [explanation, setExplanation] = useState('');
-  const [genre, setGenre] = useState<Genre>('通用');
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
-        <div className="modal__title">添加自定义词条</div>
-        <div className="modal__field">
-          <label className="modal__label">词条文本 *</label>
-          <input className="modal__input" value={text} onChange={e => setText(e.target.value)} placeholder="输入词条" maxLength={20} autoFocus />
+      {toast && (
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-surface-container-high text-on-surface border border-outline/20 shadow-lg px-6 py-3 rounded-full font-label text-sm z-[100] animate-bounce">
+          {toast}
         </div>
-        <div className="modal__field">
-          <label className="modal__label">释义（可选）</label>
-          <textarea className="modal__textarea-field" value={explanation} onChange={e => setExplanation(e.target.value)} placeholder="输入释义或解释" />
-        </div>
-        <div className="modal__field">
-          <label className="modal__label">归属类型</label>
-          <select className="modal__select" value={genre} onChange={e => setGenre(e.target.value as Genre)}>
-            {[...FICTION_GENRES, '通用' as Genre].map(g => <option key={g} value={g}>{g}</option>)}
-          </select>
-        </div>
-        <div className="modal__actions">
-          <button className="btn btn--secondary" onClick={onClose}>取消</button>
-          <button className="btn btn--primary" disabled={!text.trim()} onClick={() => onAdd({ text: text.trim(), explanation: explanation.trim() || undefined, genre })}>
-            添加
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
