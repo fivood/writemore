@@ -53,6 +53,8 @@ export default function App() {
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const isSavingRef = useRef(false);
 
+  const [mobilePanel, setMobilePanel] = useState(false);
+
   // Theme
   useEffect(() => {
     const el = document.documentElement;
@@ -534,9 +536,9 @@ export default function App() {
   return (
     <div className="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
       {/* TopNavBar */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-surface/70 dark:bg-[#100e0d]/75 border-b border-outline-variant/10 flex justify-between items-center px-8 py-4 max-w-full">
-        <div className="text-xl font-bold text-primary italic font-headline tracking-tight">每日写作灵感</div>
-        <nav className="flex space-x-8 items-center font-headline text-base tracking-tight">
+      <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-surface/70 dark:bg-[#100e0d]/75 border-b border-outline-variant/10 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full">
+        <div className="text-lg md:text-xl font-bold text-primary italic font-headline tracking-tight">每日写作灵感</div>
+        <nav className="hidden md:flex space-x-8 items-center font-headline text-base tracking-tight">
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('inspire')}>
             <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
             <span>灵感</span>
@@ -554,7 +556,7 @@ export default function App() {
             <span>历史</span>
           </button>
         </nav>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 md:space-x-2">
           <button
             onClick={() => setShowAiSettings(true)}
             title="AI 设置"
@@ -608,25 +610,40 @@ export default function App() {
         </div>
       )}
 
-      <div className="flex h-screen pt-[72px] pb-[45px]">
+      {/* Mobile bottom tab bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 glass-panel bg-surface/90 dark:bg-[#100e0d]/90 border-t border-outline-variant/10 flex justify-around items-center h-14 safe-area-bottom">
+        {[
+          { tab: 'inspire', icon: 'auto_awesome', label: '灵感' },
+          { tab: 'palace', icon: 'museum', label: '宫殿' },
+          { tab: 'favorites', icon: 'star', label: '收藏' },
+          { tab: 'history', icon: 'menu_book', label: '历史' },
+        ].map(t => (
+          <button key={t.tab} onClick={() => store.setActiveTab(t.tab)} className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors ${store.activeTab === t.tab ? 'text-primary' : 'text-on-surface-variant'}`}>
+            <span className="material-symbols-outlined text-[22px]" style={store.activeTab === t.tab ? { fontVariationSettings: "'FILL' 1" } : {}}>{t.icon}</span>
+            <span className="text-[10px] font-label mt-0.5">{t.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      <div className="flex h-screen pt-[64px] md:pt-[72px] pb-[56px] md:pb-[45px]">
 
         {/* ━━━ Mode Selection Screen (Bento) ━━━ */}
         {store.activeTab === 'inspire' && !isWriting && (
           <main className="flex-1 bg-background relative overflow-y-auto">
-            <div className="max-w-5xl mx-auto pt-16 pb-32 px-8">
+            <div className="max-w-5xl mx-auto pt-8 md:pt-16 pb-32 px-4 md:px-8">
               {/* Hero */}
-              <div className="mb-12">
+              <div className="mb-8 md:mb-12">
                 <p className="text-outline text-xs font-label uppercase tracking-[0.2em] mb-3">{dateStr}</p>
-                <h1 className="font-headline italic text-5xl md:text-6xl text-on-surface mb-3 tracking-tight leading-none">今天想写什么？</h1>
+                <h1 className="font-headline italic text-3xl md:text-5xl lg:text-6xl text-on-surface mb-3 tracking-tight leading-none">今天想写什么？</h1>
                 <p className="text-on-surface-variant font-label text-sm max-w-md leading-relaxed">选择一种写作方式，开始今天的创作练习</p>
               </div>
 
               {/* Bento Grid */}
-              <div className="grid grid-cols-12 gap-4 auto-rows-[180px]">
+              <div className="grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-4 auto-rows-[140px] md:auto-rows-[180px]">
 
                 {/* 词汇灵感 — large (8 cols, 2 rows) */}
                 <button onClick={() => selectMode('words')}
-                  className="col-span-8 row-span-2 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-8 flex flex-col justify-between group bento-glow-amber transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                  className="col-span-2 md:col-span-8 row-span-2 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-5 md:p-8 flex flex-col justify-between group bento-glow-amber transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
                 >
                   <div className="absolute -right-16 -top-16 w-56 h-56 bg-amber-400/5 dark:bg-[#ffb148]/5 blur-[80px] rounded-full group-hover:bg-amber-400/10 dark:group-hover:bg-[#ffb148]/10 transition-colors pointer-events-none"></div>
                   <div>
@@ -634,19 +651,19 @@ export default function App() {
                       <span className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-[#ffb148]">
                         <span className="material-symbols-outlined text-[30px]" style={{fontVariationSettings:"'FILL' 1"}}>casino</span>
                       </span>
-                      <h2 className="font-headline text-2xl text-on-surface">词汇灵感</h2>
+                      <h2 className="font-headline text-lg md:text-2xl text-on-surface">词汇灵感</h2>
                     </div>
                     <p className="text-on-surface-variant text-sm leading-relaxed max-w-sm">随机抽取词条，围绕它们展开想象——侘寂、余晖、熵……每一个词都是一扇门</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-label text-[12px] uppercase tracking-widest text-on-surface-variant">含词库管理 · Space 键抽取</span>
-                    <span className="px-5 py-2 bg-amber-500/15 text-amber-700 dark:text-[#ffb148] rounded-full font-label text-xs font-bold border border-amber-400/20 group-hover:bg-amber-500/25 transition-all">开始写作 →</span>
+                    <span className="font-label text-[11px] md:text-[12px] uppercase tracking-widest text-on-surface-variant hidden md:inline">含词库管理 · Space 键抽取</span>
+                    <span className="px-3 md:px-5 py-1.5 md:py-2 bg-amber-500/15 text-amber-700 dark:text-[#ffb148] rounded-full font-label text-xs font-bold border border-amber-400/20 group-hover:bg-amber-500/25 transition-all">开始写作 →</span>
                   </div>
                 </button>
 
                 {/* 梦境记录 — small (4 cols, 1 row) */}
                 <button onClick={() => selectMode('dream')}
-                  className="col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-6 flex flex-col justify-between group bento-glow-violet transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                  className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-violet transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
                 >
                   <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-violet-400/5 dark:bg-[#ba9eff]/5 blur-[60px] rounded-full group-hover:bg-violet-400/10 dark:group-hover:bg-[#ba9eff]/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
@@ -660,7 +677,7 @@ export default function App() {
 
                 {/* 人物描写 — small (4 cols, 1 row) */}
                 <button onClick={() => selectMode('character')}
-                  className="col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-6 flex flex-col justify-between group bento-glow-fuchsia transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                  className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-fuchsia transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
                 >
                   <div className="absolute -left-8 -top-8 w-36 h-36 bg-fuchsia-400/5 dark:bg-fuchsia-300/5 blur-[60px] rounded-full group-hover:bg-fuchsia-400/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
@@ -674,7 +691,7 @@ export default function App() {
 
                 {/* 自由发挥 — medium (5 cols, 1 row) */}
                 <button onClick={() => selectMode('free')}
-                  className="col-span-5 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-6 flex flex-col justify-between group bento-glow-green transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                  className="col-span-1 md:col-span-5 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-green transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
                 >
                   <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-emerald-400/5 dark:bg-[#69f6b8]/5 blur-[80px] rounded-full group-hover:bg-emerald-400/10 dark:group-hover:bg-[#69f6b8]/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
@@ -688,7 +705,7 @@ export default function App() {
 
                 {/* 场景描写 — medium (4 cols, 1 row) */}
                 <button onClick={() => selectMode('scene')}
-                  className="col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-6 flex flex-col justify-between group bento-glow-blue transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                  className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-blue transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
                 >
                   <div className="absolute right-0 top-0 w-full h-full pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity">
                     <div className="w-full h-full bg-gradient-to-br from-blue-400/20 to-transparent rounded-[1.5rem]"></div>
@@ -704,7 +721,7 @@ export default function App() {
 
                 {/* 写作挑战 — medium (3 cols, 1 row) */}
                 <button onClick={() => selectMode('challenge')}
-                  className="col-span-3 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-6 flex flex-col justify-between group bento-glow-rose transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                  className="col-span-2 md:col-span-3 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-rose transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
                 >
                   <div className="absolute -right-8 -top-8 w-36 h-36 bg-rose-400/5 dark:bg-rose-300/5 blur-[60px] rounded-full group-hover:bg-rose-400/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
@@ -728,7 +745,7 @@ export default function App() {
         {store.activeTab === 'inspire' && isWriting && (
           <>
             {/* Sidebar */}
-            <aside className={`transition-all duration-300 ${store.sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'w-64 glass-panel bg-surface-container-low/80 flex flex-col p-6 border-r border-outline-variant/10 shrink-0'}`}>
+            <aside className={`transition-all duration-300 hidden md:flex ${store.sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'w-64 glass-panel bg-surface-container-low/80 flex-col p-6 border-r border-outline-variant/10 shrink-0'}`}>
               <button onClick={handleBackToModeSelect} className="flex items-center space-x-2 text-on-surface-variant hover:text-primary transition-colors mb-6 group">
                 <span className="material-symbols-outlined text-sm group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
                 <span className="font-label text-xs">返回选择</span>
@@ -1000,7 +1017,9 @@ export default function App() {
 
             {/* Word Inspiration Panel */}
             {store.writingMode === 'words' && wordsSubView !== 'library' && (
-              <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
+              <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
+                <div className="p-5 md:p-8 flex flex-col space-y-6">
+                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">close</span>收起</button>
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">词汇灵感</span>
@@ -1086,12 +1105,15 @@ export default function App() {
                     );
                   })}
                 </div>
+                </div>
               </section>
             )}
 
             {/* Scene Prompt Panel */}
             {store.writingMode === 'scene' && store.currentScene && (
-              <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
+              <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
+                <div className="p-5 md:p-8 flex flex-col space-y-6">
+                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">close</span>收起</button>
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">场景描写</span>
@@ -1143,12 +1165,15 @@ export default function App() {
                     )}
                   </div>
                 )}
+                </div>
               </section>
             )}
 
             {/* Challenge Panel */}
             {store.writingMode === 'challenge' && store.currentChallenge && (
-              <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
+              <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
+                <div className="p-5 md:p-8 flex flex-col space-y-6">
+                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">close</span>收起</button>
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">写作挑战</span>
@@ -1181,6 +1206,7 @@ export default function App() {
                     <span>{aiChallengeLoading ? '出题中…' : 'AI 出一道题'}</span>
                   </button>
                 )}
+                </div>
               </section>
             )}
 
@@ -1188,7 +1214,9 @@ export default function App() {
             {store.writingMode === 'character' && store.currentCharacterPrompt && (() => {
               const layer = CHARACTER_LAYERS.find(l => l.id === store.currentCharacterPrompt!.layer);
               return (
-                <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
+                <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
+                  <div className="p-5 md:p-8 flex flex-col space-y-6">
+                  <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">close</span>收起</button>
                   <div className="mb-2">
                     <div className="flex justify-between items-center mb-1">
                       <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">人物描写</span>
@@ -1236,6 +1264,7 @@ export default function App() {
                       )}
                     </div>
                   )}
+                  </div>
                 </section>
               );
             })()}
@@ -1247,10 +1276,13 @@ export default function App() {
                 </div>
               )}
               
-              <div className="max-w-3xl mx-auto pt-24 pb-32 px-12 min-h-full flex flex-col">
-                <div className="mb-12">
-                  <div className="flex justify-between items-center mb-2">
+              <div className="max-w-3xl mx-auto pt-8 md:pt-24 pb-32 px-4 md:px-12 min-h-full flex flex-col">
+                <div className="mb-6 md:mb-12">
+                  <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
                     <div className="flex items-center space-x-3">
+                      <button onClick={handleBackToModeSelect} className="md:hidden flex items-center text-on-surface-variant hover:text-primary transition-colors">
+                        <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+                      </button>
                       <div className="text-outline text-xs font-label">{dateStr}</div>
                       {store.writingMode && (
                         <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[12px] font-label font-medium border ${WRITING_MODES.find(m => m.mode === store.writingMode)?.color || ''}`}>
@@ -1260,18 +1292,26 @@ export default function App() {
                       )}
                     </div>
                     <div className="flex space-x-2">
+                      {/* Mobile: show prompt panel toggle */}
+                      {store.writingMode !== 'free' && (
+                        <button onClick={() => setMobilePanel(true)} className="md:hidden flex items-center space-x-1 px-3 py-1.5 bg-surface-container text-on-surface-variant rounded-md text-xs font-label font-medium">
+                          <span className="material-symbols-outlined text-[18px]">view_sidebar</span>
+                          <span>灵感</span>
+                        </button>
+                      )}
                       <button onClick={handleSave} className="flex items-center space-x-1 px-3 py-1.5 bg-surface-container dark:bg-surface-container-high text-primary hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-md transition-colors text-xs font-label font-medium">
                         <span className="material-symbols-outlined text-[18px]">save</span>
-                        <span>存入灵感宫殿</span>
+                        <span className="hidden sm:inline">存入灵感宫殿</span>
+                        <span className="sm:hidden">保存</span>
                       </button>
-                      <button onClick={handleExport} className="flex items-center space-x-1 px-3 py-1.5 bg-primary text-on-primary hover:bg-primary-dim rounded-md transition-colors text-xs font-label font-medium shadow-sm">
+                      <button onClick={handleExport} className="hidden sm:flex items-center space-x-1 px-3 py-1.5 bg-primary text-on-primary hover:bg-primary-dim rounded-md transition-colors text-xs font-label font-medium shadow-sm">
                         <span className="material-symbols-outlined text-[18px]">upload</span>
                         <span>导出 .md</span>
                       </button>
                     </div>
                   </div>
                   <input 
-                    className="w-full bg-transparent border-none focus:ring-0 font-headline text-4xl font-black text-on-surface placeholder:text-surface-dim outline-none mb-6" 
+                    className="w-full bg-transparent border-none focus:ring-0 font-headline text-2xl md:text-4xl font-black text-on-surface placeholder:text-surface-dim outline-none mb-4 md:mb-6" 
                     placeholder={store.writingMode === 'dream' ? '给你的梦起个名字...' : store.writingMode === 'scene' ? '给这段描写起个标题...' : store.writingMode === 'challenge' ? '就这题写点什么...' : store.writingMode === 'character' ? '这个角色叫什么名字...' : '给你的灵感起个名字...'}
                     type="text" 
                     value={store.editorTitle}
@@ -1317,7 +1357,7 @@ export default function App() {
               </div>
               
               {/* Zen Toolbar */}
-              <div className="fixed right-12 top-1/2 -translate-y-1/2 flex flex-col space-y-4 p-2 glass-panel bg-surface-container-low/80 rounded-full custom-shadow">
+              <div className="fixed right-3 bottom-16 md:right-12 md:bottom-auto md:top-1/2 md:-translate-y-1/2 flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-4 p-2 glass-panel bg-surface-container-low/80 rounded-full custom-shadow z-30">
                 <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all" title="限时挑战" onClick={() => { store.setTimerActive(!store.timerActive); if (store.timerActive) store.setTimerSeconds(0); }}>
                   <span className={`material-symbols-outlined ${store.timerActive ? 'text-primary' : ''}`}>timelapse</span>
                 </button>
@@ -1362,8 +1402,8 @@ export default function App() {
         {store.activeTab === 'favorites' && <FavoritesPage />}
       </div>
 
-      {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 bg-surface/90 glass-panel border-t border-outline-variant/10 flex justify-between items-center px-10 py-2 w-full h-[45px]">
+      {/* Footer - hidden on mobile (bottom tab bar used instead) */}
+      <footer className="hidden md:flex fixed bottom-0 left-0 right-0 z-50 bg-surface/90 glass-panel border-t border-outline-variant/10 justify-between items-center px-10 py-2 w-full h-[45px]">
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-2">
             <span className="material-symbols-outlined text-primary text-sm" style={{fontVariationSettings: "'FILL' 1"}}>local_fire_department</span>

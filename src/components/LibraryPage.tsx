@@ -523,15 +523,15 @@ export default function LibraryPage() {
   };
 
   return (
-    <main className="flex-1 bg-surface relative overflow-y-auto p-8 md:p-12">
+    <main className="flex-1 bg-surface relative overflow-y-auto p-4 md:p-8 lg:p-12">
       <div className="max-w-6xl mx-auto pb-20">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-headline text-3xl font-black text-on-surface flex items-center space-x-3">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
             <span className="material-symbols-outlined text-[34px] text-primary">auto_stories</span>
             <span>词库管理</span>
           </h2>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"

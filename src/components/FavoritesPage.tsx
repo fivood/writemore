@@ -112,11 +112,11 @@ export default function FavoritesPage() {
   };
 
   return (
-    <main className="flex-1 bg-surface relative overflow-y-auto p-8 md:p-12">
+    <main className="flex-1 bg-surface relative overflow-y-auto p-4 md:p-8 lg:p-12">
       <div className="max-w-5xl mx-auto pb-20">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-headline text-3xl font-black text-on-surface flex items-center space-x-3">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
             <span className="material-symbols-outlined text-[34px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
             <span>收藏夹</span>
           </h2>
@@ -189,7 +189,7 @@ export default function FavoritesPage() {
 
         {/* Batch action bar */}
         {selectMode && selectedIds.size > 0 && (
-          <div className="mb-4 p-3 bg-amber-50 dark:bg-primary/10 border border-amber-200 dark:border-primary/20 rounded-lg flex items-center justify-between animate-[fadeIn_0.2s_ease-out]">
+          <div className="mb-4 p-3 bg-amber-50 dark:bg-primary/10 border border-amber-200 dark:border-primary/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 animate-[fadeIn_0.2s_ease-out]">
             <span className="text-sm font-label text-amber-800 dark:text-primary">
               已选择 <span className="font-bold">{selectedIds.size}</span> 项
             </span>

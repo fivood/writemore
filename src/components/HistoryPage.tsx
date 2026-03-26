@@ -273,15 +273,15 @@ export default function HistoryPage() {
   }
 
   return (
-    <main className="flex-1 bg-surface relative overflow-y-auto p-8 md:p-12">
+    <main className="flex-1 bg-surface relative overflow-y-auto p-4 md:p-8 lg:p-12">
       <div className="max-w-5xl mx-auto pb-20">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-headline text-3xl font-black text-on-surface flex items-center space-x-3">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
             <span className="material-symbols-outlined text-[34px] text-primary">history</span>
             <span>写作历史</span>
           </h2>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             {history.length > 0 && (
               <>
                 {/* View toggle */}
@@ -307,7 +307,7 @@ export default function HistoryPage() {
                   className="flex items-center gap-1.5 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
                 >
                   <span className="material-symbols-outlined text-[18px]">download</span>
-                  <span>导出全部</span>
+                  <span className="hidden sm:inline">导出全部</span>
                 </button>
                 <button
                   onClick={() => { setSelectMode(!selectMode); setSelectedIds(new Set()); }}
@@ -323,7 +323,7 @@ export default function HistoryPage() {
 
         {/* Stats bar */}
         {history.length > 0 && (
-          <div className="flex items-center flex-wrap gap-4 mb-6 p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
+          <div className="flex items-center flex-wrap gap-4 mb-6 p-3 md:p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
             <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
               <span className="material-symbols-outlined text-[20px] text-primary">description</span>
               <span className="font-bold text-on-surface">{stats.totalDrafts}</span>
@@ -394,7 +394,7 @@ export default function HistoryPage() {
 
         {/* Batch action bar */}
         {selectMode && selectedIds.size > 0 && (
-          <div className="mb-4 p-3 bg-amber-50 dark:bg-primary/10 border border-amber-200 dark:border-primary/20 rounded-lg flex items-center justify-between">
+          <div className="mb-4 p-3 bg-amber-50 dark:bg-primary/10 border border-amber-200 dark:border-primary/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <span className="text-sm font-label text-amber-800 dark:text-primary">
               已选择 <span className="font-bold">{selectedIds.size}</span> 篇草稿
             </span>

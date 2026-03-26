@@ -201,21 +201,21 @@ export default function InspirationPalace() {
   }
 
   return (
-    <main className="flex-1 bg-surface relative overflow-y-auto p-8 md:p-12">
+    <main className="flex-1 bg-surface relative overflow-y-auto p-4 md:p-8 lg:p-12">
       <div className="max-w-6xl mx-auto pb-20">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
-            <h2 className="font-headline text-3xl font-black text-on-surface flex items-center space-x-3">
+            <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
               <span className="text-[34px]">🏛</span>
               <span>灵感宫殿</span>
             </h2>
             <p className="text-on-surface-variant font-label text-sm mt-1">所有写作灵感汇聚于此</p>
           </div>
           {items.length > 0 && (
-            <div className="flex items-center space-x-4 text-sm font-label text-on-surface-variant">
+            <div className="flex flex-wrap items-center gap-3 text-sm font-label text-on-surface-variant">
               <span><strong className="text-on-surface">{stats.total}</strong> 条灵感</span>
-              <span className="text-outline-variant">|</span>
+              <span className="text-outline-variant hidden sm:inline">|</span>
               <span><strong className="text-on-surface">{stats.totalWords.toLocaleString()}</strong> 字</span>
               {store.aiEnabled && items.length >= 2 && (
                 <button
