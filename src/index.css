@@ -23,21 +23,21 @@
   --color-on-secondary: #edffda;
   --color-on-surface: #31332f;
   --color-secondary-dim: #48583b;
-  --color-on-surface-variant: #5e605b;
+  --color-on-surface-variant: #3d3f3c;
   --color-on-tertiary: #fcf7ff;
   --color-on-primary-fixed-variant: #6d3923;
   --color-primary-fixed-dim: #eea587;
   --color-on-error-container: #6e0a12;
   --color-surface-container-highest: #e3e3dc;
   --color-surface: #fbf9f5;
-  --color-outline: #7a7b76;
+  --color-outline: #55564f;
   --color-tertiary-container: #e3dffd;
   --color-tertiary-fixed-dim: #d5d1ee;
-  --color-on-secondary-container: #46563a;
+  --color-on-secondary-container: #303e25;
   --color-on-error: #fff7f6;
   --color-surface-container-lowest: #ffffff;
   --color-secondary-container: #d6e9c3;
-  --color-outline-variant: #756958;
+  --color-outline-variant: #5c5044;
   --color-inverse-on-surface: #9e9d99;
   --color-on-secondary-fixed-variant: #506043;
   --color-error-container: #fa746f;
@@ -56,6 +56,23 @@
   --font-headline: "Noto Sans SC", sans-serif;
   --font-body: "Noto Sans SC", sans-serif;
   --font-label: "Inter", sans-serif;
+
+  /* 全局字号 +2px（基准 16px → 18px，其余同比） */
+  --text-xs: 0.875rem;    /* 12→14px */
+  --text-sm: 1rem;        /* 14→16px */
+  --text-base: 1.125rem;  /* 16→18px */
+  --text-lg: 1.25rem;     /* 18→20px */
+  --text-xl: 1.375rem;    /* 20→22px */
+  --text-2xl: 1.625rem;   /* 24→26px */
+  --text-3xl: 2rem;       /* 30→32px */
+  --text-4xl: 2.375rem;   /* 36→38px */
+}
+
+/* 全局字体渲染优化（对 Tauri WebView2 尤为重要） */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 @layer utilities {

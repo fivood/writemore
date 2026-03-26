@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 
 // ── 填入你的 GitHub 用户名/仓库名 ──────────────────────────────
 const GITHUB_REPO = 'fivood/writemore';
@@ -20,7 +20,7 @@ import LibraryPage from './components/LibraryPage';
 import InspirationPalace from './components/InspirationPalace';
 import { API_PRESETS, testConnection, chatCompletion, chatCompletionStream } from './services/ai';
 import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt } from './services/prompts';
-import { supabase, signIn, signUp, signOut, pushDraft, pullDrafts } from './services/supabase';
+import { supabase, signIn, signUp, signOut, pushDraft, pullDrafts, SUPABASE_ENABLED } from './services/supabase';
 
 export default function App() {
   const store = useStore();
@@ -80,6 +80,7 @@ export default function App() {
 
   // Cloud auth 初始化
   useEffect(() => {
+    if (!SUPABASE_ENABLED) return;
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         store.setCloudUser({ id: session.user.id, email: session.user.email! });
@@ -97,6 +98,7 @@ export default function App() {
   }, []);
 
   async function syncFromCloud(userId: string) {
+    if (!SUPABASE_ENABLED) return;
     try {
       setCloudSyncing(true);
       const cloudDrafts = await pullDrafts(userId);
@@ -316,7 +318,7 @@ export default function App() {
       showToast(`💾 已保存 (${store.editorContent.replace(/\s/g, '').length}字)`);
       refreshTodayWords();
       // 后台推送到云端
-      if (store.cloudUser) {
+      if (SUPABASE_ENABLED && store.cloudUser) {
         const saved = await db.drafts.get(draftId);
         if (saved) pushDraft(saved, store.cloudUser.id).catch(console.error);
       }
@@ -530,19 +532,19 @@ export default function App() {
         <div className="text-xl font-bold text-primary italic font-headline tracking-tight">每日写作灵感</div>
         <nav className="flex space-x-8 items-center font-headline text-base tracking-tight">
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('inspire')}>
-            <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
+            <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
             <span>灵感</span>
           </button>
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'palace' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('palace')}>
-            <span className="material-symbols-outlined text-[18px]">museum</span>
+            <span className="material-symbols-outlined text-[20px]">museum</span>
             <span>灵感宫殿</span>
           </button>
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'favorites' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('favorites')}>
-            <span className="material-symbols-outlined text-[18px]">star</span>
+            <span className="material-symbols-outlined text-[20px]">star</span>
             <span>收藏</span>
           </button>
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'history' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('history')}>
-            <span className="material-symbols-outlined text-[18px]">menu_book</span>
+            <span className="material-symbols-outlined text-[20px]">menu_book</span>
             <span>历史</span>
           </button>
         </nav>
@@ -552,9 +554,10 @@ export default function App() {
             title="AI 设置"
             className={`p-2 rounded-full hover:bg-surface-container transition-colors ${store.aiEnabled ? 'text-primary' : 'text-on-surface-variant'}`}
           >
-            <span className="material-symbols-outlined text-[20px]" style={store.aiEnabled ? { fontVariationSettings: "'FILL' 1" } : {}}>smart_toy</span>
+            <span className="material-symbols-outlined text-[22px]" style={store.aiEnabled ? { fontVariationSettings: "'FILL' 1" } : {}}>smart_toy</span>
           </button>
-          {/* 云同步按鈕 */}
+          {/* 云同步按鈕：凭据未配置时隐藏 */}
+          {SUPABASE_ENABLED && (
           <button
             onClick={() => store.cloudUser ? (syncFromCloud(store.cloudUser.id), showToast('☁️ 同步中…')) : setShowCloudLogin(true)}
             title={store.cloudUser ? `已登录: ${store.cloudUser.email}（点击同步）` : '登录云同步'}
@@ -562,17 +565,18 @@ export default function App() {
               store.cloudUser ? 'text-primary' : 'text-on-surface-variant'
             }`}
           >
-            <span className="material-symbols-outlined text-[20px]" style={store.cloudUser ? { fontVariationSettings: "'FILL' 1" } : {}}>
+            <span className="material-symbols-outlined text-[22px]" style={store.cloudUser ? { fontVariationSettings: "'FILL' 1" } : {}}>
               {cloudSyncing ? 'sync' : 'cloud'}
             </span>
             {cloudSyncing && <span className="absolute inset-0 rounded-full animate-spin border-2 border-primary/30 border-t-primary" />}
           </button>
+          )}
           <button
             onClick={() => store.setTheme(store.theme === 'dark' ? 'light' : store.theme === 'light' ? 'system' : 'dark')}
             title={store.theme === 'dark' ? '暗色模式' : store.theme === 'light' ? '亮色模式' : '跟随系统'}
             className="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
           >
-            <span className="material-symbols-outlined text-[20px]">
+            <span className="material-symbols-outlined text-[22px]">
               {store.theme === 'dark' ? 'dark_mode' : store.theme === 'light' ? 'light_mode' : 'brightness_auto'}
             </span>
           </button>
@@ -583,7 +587,7 @@ export default function App() {
       {updateBanner && (
         <div className="fixed top-[72px] left-0 right-0 z-40 flex items-center justify-between px-6 py-2 bg-primary text-on-primary text-xs font-label">
           <span className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[14px]">new_releases</span>
+            <span className="material-symbols-outlined text-[16px]">new_releases</span>
             新版本 <strong>{updateBanner.version}</strong> 已发布！
           </span>
           <div className="flex items-center gap-3">
@@ -594,7 +598,7 @@ export default function App() {
               className="underline underline-offset-2 hover:opacity-80"
             >查看更新内容</a>
             <button onClick={() => setUpdateBanner(null)} className="opacity-70 hover:opacity-100 transition-opacity">
-              <span className="material-symbols-outlined text-[16px]">close</span>
+              <span className="material-symbols-outlined text-[18px]">close</span>
             </button>
           </div>
         </div>
@@ -624,14 +628,14 @@ export default function App() {
                   <div>
                     <div className="flex items-center gap-3 mb-4">
                       <span className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-[#ffb148]">
-                        <span className="material-symbols-outlined text-[28px]" style={{fontVariationSettings:"'FILL' 1"}}>casino</span>
+                        <span className="material-symbols-outlined text-[30px]" style={{fontVariationSettings:"'FILL' 1"}}>casino</span>
                       </span>
                       <h2 className="font-headline text-2xl text-on-surface">词汇灵感</h2>
                     </div>
                     <p className="text-on-surface-variant text-sm leading-relaxed max-w-sm">随机抽取词条，围绕它们展开想象——侘寂、余晖、熵……每一个词都是一扇门</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">含词库管理 · Space 键抽取</span>
+                    <span className="font-label text-[12px] uppercase tracking-widest text-on-surface-variant">含词库管理 · Space 键抽取</span>
                     <span className="px-5 py-2 bg-amber-500/15 text-amber-700 dark:text-[#ffb148] rounded-full font-label text-xs font-bold border border-amber-400/20 group-hover:bg-amber-500/25 transition-all">开始写作 →</span>
                   </div>
                 </button>
@@ -643,7 +647,7 @@ export default function App() {
                   <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-violet-400/5 dark:bg-[#ba9eff]/5 blur-[60px] rounded-full group-hover:bg-violet-400/10 dark:group-hover:bg-[#ba9eff]/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="p-2 rounded-xl bg-violet-500/10 text-violet-600 dark:text-[#ba9eff]">
-                      <span className="material-symbols-outlined text-[20px]" style={{fontVariationSettings:"'FILL' 1"}}>nights_stay</span>
+                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>nights_stay</span>
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">梦境记录</h2>
                   </div>
@@ -657,7 +661,7 @@ export default function App() {
                   <div className="absolute -left-8 -top-8 w-36 h-36 bg-fuchsia-400/5 dark:bg-fuchsia-300/5 blur-[60px] rounded-full group-hover:bg-fuchsia-400/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="p-2 rounded-xl bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300">
-                      <span className="material-symbols-outlined text-[20px]" style={{fontVariationSettings:"'FILL' 1"}}>person_search</span>
+                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>person_search</span>
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">人物描写</h2>
                   </div>
@@ -671,7 +675,7 @@ export default function App() {
                   <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-emerald-400/5 dark:bg-[#69f6b8]/5 blur-[80px] rounded-full group-hover:bg-emerald-400/10 dark:group-hover:bg-[#69f6b8]/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#69f6b8]">
-                      <span className="material-symbols-outlined text-[20px]" style={{fontVariationSettings:"'FILL' 1"}}>edit_note</span>
+                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>edit_note</span>
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">自由发挥</h2>
                   </div>
@@ -687,7 +691,7 @@ export default function App() {
                   </div>
                   <div className="flex items-center gap-2 mb-2 relative">
                     <span className="p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-300">
-                      <span className="material-symbols-outlined text-[20px]" style={{fontVariationSettings:"'FILL' 1"}}>landscape</span>
+                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>landscape</span>
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">场景描写</h2>
                   </div>
@@ -701,7 +705,7 @@ export default function App() {
                   <div className="absolute -right-8 -top-8 w-36 h-36 bg-rose-400/5 dark:bg-rose-300/5 blur-[60px] rounded-full group-hover:bg-rose-400/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-300">
-                      <span className="material-symbols-outlined text-[20px]" style={{fontVariationSettings:"'FILL' 1"}}>quiz</span>
+                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>quiz</span>
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">写作挑战</h2>
                   </div>
@@ -731,7 +735,7 @@ export default function App() {
                 <>
                   <div className="mb-6">
                     <h2 className="font-headline text-lg font-semibold text-on-surface">词汇分类</h2>
-                    <p className="text-[10px] font-label uppercase tracking-widest text-on-surface-variant mt-1">筛选词条类型</p>
+                    <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">筛选词条类型</p>
                   </div>
                   <nav className="space-y-1 flex-1 overflow-y-auto pr-2">
                     {WORD_CATEGORIES.map(cat => {
@@ -741,14 +745,14 @@ export default function App() {
                         <button key={cat}
                           onClick={() => store.toggleCategory(cat)}
                           className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-200 ${active ? 'bg-surface-container-high text-primary shadow-sm dark:shadow-[0_0_15px_rgba(186,158,255,0.12)] active:scale-95' : 'text-on-surface-variant hover:bg-surface-container dark:hover:bg-white/5 hover:translate-x-1'}`}>
-                          <span className="material-symbols-outlined text-[18px] leading-none">{meta?.icon ?? 'label'}</span>
+                          <span className="material-symbols-outlined text-[20px] leading-none">{meta?.icon ?? 'label'}</span>
                           <span className="font-label text-xs uppercase tracking-widest flex-1 text-left">{cat}</span>
                           {active && <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>}
                         </button>
                       );
                     })}
                     <div className="pt-6 pb-2">
-                      <h3 className="font-headline text-[13px] font-semibold text-on-surface mb-3">词条数量</h3>
+                      <h3 className="font-headline text-[15px] font-semibold text-on-surface mb-3">词条数量</h3>
                       <div className="flex space-x-2">
                         {[3, 4, 5].map(n => (
                           <button key={n} onClick={() => store.setWordCount(n as any)}
@@ -767,7 +771,7 @@ export default function App() {
                             : 'bg-surface-container-high text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-highest hover:text-[#ffb148]'
                         }`}
                       >
-                        <span className="material-symbols-outlined text-[14px]">menu_book</span>
+                        <span className="material-symbols-outlined text-[16px]">menu_book</span>
                         <span>词库管理</span>
                       </button>
                     </div>
@@ -780,23 +784,23 @@ export default function App() {
                 <>
                   <div className="mb-6">
                     <h2 className="font-headline text-lg font-semibold text-on-surface">场景描写</h2>
-                    <p className="text-[10px] font-label uppercase tracking-widest text-on-surface-variant mt-1">用文字描绘画面</p>
+                    <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">用文字描绘画面</p>
                   </div>
                   <div className="flex-1 flex flex-col">
                     {store.currentScene && (
                       <div className="bg-blue-50/80 dark:bg-blue-500/10 border border-blue-200/60 dark:border-blue-400/15 rounded-xl p-4 mb-4">
-                        <p className="text-[10px] font-label uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-2">当前场景</p>
+                        <p className="text-[12px] font-label uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-2">当前场景</p>
                         <h4 className="font-headline text-base font-bold text-blue-900 dark:text-blue-200 mb-2">{store.currentScene.title}</h4>
                         <p className="text-sm text-blue-800/80 dark:text-blue-300/70 leading-relaxed">{store.currentScene.description}</p>
                         <div className="flex flex-wrap gap-1.5 mt-3">
                           {store.currentScene.tags.map(tag => (
-                            <span key={tag} className="px-2 py-0.5 bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 text-[10px] font-label rounded-full">{tag}</span>
+                            <span key={tag} className="px-2 py-0.5 bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 text-[12px] font-label rounded-full">{tag}</span>
                           ))}
                         </div>
                       </div>
                     )}
                     <button onClick={() => store.setCurrentScene(pickRandomScene(store.currentScene?.id))} className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-sm font-label text-on-surface-variant hover:text-primary hover:border-primary/30 transition-all">
-                      <span className="material-symbols-outlined text-[16px]">refresh</span>
+                      <span className="material-symbols-outlined text-[18px]">refresh</span>
                       <span>换一个场景</span>
                     </button>
                   </div>
@@ -808,7 +812,7 @@ export default function App() {
                 <>
                   <div className="mb-6">
                     <h2 className="font-headline text-lg font-semibold text-on-surface">梦境记录</h2>
-                    <p className="text-[10px] font-label uppercase tracking-widest text-on-surface-variant mt-1">记录你的梦</p>
+                    <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">记录你的梦</p>
                   </div>
                   <div className="flex-1 space-y-4">
                     <div className="bg-violet-50/80 dark:bg-violet-500/10 border border-violet-200/60 dark:border-violet-400/15 rounded-xl p-4">
@@ -830,7 +834,7 @@ export default function App() {
                 <>
                   <div className="mb-6">
                     <h2 className="font-headline text-lg font-semibold text-on-surface">自由发挥</h2>
-                    <p className="text-[10px] font-label uppercase tracking-widest text-on-surface-variant mt-1">想到什么写什么</p>
+                    <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">想到什么写什么</p>
                   </div>
                   <div className="flex-1 space-y-4">
                     <div className="bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-400/15 rounded-xl p-4">
@@ -845,7 +849,7 @@ export default function App() {
                 <>
                   <div className="mb-6">
                     <h2 className="font-headline text-lg font-semibold text-on-surface">写作挑战</h2>
-                    <p className="text-[10px] font-label uppercase tracking-widest text-on-surface-variant mt-1">你问我不一定答</p>
+                    <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">你问我不一定答</p>
                   </div>
                   <div className="flex-1 flex flex-col space-y-4">
                     <div className="bg-rose-50/80 dark:bg-rose-500/10 border border-rose-200/60 dark:border-rose-400/15 rounded-xl p-4">
@@ -858,7 +862,7 @@ export default function App() {
                       </ul>
                     </div>
                     <label className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:text-error hover:border-error/30 transition-all cursor-pointer">
-                      <span className="material-symbols-outlined text-[16px]">download</span>
+                      <span className="material-symbols-outlined text-[18px]">download</span>
                       <span>导入提示 (.md)</span>
                       <input type="file" accept=".md,.txt" className="hidden" onChange={async (e) => {
                         const file = e.target.files?.[0];
@@ -879,10 +883,10 @@ export default function App() {
                         e.target.value = '';
                       }} />
                     </label>
-                    <div className="bg-surface-container-low dark:bg-surface-container-high border border-outline-variant/15 rounded-lg px-3 py-2.5 text-[10px] font-label text-on-surface-variant leading-relaxed">
+                    <div className="bg-surface-container-low dark:bg-surface-container-high border border-outline-variant/15 rounded-lg px-3 py-2.5 text-[12px] font-label text-on-surface-variant leading-relaxed">
                       <p className="text-on-surface-variant font-medium mb-1">文件格式示例</p>
-                      <p className="text-[12px] text-outline mb-1.5">每行一条提示，空行忽略，支持 - / * / • 开头</p>
-                      <pre className="font-mono text-[12px] text-on-surface-variant whitespace-pre-wrap leading-relaxed">{`- 只用动作展示愤怒，不提情绪\n用感官细节描写一场分离\n• 在对话中藏一个人说谎的信号`}</pre>
+                      <p className="text-[14px] text-outline mb-1.5">每行一条提示，空行忽略，支持 - / * / • 开头</p>
+                      <pre className="font-mono text-[14px] text-on-surface-variant whitespace-pre-wrap leading-relaxed">{`- 只用动作展示愤怒，不提情绪\n用感官细节描写一场分离\n• 在对话中藏一个人说谎的信号`}</pre>
                     </div>
                   </div>
                 </>
@@ -893,11 +897,11 @@ export default function App() {
                 <>
                   <div className="mb-5">
                     <h2 className="font-headline text-lg font-semibold text-on-surface">人物描写</h2>
-                    <p className="text-[10px] font-label uppercase tracking-widest text-on-surface-variant mt-1">六个维度深挖角色</p>
+                    <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">六个维度深挖角色</p>
                   </div>
                   <div className="flex-1 flex flex-col space-y-2 overflow-y-auto">
                     {/* Layer filter */}
-                    <p className="text-[10px] font-label text-on-surface-variant uppercase tracking-widest mb-1">切换维度</p>
+                    <p className="text-[12px] font-label text-on-surface-variant uppercase tracking-widest mb-1">切换维度</p>
                     <button
                       onClick={() => { store.setSelectedCharacterLayer(null); pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id); }}
                       className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left text-xs font-label transition-all ${
@@ -906,7 +910,7 @@ export default function App() {
                           : 'text-on-surface-variant hover:bg-surface-container dark:hover:bg-white/5'
                       }`}
                     >
-                      <span className="material-symbols-outlined text-[14px]">shuffle</span>
+                      <span className="material-symbols-outlined text-[16px]">shuffle</span>
                       <span>全部维度</span>
                     </button>
                     {CHARACTER_LAYERS.map(layer => (
@@ -922,7 +926,7 @@ export default function App() {
                             : 'text-on-surface-variant hover:bg-surface-container dark:hover:bg-white/5'
                         }`}
                       >
-                        <span className="material-symbols-outlined text-[14px]">{layer.icon}</span>
+                        <span className="material-symbols-outlined text-[16px]">{layer.icon}</span>
                         <div className="flex-1 min-w-0">
                           <div>{layer.name}</div>
                         </div>
@@ -931,7 +935,7 @@ export default function App() {
 
                     <div className="pt-3 space-y-2">
                       <label className="flex items-center justify-center space-x-2 px-3 py-2 bg-surface-container-high border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:text-fuchsia-300 hover:border-fuchsia-400/30 transition-all cursor-pointer">
-                        <span className="material-symbols-outlined text-[14px]">download</span>
+                        <span className="material-symbols-outlined text-[16px]">download</span>
                         <span>导入提示 (.md)</span>
                         <input type="file" accept=".md,.txt" className="hidden" onChange={async (e) => {
                           const file = e.target.files?.[0];
@@ -954,10 +958,10 @@ export default function App() {
                           e.target.value = '';
                         }} />
                       </label>
-                      <div className="bg-surface-container-low dark:bg-surface-container-high border border-outline-variant/15 rounded-lg px-3 py-2.5 text-[10px] font-label text-on-surface-variant leading-relaxed">
+                      <div className="bg-surface-container-low dark:bg-surface-container-high border border-outline-variant/15 rounded-lg px-3 py-2.5 text-[12px] font-label text-on-surface-variant leading-relaxed">
                         <p className="text-on-surface-variant font-medium mb-1">文件格式示例</p>
-                        <p className="text-[12px] text-outline mb-1.5">每行一条提示，将归入当前选中维度</p>
-                        <pre className="font-mono text-[12px] text-on-surface-variant whitespace-pre-wrap leading-relaxed">{`- 他最害怕失去什么？\n她能原谅什么，不能原谅什么？\n• 他的沉默意味着什么`}</pre>
+                        <p className="text-[14px] text-outline mb-1.5">每行一条提示，将归入当前选中维度</p>
+                        <pre className="font-mono text-[14px] text-on-surface-variant whitespace-pre-wrap leading-relaxed">{`- 他最害怕失去什么？\n她能原谅什么，不能原谅什么？\n• 他的沉默意味着什么`}</pre>
                       </div>
                     </div>
                   </div>
@@ -965,11 +969,11 @@ export default function App() {
               )}
               {/* Timer (all modes) */}
               <div className="pt-4 pb-2 border-t border-outline-variant/15 mt-auto">
-                <h3 className="font-headline text-[13px] font-semibold text-on-surface mb-3">限时写作</h3>
+                <h3 className="font-headline text-[15px] font-semibold text-on-surface mb-3">限时写作</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {[10, 15, 20, 30].map(n => (
                     <button key={n} onClick={() => store.setTimerDuration(n as any)}
-                      className={`py-1.5 rounded text-[10px] font-label transition-colors ${store.timerDuration === n ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-highest'}`}>
+                      className={`py-1.5 rounded text-[12px] font-label transition-colors ${store.timerDuration === n ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-highest'}`}>
                       {n}分
                     </button>
                   ))}
@@ -995,13 +999,13 @@ export default function App() {
               <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="font-label text-[10px] uppercase tracking-[0.2em] text-outline">词汇灵感</span>
+                    <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">词汇灵感</span>
                     <div className="flex space-x-1">
                       <button onClick={handleToggleFavorite} className="p-1 hover:bg-surface-container rounded group transition-all" title="收藏">
-                        <span className={`material-symbols-outlined text-[18px] transition-colors ${store.isCurrentWordSetFavorite ? 'text-amber-500' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} style={store.isCurrentWordSetFavorite ? { fontVariationSettings: "'FILL' 1" } : {}}>star</span>
+                        <span className={`material-symbols-outlined text-[20px] transition-colors ${store.isCurrentWordSetFavorite ? 'text-amber-500' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} style={store.isCurrentWordSetFavorite ? { fontVariationSettings: "'FILL' 1" } : {}}>star</span>
                       </button>
                       <button className="p-1 hover:bg-surface-container rounded group transition-all" title="抄取 (Space)" onClick={handleDraw}>
-                        <span className="material-symbols-outlined text-[18px] text-outline group-hover:text-primary transition-colors">casino</span>
+                        <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">casino</span>
                       </button>
                     </div>
                   </div>
@@ -1010,13 +1014,13 @@ export default function App() {
 
                 {store.drawnGenre && (
                   <div className={`flex items-center space-x-2 px-4 py-3 rounded-xl border ${genreStyleMap[store.drawnGenre]?.bg ?? 'bg-stone-100 border-stone-200'}`}>
-                    <span className="material-symbols-outlined text-[18px]">{genreStyleMap[store.drawnGenre]?.icon ?? 'edit'}</span>
+                    <span className="material-symbols-outlined text-[20px]">{genreStyleMap[store.drawnGenre]?.icon ?? 'edit'}</span>
                     <div className="flex-1">
-                      <p className="text-[10px] font-label uppercase tracking-widest text-on-surface-variant">写作风格</p>
+                      <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant">写作风格</p>
                       <p className="font-headline font-bold text-base leading-tight">{store.drawnGenre}</p>
                     </div>
                     <button onClick={() => store.setDrawnGenre(pickRandomGenre(store.selectedGenres))} className="p-1 rounded hover:bg-surface-container transition-colors" title="换一个风格">
-                      <span className="material-symbols-outlined text-[16px] text-outline">refresh</span>
+                      <span className="material-symbols-outlined text-[18px] text-outline">refresh</span>
                     </button>
                   </div>
                 )}
@@ -1026,8 +1030,8 @@ export default function App() {
                   <div className="bg-amber-50/60 dark:bg-amber-500/5 border border-amber-200/40 dark:border-amber-400/10 rounded-xl p-3">
                     {aiWordHint ? (
                       <div>
-                        <p className="text-[10px] font-label uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1.5 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[12px]">auto_awesome</span>AI 灵感引导
+                        <p className="text-[12px] font-label uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1.5 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[14px]">auto_awesome</span>AI 灵感引导
                         </p>
                         <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">{aiWordHint}</p>
                       </div>
@@ -1037,7 +1041,7 @@ export default function App() {
                         disabled={aiWordHintLoading}
                         className="w-full flex items-center justify-center gap-1.5 py-1 text-xs font-label text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 transition-colors disabled:opacity-50"
                       >
-                        <span className="material-symbols-outlined text-[14px]">{aiWordHintLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                        <span className="material-symbols-outlined text-[16px]">{aiWordHintLoading ? 'hourglass_top' : 'auto_awesome'}</span>
                         <span>{aiWordHintLoading ? 'AI 思考中…' : 'AI 帮我找灵感'}</span>
                       </button>
                     )}
@@ -1062,7 +1066,7 @@ export default function App() {
                     return (
                       <div key={`${w.id}_${i}`} className={`${catStyle.glow} bg-surface-container p-6 rounded-3xl border border-outline-variant/10 custom-shadow dark:shadow-none relative overflow-hidden group transition-all hover:bg-surface-container-high`}>
                         <div className="flex justify-between items-start mb-4 relative z-10">
-                          <span className={`px-2 py-1 text-[10px] font-bold font-label rounded-lg tracking-wider uppercase ${catStyle.badge}`}>
+                          <span className={`px-2 py-1 text-[12px] font-bold font-label rounded-lg tracking-wider uppercase ${catStyle.badge}`}>
                             {w.category || w.genres?.[0] || '意象'}
                           </span>
                           <button onClick={() => store.toggleLock(i)} className={`material-symbols-outlined text-sm transition-colors ${store.lockedIndices.has(i) ? 'text-primary' : 'text-stone-300 dark:text-outline hover:text-stone-500 dark:hover:text-on-surface-variant'}`}>
@@ -1086,21 +1090,21 @@ export default function App() {
               <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="font-label text-[10px] uppercase tracking-[0.2em] text-outline">场景描写</span>
+                    <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">场景描写</span>
                     <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一个场景" onClick={() => store.setCurrentScene(pickRandomScene(store.currentScene?.id))}>
-                      <span className="material-symbols-outlined text-[18px] text-outline group-hover:text-primary transition-colors">refresh</span>
+                      <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">refresh</span>
                     </button>
                   </div>
                   <h3 className="font-headline text-2xl text-on-surface">描写挑战</h3>
                 </div>
 
                 <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined text-[32px] text-blue-400 dark:text-[#69a8f6] mb-4 block">landscape</span>
+                  <span className="material-symbols-outlined text-[34px] text-blue-400 dark:text-[#69a8f6] mb-4 block">landscape</span>
                   <h4 className="font-headline text-xl font-bold mb-3 text-stone-900 dark:text-on-surface">{store.currentScene.title}</h4>
                   <p className="text-sm text-stone-700 dark:text-on-surface-variant leading-relaxed mb-4">{store.currentScene.description}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {store.currentScene.tags.map(tag => (
-                      <span key={tag} className="px-2.5 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 text-[10px] font-label rounded-full border border-blue-200/50 dark:border-blue-400/20">{tag}</span>
+                      <span key={tag} className="px-2.5 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 text-[12px] font-label rounded-full border border-blue-200/50 dark:border-blue-400/20">{tag}</span>
                     ))}
                   </div>
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
@@ -1114,7 +1118,7 @@ export default function App() {
                       disabled={aiSceneLoading}
                       className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
                     >
-                      <span className="material-symbols-outlined text-[14px]">{aiSceneLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                      <span className="material-symbols-outlined text-[16px]">{aiSceneLoading ? 'hourglass_top' : 'auto_awesome'}</span>
                       <span>{aiSceneLoading ? '生成中…' : 'AI 补充感官细节'}</span>
                     </button>
                     <button
@@ -1122,13 +1126,13 @@ export default function App() {
                       disabled={aiSceneLoading}
                       className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
                     >
-                      <span className="material-symbols-outlined text-[14px]">smart_toy</span>
+                      <span className="material-symbols-outlined text-[16px]">smart_toy</span>
                       <span>AI 生成新场景</span>
                     </button>
                     {aiSceneExtra && (
                       <div className="bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl p-3">
-                        <p className="text-[10px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-1.5 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[12px]">auto_awesome</span>感官引导
+                        <p className="text-[12px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-1.5 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[14px]">auto_awesome</span>感官引导
                         </p>
                         <p className="text-sm text-blue-900 dark:text-blue-200 leading-relaxed whitespace-pre-line">{aiSceneExtra}</p>
                       </div>
@@ -1143,20 +1147,20 @@ export default function App() {
               <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="font-label text-[10px] uppercase tracking-[0.2em] text-outline">写作挑战</span>
+                    <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">写作挑战</span>
                     <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一题" onClick={() => pickAndSetChallenge(store.currentChallenge?.id)}>
-                      <span className="material-symbols-outlined text-[18px] text-outline group-hover:text-primary transition-colors">refresh</span>
+                      <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">refresh</span>
                     </button>
                   </div>
                   <h3 className="font-headline text-2xl text-on-surface">习作题目</h3>
                 </div>
 
                 <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined text-[32px] text-rose-400 dark:text-rose-300 mb-4 block">quiz</span>
+                  <span className="material-symbols-outlined text-[34px] text-rose-400 dark:text-rose-300 mb-4 block">quiz</span>
                   <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
                   {store.currentChallenge.id.startsWith('ai_') && (
-                    <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100/80 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-400/20 text-[10px] font-label text-rose-600 dark:text-rose-400">
-                      <span className="material-symbols-outlined text-[11px]">auto_awesome</span>AI 出题
+                    <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100/80 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-400/20 text-[12px] font-label text-rose-600 dark:text-rose-400">
+                      <span className="material-symbols-outlined text-[13px]">auto_awesome</span>AI 出题
                     </span>
                   )}
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
@@ -1169,7 +1173,7 @@ export default function App() {
                     disabled={aiChallengeLoading}
                     className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50/60 dark:bg-rose-500/5 border border-rose-200/40 dark:border-rose-400/10 rounded-xl text-xs font-label text-rose-700 dark:text-rose-400 hover:bg-rose-100/60 dark:hover:bg-rose-500/10 transition-colors disabled:opacity-50"
                   >
-                    <span className="material-symbols-outlined text-[14px]">{aiChallengeLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                    <span className="material-symbols-outlined text-[16px]">{aiChallengeLoading ? 'hourglass_top' : 'auto_awesome'}</span>
                     <span>{aiChallengeLoading ? '出题中…' : 'AI 出一道题'}</span>
                   </button>
                 )}
@@ -1183,9 +1187,9 @@ export default function App() {
                 <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
                   <div className="mb-2">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="font-label text-[10px] uppercase tracking-[0.2em] text-outline">人物描写</span>
+                      <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">人物描写</span>
                     <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一题" onClick={() => pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id)}>
-                      <span className="material-symbols-outlined text-[18px] text-outline group-hover:text-primary transition-colors">refresh</span>
+                      <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">refresh</span>
                       </button>
                     </div>
                     <h3 className="font-headline text-2xl text-on-surface">角色练习</h3>
@@ -1193,14 +1197,14 @@ export default function App() {
 
                   {layer && (
                     <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg border text-xs font-label ${layer.color}`}>
-                      <span className="material-symbols-outlined text-[14px]">{layer.icon}</span>
+                      <span className="material-symbols-outlined text-[16px]">{layer.icon}</span>
                       <span className="font-medium">{layer.name}</span>
                       <span className="opacity-60 flex-1 truncate">{layer.description}</span>
                     </div>
                   )}
 
                   <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                    <span className="material-symbols-outlined text-[28px] text-fuchsia-400 dark:text-fuchsia-300 mb-4 block">person_search</span>
+                    <span className="material-symbols-outlined text-[30px] text-fuchsia-400 dark:text-fuchsia-300 mb-4 block">person_search</span>
                     <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                   </div>
@@ -1213,13 +1217,13 @@ export default function App() {
                         disabled={aiCharacterLoading}
                         className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
                       >
-                        <span className="material-symbols-outlined text-[14px]">{aiCharacterLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                        <span className="material-symbols-outlined text-[16px]">{aiCharacterLoading ? 'hourglass_top' : 'auto_awesome'}</span>
                         <span>{aiCharacterLoading ? '思考中…' : 'AI 深挖角色'}</span>
                       </button>
                       {aiCharacterExtra && (
                         <div className="bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl p-3">
-                          <p className="text-[10px] font-label uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-400 mb-1.5 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[12px]">auto_awesome</span>AI 追问
+                          <p className="text-[12px] font-label uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-400 mb-1.5 flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[14px]">auto_awesome</span>AI 追问
                           </p>
                           <p className="text-sm text-fuchsia-900 dark:text-fuchsia-200 leading-relaxed">{aiCharacterExtra}</p>
                         </div>
@@ -1243,19 +1247,19 @@ export default function App() {
                     <div className="flex items-center space-x-3">
                       <div className="text-outline text-xs font-label">{dateStr}</div>
                       {store.writingMode && (
-                        <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-label font-medium border ${WRITING_MODES.find(m => m.mode === store.writingMode)?.color || ''}`}>
-                          <span className="material-symbols-outlined text-[12px]">{WRITING_MODES.find(m => m.mode === store.writingMode)?.icon}</span>
+                        <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[12px] font-label font-medium border ${WRITING_MODES.find(m => m.mode === store.writingMode)?.color || ''}`}>
+                          <span className="material-symbols-outlined text-[14px]">{WRITING_MODES.find(m => m.mode === store.writingMode)?.icon}</span>
                           <span>{WRITING_MODES.find(m => m.mode === store.writingMode)?.label}</span>
                         </span>
                       )}
                     </div>
                     <div className="flex space-x-2">
                       <button onClick={handleSave} className="flex items-center space-x-1 px-3 py-1.5 bg-surface-container dark:bg-surface-container-high text-primary hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-md transition-colors text-xs font-label font-medium">
-                        <span className="material-symbols-outlined text-[16px]">save</span>
+                        <span className="material-symbols-outlined text-[18px]">save</span>
                         <span>存入灵感宫殿</span>
                       </button>
                       <button onClick={handleExport} className="flex items-center space-x-1 px-3 py-1.5 bg-primary text-on-primary hover:bg-primary-dim rounded-md transition-colors text-xs font-label font-medium shadow-sm">
-                        <span className="material-symbols-outlined text-[16px]">upload</span>
+                        <span className="material-symbols-outlined text-[18px]">upload</span>
                         <span>导出 .md</span>
                       </button>
                     </div>
@@ -1294,11 +1298,11 @@ export default function App() {
                 {aiFeedback && (
                   <div className="mt-6 bg-emerald-50/70 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-2xl p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <p className="text-[10px] font-label uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[13px]">rate_review</span>AI 写作反馈
+                      <p className="text-[12px] font-label uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[15px]">rate_review</span>AI 写作反馈
                       </p>
                       <button onClick={() => setAiFeedback('')} className="text-emerald-500/60 hover:text-emerald-500 transition-colors">
-                        <span className="material-symbols-outlined text-[16px]">close</span>
+                        <span className="material-symbols-outlined text-[18px]">close</span>
                       </button>
                     </div>
                     <p className="text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
@@ -1322,7 +1326,7 @@ export default function App() {
                       title="AI 续写"
                       className="w-10 h-10 rounded-full flex items-center justify-center text-violet-500 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all disabled:opacity-40"
                     >
-                      <span className="material-symbols-outlined text-[20px]">{aiContinueLoading ? 'hourglass_top' : 'auto_fix_high'}</span>
+                      <span className="material-symbols-outlined text-[22px]">{aiContinueLoading ? 'hourglass_top' : 'auto_fix_high'}</span>
                     </button>
                     <button
                       onClick={handleAiFeedback}
@@ -1330,7 +1334,7 @@ export default function App() {
                       title="AI 写后反馈"
                       className="w-10 h-10 rounded-full flex items-center justify-center text-emerald-500 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all disabled:opacity-40"
                     >
-                      <span className="material-symbols-outlined text-[20px]">{aiFeedbackLoading ? 'hourglass_top' : 'rate_review'}</span>
+                      <span className="material-symbols-outlined text-[22px]">{aiFeedbackLoading ? 'hourglass_top' : 'rate_review'}</span>
                     </button>
                   </>
                 )}
@@ -1357,14 +1361,14 @@ export default function App() {
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-2">
             <span className="material-symbols-outlined text-primary text-sm" style={{fontVariationSettings: "'FILL' 1"}}>local_fire_department</span>
-            <span className="font-label text-[11px] font-medium text-primary">连续打卡: {store.streak} 天</span>
+            <span className="font-label text-[13px] font-medium text-primary">连续打卡: {store.streak} 天</span>
           </div>
           <div className="flex items-center space-x-2">
             <span className="material-symbols-outlined text-outline text-sm">edit_note</span>
-            <span className="font-label text-[11px] font-medium text-on-surface-variant">今日字数: {wordCount}</span>
+            <span className="font-label text-[13px] font-medium text-on-surface-variant">今日字数: {wordCount}</span>
           </div>
         </div>
-        <div className="flex items-center space-x-6 text-[11px] font-label font-medium text-stone-400 dark:text-outline">
+        <div className="flex items-center space-x-6 text-[13px] font-label font-medium text-stone-400 dark:text-outline">
           <span className="text-stone-500 dark:text-on-surface-variant">© 今天你写了吗</span>
         </div>
       </footer>
@@ -1382,7 +1386,7 @@ export default function App() {
           <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">
-                <span className="material-symbols-outlined text-primary text-[24px]">smart_toy</span>
+                <span className="material-symbols-outlined text-primary text-[26px]">smart_toy</span>
                 <h2 className="font-headline text-xl font-bold text-on-surface">AI 设置</h2>
               </div>
               <button onClick={() => setShowAiSettings(false)} className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
@@ -1450,7 +1454,7 @@ export default function App() {
                   placeholder="sk-..."
                   className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                 />
-                <p className="text-[11px] text-on-surface-variant mt-1">密钥仅存储在浏览器本地，不会上传到任何服务器</p>
+                <p className="text-[13px] text-on-surface-variant mt-1">密钥仅存储在浏览器本地，不会上传到任何服务器</p>
               </div>
 
               {/* Model */}
@@ -1494,7 +1498,7 @@ export default function App() {
                       <button
                         key={m}
                         onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
-                        className={`px-2 py-0.5 rounded text-[11px] font-label border transition-colors ${
+                        className={`px-2 py-0.5 rounded text-[13px] font-label border transition-colors ${
                           store.aiConfig.model === m
                             ? 'bg-primary/10 border-primary/30 text-primary'
                             : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'
@@ -1515,7 +1519,7 @@ export default function App() {
                           <button
                             key={m}
                             onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
-                            className={`px-2 py-1 rounded text-[11px] font-label border transition-colors ${
+                            className={`px-2 py-1 rounded text-[13px] font-label border transition-colors ${
                               store.aiConfig.model === m
                                 ? 'bg-primary/10 border-primary/30 text-primary'
                                 : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'
@@ -1546,21 +1550,21 @@ export default function App() {
                   disabled={aiTestStatus === 'testing'}
                   className="flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-[16px]">{aiTestStatus === 'testing' ? 'hourglass_top' : 'wifi_tethering'}</span>
+                  <span className="material-symbols-outlined text-[18px]">{aiTestStatus === 'testing' ? 'hourglass_top' : 'wifi_tethering'}</span>
                   <span>{aiTestStatus === 'testing' ? '测试中…' : '测试连接'}</span>
                 </button>
                 {aiTestStatus === 'success' && (
                   <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-sm font-label">
-                    <span className="material-symbols-outlined text-[16px]">check_circle</span>连接成功
+                    <span className="material-symbols-outlined text-[18px]">check_circle</span>连接成功
                   </span>
                 )}
                 {aiTestStatus === 'fail' && (
                   <div className="flex flex-col gap-1">
                     <span className="flex items-center gap-1 text-red-600 dark:text-red-400 text-sm font-label">
-                      <span className="material-symbols-outlined text-[16px]">error</span>连接失败
+                      <span className="material-symbols-outlined text-[18px]">error</span>连接失败
                     </span>
                     {aiTestError && (
-                      <span className="text-[11px] text-red-500/80 dark:text-red-400/70 font-mono break-all max-w-xs">{aiTestError}</span>
+                      <span className="text-[13px] text-red-500/80 dark:text-red-400/70 font-mono break-all max-w-xs">{aiTestError}</span>
                     )}
                   </div>
                 )}
@@ -1571,12 +1575,12 @@ export default function App() {
       )}
 
       {/* Cloud Login Modal */}
-      {showCloudLogin && (
+      {SUPABASE_ENABLED && showCloudLogin && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowCloudLogin(false)}>
           <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">
-                <span className="material-symbols-outlined text-primary text-[24px]">cloud</span>
+                <span className="material-symbols-outlined text-primary text-[26px]">cloud</span>
                 <h2 className="font-headline text-xl font-bold text-on-surface">云端同步</h2>
               </div>
               <button onClick={() => setShowCloudLogin(false)} className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
@@ -1587,7 +1591,7 @@ export default function App() {
             {store.cloudUser ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-3 p-3 bg-emerald-50/60 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-xl">
-                  <span className="material-symbols-outlined text-emerald-500 text-[20px]">check_circle</span>
+                  <span className="material-symbols-outlined text-emerald-500 text-[22px]">check_circle</span>
                   <div>
                     <p className="text-sm font-label font-medium text-on-surface">已登录</p>
                     <p className="text-xs text-on-surface-variant">{store.cloudUser.email}</p>
@@ -1598,14 +1602,14 @@ export default function App() {
                   disabled={cloudSyncing}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-label font-medium hover:bg-primary/15 transition-colors disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-[18px]">{cloudSyncing ? 'hourglass_top' : 'sync'}</span>
+                  <span className="material-symbols-outlined text-[20px]">{cloudSyncing ? 'hourglass_top' : 'sync'}</span>
                   {cloudSyncing ? '同步中…' : '立即从云端同步'}
                 </button>
                 <button
                   onClick={async () => { await signOut(); showToast('已退出登录'); setShowCloudLogin(false); }}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-outline-variant/30 rounded-xl text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
                 >
-                  <span className="material-symbols-outlined text-[18px]">logout</span>退出登录
+                  <span className="material-symbols-outlined text-[20px]">logout</span>退出登录
                 </button>
               </div>
             ) : (

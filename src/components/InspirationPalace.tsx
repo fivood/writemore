@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+﻿import { useEffect, useState, useMemo } from 'react';
 import { db } from '../db';
 import { useStore } from '../store';
 import { SCENE_PROMPTS } from '../data/scenes';
@@ -175,7 +175,7 @@ export default function InspirationPalace() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="font-headline text-3xl font-black text-on-surface flex items-center space-x-3">
-              <span className="text-[32px]">🏛</span>
+              <span className="text-[34px]">🏛</span>
               <span>灵感宫殿</span>
             </h2>
             <p className="text-on-surface-variant font-label text-sm mt-1">所有写作灵感汇聚于此</p>
@@ -191,7 +191,7 @@ export default function InspirationPalace() {
                   disabled={aiRemixLoading}
                   className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-violet-50/60 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-lg text-xs font-label text-violet-700 dark:text-violet-400 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-[14px]">{aiRemixLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                  <span className="material-symbols-outlined text-[16px]">{aiRemixLoading ? 'hourglass_top' : 'auto_awesome'}</span>
                   <span>{aiRemixLoading ? '生成中…' : 'AI 再创作'}</span>
                 </button>
               )}
@@ -202,8 +202,8 @@ export default function InspirationPalace() {
         {/* AI Remix Result */}
         {aiRemixResult && (
           <div className="mb-6 bg-violet-50/60 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-xl p-4">
-            <p className="text-[10px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-400 mb-2 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[12px]">auto_awesome</span>AI 灵感再创作
+            <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-400 mb-2 flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">auto_awesome</span>AI 灵感再创作
             </p>
             <p className="text-sm text-violet-900 dark:text-violet-200 leading-relaxed mb-3">{aiRemixResult}</p>
             <div className="flex gap-2">
@@ -211,7 +211,7 @@ export default function InspirationPalace() {
                 onClick={handleStartFromRemix}
                 className="flex items-center gap-1 px-3 py-1.5 bg-violet-600 text-white rounded-lg text-xs font-label hover:bg-violet-700 transition-colors"
               >
-                <span className="material-symbols-outlined text-[14px]">edit</span>
+                <span className="material-symbols-outlined text-[16px]">edit</span>
                 <span>以此开始写作</span>
               </button>
               <button
@@ -219,7 +219,7 @@ export default function InspirationPalace() {
                 disabled={aiRemixLoading}
                 className="flex items-center gap-1 px-3 py-1.5 border border-violet-300 dark:border-violet-400/20 rounded-lg text-xs font-label text-violet-700 dark:text-violet-400 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
               >
-                <span className="material-symbols-outlined text-[14px]">refresh</span>
+                <span className="material-symbols-outlined text-[16px]">refresh</span>
                 <span>再来一个</span>
               </button>
             </div>
@@ -253,7 +253,7 @@ export default function InspirationPalace() {
                       : 'bg-surface-container text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[14px]">{m.icon}</span>
+                  <span className="material-symbols-outlined text-[16px]">{m.icon}</span>
                   <span>{m.label}</span>
                   <span className="opacity-60">{count}</span>
                 </button>
@@ -262,7 +262,7 @@ export default function InspirationPalace() {
 
             {/* Search */}
             <div className="relative ml-auto">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[16px]">search</span>
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
               <input
                 type="text"
                 placeholder="搜索灵感..."
@@ -319,13 +319,13 @@ export default function InspirationPalace() {
                     className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
                     title="删除"
                   >
-                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                    <span className="material-symbols-outlined text-[20px]">delete</span>
                   </button>
 
                   {/* Mode badge + date */}
                   <div className="flex items-center justify-between mb-3 pr-8">
-                    <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-label font-medium border ${mStyle.bg} ${mStyle.border} ${mStyle.text}`}>
-                      <span className="material-symbols-outlined text-[12px]">{mStyle.icon}</span>
+                    <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[12px] font-label font-medium border ${mStyle.bg} ${mStyle.border} ${mStyle.text}`}>
+                      <span className="material-symbols-outlined text-[14px]">{mStyle.icon}</span>
                       <span>{mLabel?.label}</span>
                     </span>
                     <span className="text-xs font-label text-outline">
@@ -341,7 +341,7 @@ export default function InspirationPalace() {
                   {/* Scene subtitle */}
                   {sceneTitle && (
                     <p className="text-xs text-blue-500 font-label mb-2 flex items-center space-x-1">
-                      <span className="material-symbols-outlined text-[12px]">landscape</span>
+                      <span className="material-symbols-outlined text-[14px]">landscape</span>
                       <span>{sceneTitle}</span>
                     </p>
                   )}
@@ -353,18 +353,18 @@ export default function InspirationPalace() {
 
                   {/* Bottom: word count + word chips */}
                   <div className="flex items-center justify-between pt-3 border-t border-outline-variant/10">
-                    <span className="text-[10px] tracking-wider uppercase bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-label font-medium">
+                    <span className="text-[12px] tracking-wider uppercase bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-label font-medium">
                       {item.draft.wordCount} 字
                     </span>
                     {item.wordSet && item.wordSet.words.length > 0 && (
                       <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
                         {item.wordSet.words.slice(0, 4).map((w, idx) => (
-                          <span key={idx} className="px-1.5 py-0.5 bg-surface-container-high text-on-surface-variant text-[12px] rounded border border-outline-variant/20 font-label">
+                          <span key={idx} className="px-1.5 py-0.5 bg-surface-container-high text-on-surface-variant text-[14px] rounded border border-outline-variant/20 font-label">
                             {w.text}
                           </span>
                         ))}
                         {item.wordSet.words.length > 4 && (
-                          <span className="text-[12px] text-outline font-label">+{item.wordSet.words.length - 4}</span>
+                          <span className="text-[14px] text-outline font-label">+{item.wordSet.words.length - 4}</span>
                         )}
                       </div>
                     )}

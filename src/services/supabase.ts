@@ -4,10 +4,15 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Draft, WordSet } from '../types';
 
-const SUPABASE_URL = 'https://perntvwcweiegfgozhge.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_6tsePQAUTbNR9wujWdcoPg_p3KE0ccB';
+const SUPABASE_URL = '';
+const SUPABASE_KEY = '';
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+/** 凭据为空时云功能全部禁用，用户纯本地使用 */
+export const SUPABASE_ENABLED = !!(SUPABASE_URL && SUPABASE_KEY);
+
+export const supabase = SUPABASE_ENABLED
+  ? createClient(SUPABASE_URL, SUPABASE_KEY)
+  : null as unknown as ReturnType<typeof createClient>;
 
 // ── 认证 ──────────────────────────────────────────────────
 
