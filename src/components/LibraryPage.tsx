@@ -67,7 +67,7 @@ function parseMdImport(content: string): ParsedImportItem[] {
         const text = m[2].trim();
         const explanation = (m[3] || '').trim();
         if (text) {
-          items.push({ text, explanation, genre });
+          items.push({ text, explanation, category: genre });
           matched = true;
           break;
         }
@@ -76,7 +76,7 @@ function parseMdImport(content: string): ParsedImportItem[] {
 
     // Fallback: treat as plain word with no genre/explanation
     if (!matched && line.length > 0 && line.length <= 20 && !line.includes(' ')) {
-      items.push({ text: line, explanation: '', genre: '通用' });
+      items.push({ text: line, explanation: '', category: '通用' });
     }
   }
 

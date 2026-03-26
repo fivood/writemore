@@ -144,6 +144,7 @@ export async function testConnection(config: AIConfig): Promise<boolean> {
 /** 预设的 API 供应商 */
 export const API_PRESETS: { label: string; base: string; models: string[] }[] = [
   { label: 'OpenAI',   base: 'https://api.openai.com/v1',  models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1-nano'] },
+  { label: 'Gemini',   base: 'https://generativelanguage.googleapis.com/v1beta/openai', models: ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash', 'gemini-1.5-pro'] },
   { label: 'DeepSeek', base: 'https://api.deepseek.com/v1', models: ['deepseek-chat'] },
   { label: 'Ollama (本地)', base: 'http://localhost:11434/v1', models: ['qwen2.5', 'llama3', 'mistral'] },
 ];
