@@ -18,6 +18,7 @@ export default function App() {
   const store = useStore();
   const [toast, setToast] = useState('');
   const [wordsSubView, setWordsSubView] = useState<'write' | 'library'>('write');
+  const [todayOtherDraftsWords, setTodayOtherDraftsWords] = useState(0);
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
   // Theme
@@ -196,6 +197,7 @@ export default function App() {
       store.setCurrentWordSetId(wordSetId);
       store.setCurrentDraftId(draftId);
       showToast(`💾 已保存 (${store.editorContent.replace(/\s/g, '').length}字)`);
+      refreshTodayWords();
     } catch (e) {
       console.error('Failed to save draft', e);
     }
@@ -225,7 +227,23 @@ export default function App() {
     setTimeout(() => setToast(''), 2500);
   }
 
-  const wordCount = store.editorContent.replace(/\s/g, '').length;
+  async function refreshTodayWords() {
+    try {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const drafts = await db.drafts.toArray();
+      const total = drafts
+        .filter(d => !d.deletedFromPalace)
+        .filter(d => new Date(d.updatedAt).toISOString().slice(0, 10) === todayStr)
+        .filter(d => d.id !== store.currentDraftId)
+        .reduce((sum, d) => sum + (d.wordCount || 0), 0);
+      setTodayOtherDraftsWords(total);
+    } catch {}
+  }
+
+  useEffect(() => { refreshTodayWords(); }, [store.currentDraftId]);
+
+  const currentEditorWords = store.editorContent.replace(/\s/g, '').length;
+  const wordCount = todayOtherDraftsWords + currentEditorWords;
   
   const today = new Date();
   const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 · 星期${['日', '一', '二', '三', '四', '五', '六'][today.getDay()]}`;
