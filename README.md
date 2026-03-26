@@ -4,6 +4,35 @@
 
 数据优先存储在浏览器本地（IndexedDB），可选登录账号后自动同步到云端，多设备共享草稿。
 
+## 快速开始
+
+### 网页版（无需安装）
+
+直接访问：**https://fivood.github.io/writemore/**
+
+数据存储在浏览器本地，登录账号可同步到云端。
+
+#### iPad / iPhone 安装为 App
+
+1. Safari 打开上方网址
+2. 点击底部 **分享按钮**（方块+箭头图标）
+3. 选择 **「添加到主屏幕」**
+4. 主屏幕出现图标后，点击即可全屏运行
+
+---
+
+### Windows 桌面版
+
+前往 [Releases 页面](https://github.com/fivood/writemore/releases/latest) 下载最新版本：
+
+| 文件 | 说明 |
+|------|------|
+| `WriteMore_*_x64-setup.exe` | 安装包（推荐） |
+| `WriteMore_*_x64_en-US.msi` | MSI 安装包 |
+| `app.exe`（在 zip 内） | 绿色版，解压后直接双击运行 |
+
+> **提示**：首次运行需要 [WebView2 Runtime](https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/)。Windows 11 / Windows 10 21H2+ 已内置，无需单独安装。
+
 ## 功能
 
 ### 六种写作模式
