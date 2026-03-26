@@ -16531,5 +16531,1226 @@
     ],
     "source": "builtin",
     "enabled": true
+  },
+  {
+    "id": "w1638",
+    "text": "馥郁",
+    "explanation": "浓郁甜美的香气",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1639",
+    "text": "刺鼻",
+    "explanation": "刺激嗅觉、令人不适的强烈气味",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1640",
+    "text": "幽香",
+    "explanation": "幽静淡雅的气息",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1641",
+    "text": "腥咸",
+    "explanation": "带腥气的咸味",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1642",
+    "text": "苦涩",
+    "explanation": "苦而发涩的滋味，也形容心情的痛苦",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1643",
+    "text": "回甘",
+    "explanation": "先苦后甜的回味",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1644",
+    "text": "酸楚",
+    "explanation": "酸涩难受的感觉",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1645",
+    "text": "灼热",
+    "explanation": "如火烧般的炽烈热度",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1646",
+    "text": "冰凉",
+    "explanation": "冰冷的触感",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1647",
+    "text": "温热",
+    "explanation": "温暖而带热意的感觉",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1648",
+    "text": "刺痛",
+    "explanation": "如针刺般的疼痛",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1649",
+    "text": "酥麻",
+    "explanation": "酥软而麻木的感觉",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1650",
+    "text": "粗粝",
+    "explanation": "粗糙不平的质感",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1651",
+    "text": "柔滑",
+    "explanation": "柔软光滑的触感",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1652",
+    "text": "粘稠",
+    "explanation": "浓厚而有黏性的质感",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1653",
+    "text": "湿润",
+    "explanation": "略带水分、不干燥的感觉",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1654",
+    "text": "干涩",
+    "explanation": "干燥涩滞、缺乏润泽的感觉",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1655",
+    "text": "震颤",
+    "explanation": "细微持续地颤动",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1656",
+    "text": "冷冽",
+    "explanation": "寒冷而清爽刺骨",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1657",
+    "text": "嘶哑",
+    "explanation": "声音沙哑，失去圆润",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1658",
+    "text": "悠扬",
+    "explanation": "声音高低起伏、绵延远传",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1659",
+    "text": "刺耳",
+    "explanation": "极不悦耳，令人难受的声音",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1660",
+    "text": "回荡",
+    "explanation": "声音在空间中反复震荡",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1661",
+    "text": "低沉",
+    "explanation": "声音深沉浑厚",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1662",
+    "text": "轰鸣",
+    "explanation": "如雷般巨大的轰响",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1663",
+    "text": "呜咽",
+    "explanation": "哽咽悲泣的声音",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1664",
+    "text": "窸窣",
+    "explanation": "细微的摩擦或碎裂声",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1665",
+    "text": "叮当",
+    "explanation": "清脆的碰撞声响",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1666",
+    "text": "空洞",
+    "explanation": "空虚无物般的回响",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1667",
+    "text": "朦胧",
+    "explanation": "模糊不清楚",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1668",
+    "text": "炫目",
+    "explanation": "极度耀眼，令人目眩",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1669",
+    "text": "暗淡",
+    "explanation": "光线不足，缺乏光泽",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1670",
+    "text": "闪烁",
+    "explanation": "忽明忽暗地发光",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1671",
+    "text": "惨白",
+    "explanation": "毫无血色的苍白",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1672",
+    "text": "刺眼",
+    "explanation": "光线过强，令人难以直视",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1673",
+    "text": "绯红",
+    "explanation": "鲜艳的红色",
+    "category": "感官",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1674",
+    "text": "俯瞰",
+    "explanation": "从高处向下注视",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1675",
+    "text": "凝视",
+    "explanation": "专注而深沉地注视",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1676",
+    "text": "叹息",
+    "explanation": "深深吸气后缓慢呼出，表达遗憾无奈",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1677",
+    "text": "蜷缩",
+    "explanation": "身体弯曲紧缩成一团",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1678",
+    "text": "踉跄",
+    "explanation": "走路不稳，跌跌撞撞",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1679",
+    "text": "徘徊",
+    "explanation": "在同一地方来回走动，表现犹豫不决",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1680",
+    "text": "弥漫",
+    "explanation": "向四面扩散充满",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1681",
+    "text": "蔓延",
+    "explanation": "逐渐向四周扩展蔓伸",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1682",
+    "text": "侵蚀",
+    "explanation": "缓慢地侵入腐蚀",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1683",
+    "text": "吞噬",
+    "explanation": "完全吞掉，彻底消灭",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1684",
+    "text": "笼罩",
+    "explanation": "遮盖覆盖，无处可逃",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1685",
+    "text": "穿透",
+    "explanation": "穿过阻隔，透达另一面",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1686",
+    "text": "缠绕",
+    "explanation": "绕在一起，难以分开",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1687",
+    "text": "燃烧",
+    "explanation": "持续地发热发光，比喻激情与消耗",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1688",
+    "text": "涌动",
+    "explanation": "翻涌流动，大量涌出",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1689",
+    "text": "流淌",
+    "explanation": "液体缓慢流动",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1690",
+    "text": "凝固",
+    "explanation": "停止流动，变为固态，比喻凝滞",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1691",
+    "text": "消散",
+    "explanation": "渐渐消失散去",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1692",
+    "text": "崩塌",
+    "explanation": "突然倒塌，秩序瓦解",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1693",
+    "text": "逃离",
+    "explanation": "逃脱离开",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1694",
+    "text": "追逐",
+    "explanation": "跟在后面奋力追赶",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1695",
+    "text": "呢喃",
+    "explanation": "轻柔絮絮地低声说话",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1696",
+    "text": "叫嚣",
+    "explanation": "大声吵嚷喧嚣",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1697",
+    "text": "躲避",
+    "explanation": "躲开，回避接触",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1698",
+    "text": "颤栗",
+    "explanation": "因恐惧或寒冷而剧烈颤抖",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1699",
+    "text": "摇曳",
+    "explanation": "轻轻摇晃",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1700",
+    "text": "沉沦",
+    "explanation": "陷入不好的境地无法自拔",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1701",
+    "text": "凋零",
+    "explanation": "花草枯萎凋落，比喻逐渐消亡",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1702",
+    "text": "绽放",
+    "explanation": "花朵开放，比喻美好事物展现",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1703",
+    "text": "挣脱",
+    "explanation": "用力摆脱束缚",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1704",
+    "text": "奔涌",
+    "explanation": "水流急速涌出，比喻情感大量涌现",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1705",
+    "text": "消逝",
+    "explanation": "慢慢消失不见",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1706",
+    "text": "蒸腾",
+    "explanation": "热气或气体向上升腾",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1707",
+    "text": "沉淀",
+    "explanation": "物质沉于底部，比喻沉静积累",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1708",
+    "text": "沸腾",
+    "explanation": "剧烈翻滚，比喻情绪激昂",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1709",
+    "text": "破碎",
+    "explanation": "裂成碎片，无法复原",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1710",
+    "text": "撕裂",
+    "explanation": "猛力撕开，用力裂开",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1711",
+    "text": "渗透",
+    "explanation": "慢慢透入，潜移默化地影响",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1712",
+    "text": "溶解",
+    "explanation": "固体在液体中分散消失",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1713",
+    "text": "回响",
+    "explanation": "声音或影响持续震荡延续",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1714",
+    "text": "潜伏",
+    "explanation": "隐藏等待，蛰伏暗处",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1715",
+    "text": "蛰伏",
+    "explanation": "蛰居低调，等待时机",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1716",
+    "text": "苏醒",
+    "explanation": "从昏迷或沉睡中醒来",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1717",
+    "text": "沉醉",
+    "explanation": "深深沉浸其中",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1718",
+    "text": "迷失",
+    "explanation": "失去方向或自我",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1719",
+    "text": "盘旋",
+    "explanation": "环绕飞行，反复绕行",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1720",
+    "text": "交织",
+    "explanation": "相互穿插缠绕",
+    "category": "动作",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1721",
+    "text": "悸动",
+    "explanation": "心跳加速，内心激动不安",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1722",
+    "text": "惆怅",
+    "explanation": "因失意而感到忧郁悲哀",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1723",
+    "text": "麻木",
+    "explanation": "感觉迟钝，对痛苦失去反应",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1724",
+    "text": "茫然",
+    "explanation": "不知所措，毫无头绪",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1725",
+    "text": "迷惘",
+    "explanation": "迷失方向，不知所措",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1726",
+    "text": "怅然",
+    "explanation": "因失意失落而感到不快",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1727",
+    "text": "压抑",
+    "explanation": "情绪受到压制，无法宣泄",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1728",
+    "text": "煎熬",
+    "explanation": "极度痛苦地忍受",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1729",
+    "text": "颓然",
+    "explanation": "精神萎靡，无精打采",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1730",
+    "text": "惶恐",
+    "explanation": "极度惊慌害怕",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1731",
+    "text": "悲怆",
+    "explanation": "极度悲哀凄凉",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1732",
+    "text": "惊愕",
+    "explanation": "因突然发生的事而惊讶呆滞",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1733",
+    "text": "愧疚",
+    "explanation": "因做错事而内心不安",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1734",
+    "text": "释然",
+    "explanation": "放下心中负担，感到轻松自在",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1735",
+    "text": "恍惚",
+    "explanation": "心神不定，记忆朦胧",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1736",
+    "text": "跌宕",
+    "explanation": "起伏变化，情节激烈",
+    "category": "状态",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1737",
+    "text": "残阳",
+    "explanation": "将落的夕阳，比喻末日或垂暮之年",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1738",
+    "text": "惊鸿",
+    "explanation": "轻盈美丽的身影，惊鸿一瞥",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1739",
+    "text": "破镜",
+    "explanation": "残缺的镜子，比喻离散与破碎的感情",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1740",
+    "text": "飞蛾扑火",
+    "explanation": "明知危险仍奋不顾身地无悔追求",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1741",
+    "text": "执念",
+    "explanation": "无法放下的执著心念",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1742",
+    "text": "孤鸿",
+    "explanation": "独自飞翔的大雁，比喻孤独漂泊",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1743",
+    "text": "霜华",
+    "explanation": "白色的霜，比喻白发或冷寂清绝",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1744",
+    "text": "落幕",
+    "explanation": "演出结束，帷幕放下，比喻终结",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1745",
+    "text": "镜中月",
+    "explanation": "镜中的月亮，可见却无法触碰的虚幻",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1746",
+    "text": "水中花",
+    "explanation": "水中倒映的花，虚幻易逝之美",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1747",
+    "text": "一叶知秋",
+    "explanation": "见一片落叶便知秋至，从细微处洞察大势",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1748",
+    "text": "物是人非",
+    "explanation": "景物依旧而人事已非，感叹世事变迁",
+    "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
   }
 ]

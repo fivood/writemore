@@ -1,10 +1,12 @@
 import Dexie, { type Table } from 'dexie';
 import type { Word, WordSet, Draft } from './types';
+import type { WritingChallenge } from './data/challenges';
 
 export class WriteMoreDB extends Dexie {
   words!: Table<Word>;
   wordSets!: Table<WordSet>;
   drafts!: Table<Draft>;
+  challenges!: Table<WritingChallenge>;
 
   constructor() {
     super('writemore');
@@ -12,6 +14,17 @@ export class WriteMoreDB extends Dexie {
       words: 'id, text, genre, source, enabled',
       wordSets: 'id, createdAt, isFavorite, hasWritten, genre',
       drafts: 'id, wordSetId, updatedAt',
+    });
+    this.version(2).stores({
+      words: 'id, text, genre, source, enabled',
+      wordSets: 'id, createdAt, isFavorite, hasWritten, genre',
+      drafts: 'id, wordSetId, updatedAt, writingMode',
+    });
+    this.version(3).stores({
+      words: 'id, text, genre, source, enabled',
+      wordSets: 'id, createdAt, isFavorite, hasWritten, genre',
+      drafts: 'id, wordSetId, updatedAt, writingMode',
+      challenges: 'id, source',
     });
   }
 }

@@ -1,5 +1,6 @@
 import builtinWords from '../data/words.json';
-import type { Word, Genre } from '../types';
+import type { Word, Genre, WordCategory } from '../types';
+import { FICTION_GENRES } from '../types';
 
 // Migrate old-format words (single genre) to new format (category + genres[])
 function migrateWord(w: any): Word {
@@ -26,8 +27,16 @@ export function getWordsByGenres(genres: Genre[]): Word[] {
   );
 }
 
-export function drawRandomWords(count: number, genres: Genre[], locked: Map<number, Word>): Word[] {
-  const pool = getWordsByGenres(genres);
+export function pickRandomGenre(selectedGenres: Genre[]): Genre {
+  const pool = selectedGenres.length > 0 ? selectedGenres.filter(g => g !== '通用') : FICTION_GENRES;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+export function drawRandomWords(count: number, categories: WordCategory[], locked: Map<number, Word>): Word[] {
+  const base = allWords.filter(w => w.enabled !== false);
+  const pool = categories.length === 0
+    ? base
+    : base.filter(w => categories.includes(w.category as WordCategory));
   const result: Word[] = new Array(count);
   const usedIds = new Set<string>();
 

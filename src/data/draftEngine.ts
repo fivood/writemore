@@ -1,12 +1,16 @@
 import { db } from '../db';
-import type { Word, WordSet, Draft } from '../types';
+import type { Word, WordSet, Draft, WritingMode } from '../types';
 
 export async function saveDraftToDb(
   title: string,
   content: string,
   currentWords: Word[],
   existingWordSetId: string | null,
-  existingDraftId: string | null
+  existingDraftId: string | null,
+  drawnGenre?: string | null,
+  writingMode?: WritingMode | null,
+  sceneId?: string | null,
+  challengeId?: string | null,
 ): Promise<{ wordSetId: string; draftId: string }> {
   
   let wordSetId = existingWordSetId;
@@ -18,7 +22,7 @@ export async function saveDraftToDb(
     const wordSet: WordSet = {
       id: wordSetId,
       words: currentWords,
-      genre: currentWords[0]?.genres?.[0] || '通用',
+      genre: drawnGenre || currentWords[0]?.genres?.[0] || '通用',
       createdAt: now,
       isFavorite: false,
       hasWritten: true,
@@ -30,7 +34,7 @@ export async function saveDraftToDb(
      await db.wordSets.put({
        id: wordSetId,
        words: [],
-       genre: '通用',
+       genre: drawnGenre || '通用',
        createdAt: now,
        isFavorite: false,
        hasWritten: true,
@@ -59,6 +63,9 @@ export async function saveDraftToDb(
       wordCount,
       createdAt: now,
       updatedAt: now,
+      writingMode: writingMode || undefined,
+      sceneId: sceneId || undefined,
+      challengeId: challengeId || undefined,
     };
     await db.drafts.put(draft);
   }

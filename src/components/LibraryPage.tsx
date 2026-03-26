@@ -1,39 +1,30 @@
 import { useState, useMemo, useRef } from 'react';
 import { getAllWords, addUserWord, updateUserWord, deleteUserWord, toggleWordEnabled } from '../data/wordEngine';
-import type { Word, Genre } from '../types';
-import { FICTION_GENRES } from '../types';
+import type { Word, Genre, WordCategory } from '../types';
+import { WORD_CATEGORIES, CATEGORY_META } from '../types';
 
 type ViewFilter = 'all' | 'builtin' | 'user';
 
-const GENRE_OPTIONS: (Genre | 'all')[] = ['all', ...FICTION_GENRES, '通用'];
-const GENRE_LABELS: Record<string, string> = {
-  all: '全部类型', 科幻: '科幻', 悬疑: '悬疑', 奇幻: '奇幻', 言情: '言情',
-  武侠: '武侠', 都市: '都市', 历史: '历史', 恐怖: '恐怖', 通用: '通用',
-};
-const GENRE_COLORS: Record<string, string> = {
-  科幻: 'bg-blue-100 text-blue-700 border-blue-200',
-  悬疑: 'bg-purple-100 text-purple-700 border-purple-200',
-  奇幻: 'bg-cyan-100 text-cyan-700 border-cyan-200',
-  言情: 'bg-pink-100 text-pink-700 border-pink-200',
-  武侠: 'bg-orange-100 text-orange-700 border-orange-200',
-  都市: 'bg-teal-100 text-teal-700 border-teal-200',
-  历史: 'bg-amber-100 text-amber-800 border-amber-200',
-  恐怖: 'bg-red-100 text-red-700 border-red-200',
-  通用: 'bg-stone-100 text-stone-600 border-stone-200',
-};
+const CATEGORY_OPTIONS: (WordCategory | 'all')[] = ['all', ...WORD_CATEGORIES];
+
+const CATEGORY_COLORS: Record<string, string> = Object.fromEntries(
+  WORD_CATEGORIES.map(c => [c, CATEGORY_META[c]?.color ?? 'bg-stone-100 text-stone-600 border-stone-200'])
+);
+CATEGORY_COLORS['all'] = 'bg-stone-100 text-stone-600 border-stone-200';
 
 interface EditingWord {
   id?: string;
   text: string;
   explanation: string;
-  genre: Genre;
+  category: WordCategory;
+  genres: Genre[];
 }
 
 // ── Import types ──
 interface ParsedImportItem {
   text: string;
   explanation: string;
-  genre: string;           // raw string from file, may be a new genre
+  category: string;        // raw string from file, may be a new category
 }
 
 type ImportItemStatus = 'new' | 'duplicate' | 'conflict';
@@ -43,7 +34,7 @@ interface ImportPreviewItem {
   status: ImportItemStatus;
   existingWord?: Word;     // the matching existing word if duplicate/conflict
   selected: boolean;       // user can toggle
-  resolvedGenre: string;   // final genre to use (may be overridden)
+  resolvedCategory: string; // final category to use (may be overridden)
 }
 
 // ── MD parser ──
@@ -100,7 +91,7 @@ function parseJsonImport(content: string): ParsedImportItem[] {
     .map((item: Record<string, unknown>) => ({
       text: (item.text as string).trim(),
       explanation: ((item.explanation as string) || '').trim(),
-      genre: ((item.genre as string) || '通用').trim(),
+      category: ((item.category as string) || (item.genre as string) || '意象').trim(),
     }));
 }
 
@@ -115,12 +106,12 @@ function ImportPreviewModal({
   onClose: () => void;
 }) {
   const [previewItems, setPreviewItems] = useState(items);
-  const KNOWN_GENRES = new Set([...FICTION_GENRES, '通用']);
+  const KNOWN_CATEGORIES = new Set(WORD_CATEGORIES);
 
   const newWords = previewItems.filter(i => i.status === 'new');
   const duplicates = previewItems.filter(i => i.status === 'duplicate');
   const conflicts = previewItems.filter(i => i.status === 'conflict');
-  const newGenres = [...new Set(previewItems.map(i => i.resolvedGenre).filter(g => !KNOWN_GENRES.has(g)))];
+  const unknownCategories = [...new Set(previewItems.map(i => i.resolvedCategory).filter(c => !KNOWN_CATEGORIES.has(c)))];
   const selectedCount = previewItems.filter(i => i.selected).length;
 
   const toggleItem = (idx: number) => {
@@ -135,8 +126,8 @@ function ImportPreviewModal({
     setPreviewItems(prev => prev.map(item => item.status === status ? { ...item, selected } : item));
   };
 
-  const updateGenre = (idx: number, genre: string) => {
-    setPreviewItems(prev => prev.map((item, i) => i === idx ? { ...item, resolvedGenre: genre } : item));
+  const updateCategory = (idx: number, category: string) => {
+    setPreviewItems(prev => prev.map((item, i) => i === idx ? { ...item, resolvedCategory: category } : item));
   };
 
   const statusIcon = (s: ImportItemStatus) => {
@@ -192,10 +183,10 @@ function ImportPreviewModal({
                 <span>分类冲突: {conflicts.length}</span>
               </button>
             )}
-            {newGenres.length > 0 && (
+            {unknownCategories.length > 0 && (
               <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-purple-50 text-purple-700 border border-purple-200">
                 <span className="material-symbols-outlined text-[14px]">new_label</span>
-                <span>新分类: {newGenres.join('、')}</span>
+                <span>新分类: {unknownCategories.join('、')}</span>
               </div>
             )}
           </div>
@@ -239,11 +230,11 @@ function ImportPreviewModal({
                   }`}>{statusLabel(item.status)}</span>
                 </div>
 
-                {/* Genre tag */}
+                {/* Category tag */}
                 <span className={`shrink-0 px-1.5 py-0.5 text-[9px] font-label font-bold rounded border tracking-wider ${
-                  GENRE_COLORS[item.resolvedGenre] || 'bg-purple-100 text-purple-700 border-purple-200'
+                  CATEGORY_COLORS[item.resolvedCategory] || 'bg-purple-100 text-purple-700 border-purple-200'
                 }`}>
-                  {item.resolvedGenre}
+                  {CATEGORY_META[item.resolvedCategory]?.icon ?? ''} {item.resolvedCategory}
                 </span>
 
                 {/* Word text */}
@@ -258,19 +249,17 @@ function ImportPreviewModal({
                 {item.status === 'conflict' && item.existingWord && (
                   <div className="shrink-0 flex items-center space-x-1">
                     <span className="text-[10px] text-stone-400 font-label">现有:</span>
-                    <span className={`px-1.5 py-0.5 text-[9px] font-label font-bold rounded border tracking-wider ${
-                      GENRE_COLORS[item.existingWord.genre] || 'bg-stone-100 text-stone-600 border-stone-200'
-                    }`}>{item.existingWord.genre}</span>
+                    <span className={`px-1.5 py-0.5 text-[9px] font-label font-bold rounded border tracking-wider ${CATEGORY_COLORS[item.existingWord.category] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>{item.existingWord.category}</span>
                     <span className="text-[10px] text-stone-400 font-label">→</span>
-                    {/* Let user pick which genre to use */}
+                    {/* Let user pick which category to use */}
                     <select
-                      value={item.resolvedGenre}
-                      onChange={(e) => updateGenre(idx, e.target.value)}
+                      value={item.resolvedCategory}
+                      onChange={(e) => updateCategory(idx, e.target.value)}
                       className="text-[10px] font-label border border-stone-200 rounded px-1 py-0.5 bg-white text-on-surface focus:outline-none"
                       onClick={e => e.stopPropagation()}
                     >
-                      <option value={item.parsed.genre}>{item.parsed.genre} (导入)</option>
-                      <option value={item.existingWord.genre}>{item.existingWord.genre} (保留)</option>
+                      <option value={item.parsed.category}>{item.parsed.category} (导入)</option>
+                      <option value={item.existingWord.category}>{item.existingWord.category} (保留)</option>
                     </select>
                   </div>
                 )}
@@ -286,10 +275,10 @@ function ImportPreviewModal({
         {/* Footer */}
         <div className="p-4 border-t border-stone-100 flex items-center justify-between">
           <p className="text-xs font-label text-stone-400">
-            {newGenres.length > 0 && (
+            {unknownCategories.length > 0 && (
               <span className="text-purple-600">
                 <span className="material-symbols-outlined text-[12px] align-middle">info</span>
-                {' '}新分类「{newGenres.join('、')}」将被自动创建
+                {' '}新分类「{unknownCategories.join('、')}」将被自动创建
               </span>
             )}
           </p>
@@ -316,7 +305,7 @@ function ImportPreviewModal({
 export default function LibraryPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [genreFilter, setGenreFilter] = useState<Genre | 'all'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<WordCategory | 'all'>('all');
   const [sourceFilter, setSourceFilter] = useState<ViewFilter>('all');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<EditingWord | null>(null);
@@ -333,17 +322,17 @@ export default function LibraryPage() {
     const builtin = allWords.filter(w => w.source === 'builtin').length;
     const user = allWords.filter(w => w.source === 'user').length;
     const disabled = allWords.filter(w => !w.enabled).length;
-    const genreCounts = new Map<string, number>();
-    allWords.forEach(w => genreCounts.set(w.genre, (genreCounts.get(w.genre) || 0) + 1));
-    return { total, builtin, user, disabled, genreCounts };
+    const categoryCounts = new Map<string, number>();
+    allWords.forEach(w => categoryCounts.set(w.category, (categoryCounts.get(w.category) || 0) + 1));
+    return { total, builtin, user, disabled, categoryCounts };
   }, [allWords]);
 
   // Filtered words
   const filtered = useMemo(() => {
     let result = allWords;
 
-    if (genreFilter !== 'all') {
-      result = result.filter(w => w.genre === genreFilter);
+    if (categoryFilter !== 'all') {
+      result = result.filter(w => w.category === categoryFilter);
     }
     if (sourceFilter === 'builtin') result = result.filter(w => w.source === 'builtin');
     if (sourceFilter === 'user') result = result.filter(w => w.source === 'user');
@@ -357,7 +346,7 @@ export default function LibraryPage() {
     }
 
     return result;
-  }, [allWords, genreFilter, sourceFilter, searchQuery]);
+  }, [allWords, categoryFilter, sourceFilter, searchQuery]);
 
   // Pagination
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -367,21 +356,21 @@ export default function LibraryPage() {
 
   // Add / Edit word
   const openAddModal = () => {
-    setEditing({ text: '', explanation: '', genre: '通用' });
+    setEditing({ text: '', explanation: '', category: '意象', genres: ['通用'] });
     setShowModal(true);
   };
 
   const openEditModal = (w: Word) => {
-    setEditing({ id: w.id, text: w.text, explanation: w.explanation || '', genre: w.genre });
+    setEditing({ id: w.id, text: w.text, explanation: w.explanation || '', category: w.category || '意象', genres: w.genres || ['通用'] });
     setShowModal(true);
   };
 
   const handleSaveWord = () => {
     if (!editing || !editing.text.trim()) return;
     if (editing.id) {
-      updateUserWord(editing.id, { text: editing.text.trim(), explanation: editing.explanation.trim() || undefined, genre: editing.genre });
+      updateUserWord(editing.id, { text: editing.text.trim(), explanation: editing.explanation.trim() || undefined, category: editing.category });
     } else {
-      addUserWord({ text: editing.text.trim(), explanation: editing.explanation.trim() || undefined, genre: editing.genre });
+      addUserWord({ text: editing.text.trim(), explanation: editing.explanation.trim() || undefined, category: editing.category, genres: editing.genres });
     }
     setShowModal(false);
     setEditing(null);
@@ -436,7 +425,7 @@ export default function LibraryPage() {
 
           if (!existing) {
             status = 'new';
-          } else if (existing.genre !== p.genre) {
+          } else if (existing.category !== p.category) {
             status = 'conflict';
           } else {
             status = 'duplicate';
@@ -447,7 +436,7 @@ export default function LibraryPage() {
             status,
             existingWord: existing,
             selected: status === 'new' || status === 'conflict', // default: select new & conflicts, not pure duplicates
-            resolvedGenre: p.genre,
+            resolvedCategory: p.category,
           };
         });
 
@@ -464,18 +453,16 @@ export default function LibraryPage() {
     let imported = 0;
     for (const item of selected) {
       if (item.status === 'conflict' && item.existingWord) {
-        // Update genre of the existing word if user chose the imported genre
-        if (item.resolvedGenre !== item.existingWord.genre) {
-          // For builtin words we can't update genre directly via updateUserWord,
-          // so we add as new user word with the new genre
+        // Update category of the existing word if user chose the imported category
+        if (item.resolvedCategory !== item.existingWord.category) {
           if (item.existingWord.source === 'user') {
-            updateUserWord(item.existingWord.id, { genre: item.resolvedGenre as Genre });
+            updateUserWord(item.existingWord.id, { category: item.resolvedCategory as WordCategory });
           } else {
-            // Add as user word override
             addUserWord({
               text: item.parsed.text,
               explanation: item.parsed.explanation || item.existingWord.explanation || undefined,
-              genre: item.resolvedGenre as Genre,
+              category: item.resolvedCategory as WordCategory,
+              genres: item.existingWord.genres || ['通用'],
             });
           }
           imported++;
@@ -484,15 +471,16 @@ export default function LibraryPage() {
         addUserWord({
           text: item.parsed.text,
           explanation: item.parsed.explanation || undefined,
-          genre: item.resolvedGenre as Genre,
+          category: item.resolvedCategory as WordCategory,
+          genres: ['通用'],
         });
         imported++;
       } else if (item.status === 'duplicate' && item.selected) {
-        // User explicitly chose to re-import a duplicate — add as user word anyway
         addUserWord({
           text: item.parsed.text,
           explanation: item.parsed.explanation || undefined,
-          genre: item.resolvedGenre as Genre,
+          category: item.resolvedCategory as WordCategory,
+          genres: ['通用'],
         });
         imported++;
       }
@@ -523,7 +511,7 @@ export default function LibraryPage() {
     const userWords = allWords.filter(w => w.source === 'user');
     if (userWords.length === 0) { alert('没有自定义词条可导出'); return; }
     const lines = userWords.map(w =>
-      `[${w.genre}]（${w.text}）${w.explanation ? `：（${w.explanation}）` : ''}`
+      `[${w.category}]（${w.text}）${w.explanation ? `：（${w.explanation}）` : ''}`
     );
     const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
@@ -628,24 +616,28 @@ export default function LibraryPage() {
           )}
         </div>
 
-        {/* Genre filter pills */}
+        {/* Category filter pills */}
         <div className="flex flex-wrap gap-2 mb-5">
-          {GENRE_OPTIONS.map(g => (
-            <button
-              key={g}
-              onClick={() => { setGenreFilter(g); setPage(0); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-label font-medium border transition-all ${
-                genreFilter === g
-                  ? 'bg-primary text-white border-primary'
-                  : 'bg-white text-stone-500 border-stone-200/80 hover:border-stone-300'
-              }`}
-            >
-              {GENRE_LABELS[g]}
-              {g !== 'all' && (
-                <span className="ml-1 opacity-70">({stats.genreCounts.get(g) || 0})</span>
-              )}
-            </button>
-          ))}
+          {CATEGORY_OPTIONS.map(c => {
+            const meta = c !== 'all' ? CATEGORY_META[c] : null;
+            return (
+              <button
+                key={c}
+                onClick={() => { setCategoryFilter(c); setPage(0); }}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium border transition-all ${
+                  categoryFilter === c
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-white text-stone-500 border-stone-200/80 hover:border-stone-300'
+                }`}
+              >
+                {meta && <span className="text-sm leading-none">{meta.icon}</span>}
+                <span>{c === 'all' ? '全部类型' : c}</span>
+                {c !== 'all' && (
+                  <span className="opacity-70">({stats.categoryCounts.get(c) || 0})</span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Search bar */}
@@ -736,9 +728,9 @@ export default function LibraryPage() {
                   )}
                 </div>
 
-                {/* Genre badge */}
-                <span className={`inline-block px-1.5 py-0.5 text-[9px] font-label font-bold rounded border tracking-wider mb-2 ${GENRE_COLORS[w.genre] || GENRE_COLORS['通用']}`}>
-                  {w.genre}
+                {/* Category badge */}
+                <span className={`inline-block px-1.5 py-0.5 text-[9px] font-label font-bold rounded border tracking-wider mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['意象'] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>
+                  {CATEGORY_META[w.category]?.icon ?? ''} {w.category}
                 </span>
 
                 {/* Word text */}
@@ -830,19 +822,20 @@ export default function LibraryPage() {
               </div>
 
               <div>
-                <label className="text-xs font-label font-medium text-stone-600 mb-1.5 block">归属类型</label>
+                <label className="text-xs font-label font-medium text-stone-600 mb-1.5 block">词条分类</label>
                 <div className="flex flex-wrap gap-2">
-                  {([...FICTION_GENRES, '通用'] as Genre[]).map(g => (
+                  {WORD_CATEGORIES.map(c => (
                     <button
-                      key={g}
-                      onClick={() => setEditing({ ...editing, genre: g })}
-                      className={`px-3 py-1.5 rounded-md text-xs font-label font-medium border transition-all ${
-                        editing.genre === g
+                      key={c}
+                      onClick={() => setEditing({ ...editing!, category: c })}
+                      className={`flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs font-label font-medium border transition-all ${
+                        editing.category === c
                           ? 'bg-primary text-white border-primary'
                           : 'bg-white text-stone-500 border-stone-200 hover:border-stone-300'
                       }`}
                     >
-                      {g}
+                      <span>{CATEGORY_META[c]?.icon}</span>
+                      <span>{c}</span>
                     </button>
                   ))}
                 </div>

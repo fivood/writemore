@@ -1,16 +1,22 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Genre, WordCount, Theme, TimerDuration, Word } from './types';
+import type { Genre, WordCategory, WordCount, Theme, TimerDuration, Word, WritingMode, ScenePrompt } from './types';
+import type { WritingChallenge } from './data/challenges';
 
 interface AppState {
   // Theme
   theme: Theme;
   setTheme: (t: Theme) => void;
 
-  // Genre filter
+  // Genre filter (used by pickRandomGenre for style banner)
   selectedGenres: Genre[];
   toggleGenre: (g: Genre) => void;
   setSelectedGenres: (g: Genre[]) => void;
+
+  // Category filter (controls which word types are drawn)
+  selectedCategories: WordCategory[];
+  toggleCategory: (c: WordCategory) => void;
+  setSelectedCategories: (c: WordCategory[]) => void;
 
   // Word count
   wordCount: WordCount;
@@ -64,6 +70,18 @@ interface AppState {
   isCurrentWordSetFavorite: boolean;
   setIsCurrentWordSetFavorite: (fav: boolean) => void;
 
+  // Drawn genre (style prompt for current session)
+  drawnGenre: Genre | null;
+  setDrawnGenre: (g: Genre | null) => void;
+
+  // Writing mode
+  writingMode: WritingMode | null;
+  setWritingMode: (m: WritingMode | null) => void;
+  currentScene: ScenePrompt | null;
+  setCurrentScene: (s: ScenePrompt | null) => void;
+  currentChallenge: WritingChallenge | null;
+  setCurrentChallenge: (c: WritingChallenge | null) => void;
+
   // Font size
   fontSize: 'small' | 'medium' | 'large';
   setFontSize: (s: 'small' | 'medium' | 'large') => void;
@@ -83,6 +101,13 @@ export const useStore = create<AppState>()(
         set({ selectedGenres: cur.includes(g) ? cur.filter(x => x !== g) : [...cur, g] });
       },
       setSelectedGenres: (g) => set({ selectedGenres: g }),
+
+      selectedCategories: [],
+      toggleCategory: (c) => {
+        const cur = get().selectedCategories;
+        set({ selectedCategories: cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c] });
+      },
+      setSelectedCategories: (c) => set({ selectedCategories: c }),
 
       wordCount: 3,
       setWordCount: (c) => set({ wordCount: c }),
@@ -140,6 +165,16 @@ export const useStore = create<AppState>()(
       isCurrentWordSetFavorite: false,
       setIsCurrentWordSetFavorite: (fav) => set({ isCurrentWordSetFavorite: fav }),
 
+      drawnGenre: null,
+      setDrawnGenre: (g) => set({ drawnGenre: g }),
+
+      writingMode: null,
+      setWritingMode: (m) => set({ writingMode: m }),
+      currentScene: null,
+      setCurrentScene: (s) => set({ currentScene: s }),
+      currentChallenge: null,
+      setCurrentChallenge: (c) => set({ currentChallenge: c }),
+
       fontSize: 'medium',
       setFontSize: (s) => set({ fontSize: s }),
     }),
@@ -148,6 +183,7 @@ export const useStore = create<AppState>()(
       partialize: (s) => ({
         theme: s.theme,
         selectedGenres: s.selectedGenres,
+        selectedCategories: s.selectedCategories,
         wordCount: s.wordCount,
         timerDuration: s.timerDuration,
         sidebarCollapsed: s.sidebarCollapsed,
@@ -160,7 +196,10 @@ export const useStore = create<AppState>()(
         currentWordSetId: s.currentWordSetId,
         currentDraftId: s.currentDraftId,
         isCurrentWordSetFavorite: s.isCurrentWordSetFavorite,
-        currentWords: s.currentWords,    // auto-save drawn words too
+        currentWords: s.currentWords,
+        writingMode: s.writingMode,
+        currentScene: s.currentScene,
+        currentChallenge: s.currentChallenge,
       }),
     }
   )
