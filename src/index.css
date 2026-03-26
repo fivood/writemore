@@ -321,6 +321,10 @@ html {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 .dark .bento-glow-amber:hover  { box-shadow: 0 0 50px -8px rgba(255, 177, 72, 0.18); }
 .dark .bento-glow-green:hover  { box-shadow: 0 0 50px -8px rgba(105, 246, 184, 0.18); }
 .dark .bento-glow-rose:hover   { box-shadow: 0 0 50px -8px rgba(255, 100, 120, 0.18); }

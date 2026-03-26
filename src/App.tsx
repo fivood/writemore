@@ -569,7 +569,7 @@ export default function App() {
   return (
     <div className="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
       {/* TopNavBar */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-surface/70 dark:bg-[#100e0d]/75 border-b border-outline-variant/10 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full">
+      <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-surface/70 dark:bg-[#100e0d]/75 border-b border-outline-variant/10 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full safe-area-top">
         <div className="text-lg md:text-xl font-bold text-primary italic font-headline tracking-tight">每日写作灵感</div>
         <nav className="hidden md:flex space-x-8 items-center font-headline text-base tracking-tight">
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('inspire')}>
@@ -624,7 +624,7 @@ export default function App() {
 
       {/* 更新横幅 */}
       {updateBanner && (
-        <div className="fixed top-[72px] left-0 right-0 z-40 flex items-center justify-between px-6 py-2 bg-primary text-on-primary text-xs font-label">
+        <div className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-2 bg-primary text-on-primary text-xs font-label" style={{ top: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
           <span className="flex items-center gap-1.5">
             <span className="material-symbols-outlined text-[16px]">new_releases</span>
             新版本 <strong>{updateBanner.version}</strong> 已发布！
@@ -658,7 +658,7 @@ export default function App() {
         ))}
       </nav>
 
-      <div className="flex h-screen pt-[64px] md:pt-[72px] pb-[56px] md:pb-[45px]">
+      <div className="flex h-screen pb-[56px] md:pb-[45px]" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
 
         {/* ━━━ Mode Selection Screen (Bento) ━━━ */}
         {store.activeTab === 'inspire' && !isWriting && (
