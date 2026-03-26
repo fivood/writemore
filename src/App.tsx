@@ -20,7 +20,7 @@ import LibraryPage from './components/LibraryPage';
 import InspirationPalace from './components/InspirationPalace';
 import { API_PRESETS, testConnection, chatCompletion, chatCompletionStream } from './services/ai';
 import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt } from './services/prompts';
-import { supabase, signIn, signUp, signOut, pushDraft, pullDrafts, SUPABASE_ENABLED } from './services/supabase';
+import { supabase, signIn, signUp, signOut, pushDraft, pullDrafts, pushWordSet, pullWordSets, SUPABASE_ENABLED } from './services/supabase';
 
 export default function App() {
   const store = useStore();
@@ -104,13 +104,46 @@ export default function App() {
     if (!SUPABASE_ENABLED) return;
     try {
       setCloudSyncing(true);
+
+      // ── Draft 双向同步 ──
       const cloudDrafts = await pullDrafts(userId);
+      const localDrafts = await db.drafts.toArray();
+
+      // 云端 → 本地：云端更新的覆盖本地
       for (const cd of cloudDrafts) {
-        const local = await db.drafts.get(cd.id);
+        const local = localDrafts.find(d => d.id === cd.id);
         if (!local || new Date(cd.updatedAt) > new Date(local.updatedAt)) {
           await db.drafts.put(cd);
         }
       }
+
+      // 本地 → 云端：本地有但云端没有、或本地更新的推上去
+      const cloudIdSet = new Set(cloudDrafts.map(d => d.id));
+      for (const ld of localDrafts) {
+        const cloud = cloudDrafts.find(d => d.id === ld.id);
+        if (!cloudIdSet.has(ld.id) || (cloud && new Date(ld.updatedAt) > new Date(cloud.updatedAt))) {
+          await pushDraft(ld, userId);
+        }
+      }
+
+      // ── WordSet 双向同步 ──
+      const cloudWordSets = await pullWordSets(userId);
+      const localWordSets = await db.wordSets.toArray();
+
+      for (const cws of cloudWordSets) {
+        const local = localWordSets.find(w => w.id === cws.id);
+        if (!local) {
+          await db.wordSets.put(cws);
+        }
+      }
+
+      const cloudWsIdSet = new Set(cloudWordSets.map(w => w.id));
+      for (const lws of localWordSets) {
+        if (!cloudWsIdSet.has(lws.id)) {
+          await pushWordSet(lws, userId);
+        }
+      }
+
     } catch (e) {
       console.error('Cloud sync failed', e);
     } finally {
