@@ -1,5 +1,5 @@
-const CACHE = 'writemore-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json', '/icons/128x128.png', '/icons/512x512.png'];
+const CACHE = 'writemore-v2';
+const ASSETS = ['/writemore/', '/writemore/index.html', '/writemore/manifest.json', '/writemore/icons/128x128.png', '/writemore/icons/512x512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
