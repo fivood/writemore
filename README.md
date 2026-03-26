@@ -1,53 +1,102 @@
-# React + TypeScript + Vite
+# WriteMore · 每日写作灵感
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个纯前端的中文创意写作练习工具。通过随机词条、场景描写、写作挑战等多种模式激发灵感，帮助写作者养成每日练笔的习惯。
 
-Currently, two official plugins are available:
+所有数据存储在浏览器本地（IndexedDB），无需注册、无需联网，打开即用。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 功能
 
-## React Compiler
+### 六种写作模式
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| 模式 | 说明 |
+|------|------|
+| **词汇灵感** | 从 9 大分类词库中随机抽取词条，围绕它们展开想象 |
+| **场景描写** | 30 个精心设计的场景提示，练习感官描写能力 |
+| **写作挑战** | 25 道挑战题目，涵盖展示型写作、陈词滥调改造、感官练习等 |
+| **人物描写** | 57 个角色塑造提示，从内心、关系、声音、身体、历史、边缘视角六个维度深挖角色 |
+| **梦境记录** | 自由记录梦境，捕捉潜意识的素材 |
+| **自由发挥** | 无提示、无限制，纯粹的自由书写 |
 
-## Expanding the ESLint configuration
+### 词库系统
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **9 大词汇分类**：意象、实物、动作、状态、感官、抽象、人物、地名、典故
+- **8 种写作风格**：科幻、悬疑、奇幻、言情、武侠、都市、历史、恐怖
+- **词库管理**：支持自定义词条的增删改、批量导入导出（JSON）、按分类筛选
+- **词条锁定**：抽取时可锁定满意的词条，只刷新其余位置
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 写作辅助
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **限时写作**：10 / 15 / 20 / 30 分钟倒计时模式
+- **Markdown 编辑器**：支持 Markdown 格式书写
+- **自动保存**：每 30 秒自动存档
+- **导出**：一键导出为 `.md` 文件
+- **全屏专注**：沉浸式写作体验
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 数据管理
+
+- **灵感宫殿**：浏览所有历史草稿，按写作模式筛选和关键词搜索，一键恢复到编辑器继续写作
+- **收藏**：收藏喜欢的词条组合，随时回顾使用
+- **历史热力图**：类 GitHub 贡献图的写作日历，可视化写作习惯
+- **连续打卡**：记录连续写作天数
+
+### 其他特性
+
+- 亮色 / 暗色 / 跟随系统三种主题
+- 支持导入自定义写作挑战和角色提示（`.md` 文件，每行一条）
+- 构建为单 HTML 文件，可离线使用
+- 键盘快捷键：`Space` 抽取词条，`Ctrl+S` 保存，`Enter` 聚焦编辑器
+
+## 技术栈
+
+- **React 19** + **TypeScript**
+- **Vite** — 开发与构建
+- **Tailwind CSS 4** — 样式
+- **Zustand** — 状态管理
+- **Dexie (IndexedDB)** — 本地数据持久化
+- **Material Symbols** — 图标
+- **vite-plugin-singlefile** — 构建为单文件
+
+## 开发
+
+```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+
+# 类型检查
+npx tsc --noEmit
+
+# 构建生产版本（输出到 dist/index.html）
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 项目结构
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
+```
+src/
+├── App.tsx                  # 主界面与写作模式逻辑
+├── store.ts                 # Zustand 全局状态
+├── db.ts                    # Dexie 数据库定义
+├── types.ts                 # 类型与常量
+├── index.css                # 全局样式与暗色主题
+├── components/
+│   ├── InspirationPalace.tsx  # 灵感宫殿（草稿管理）
+│   ├── FavoritesPage.tsx      # 收藏页
+│   ├── HistoryPage.tsx        # 历史与热力图
+│   └── LibraryPage.tsx        # 词库管理
+└── data/
+    ├── wordEngine.ts          # 词条抽取引擎
+    ├── words.json             # 内置词库数据
+    ├── scenes.ts              # 场景提示库
+    ├── challenges.ts          # 写作挑战题库
+    └── characterPrompts.ts    # 角色描写提示库
+```
+
+## 许可
+
+MIT
 import reactDom from 'eslint-plugin-react-dom'
 
 export default defineConfig([
