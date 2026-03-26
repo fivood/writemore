@@ -13,12 +13,12 @@ interface PalaceItem {
 }
 
 const MODE_STYLE: Record<WritingMode, { icon: string; bg: string; border: string; text: string }> = {
-  words:     { icon: 'casino',      bg: 'bg-amber-50',   border: 'border-amber-200',   text: 'text-amber-700'   },
-  free:      { icon: 'edit_note',   bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700' },
-  scene:     { icon: 'landscape',   bg: 'bg-blue-50',    border: 'border-blue-200',    text: 'text-blue-700'    },
-  dream:     { icon: 'nights_stay', bg: 'bg-violet-50',  border: 'border-violet-200',  text: 'text-violet-700'  },
-  challenge:  { icon: 'quiz',         bg: 'bg-rose-50',    border: 'border-rose-200',    text: 'text-rose-700'    },
-  character:  { icon: 'person_search', bg: 'bg-fuchsia-50', border: 'border-fuchsia-200', text: 'text-fuchsia-700' },
+  words:     { icon: 'casino',       bg: 'bg-amber-50  dark:bg-primary/10',   border: 'border-amber-200  dark:border-primary/20',   text: 'text-amber-700  dark:text-primary'   },
+  free:      { icon: 'edit_note',    bg: 'bg-emerald-50 dark:bg-secondary/10', border: 'border-emerald-200 dark:border-secondary/20', text: 'text-emerald-700 dark:text-secondary' },
+  scene:     { icon: 'landscape',    bg: 'bg-blue-50   dark:bg-blue-900/20',  border: 'border-blue-200   dark:border-blue-400/20',  text: 'text-blue-700   dark:text-blue-300'  },
+  dream:     { icon: 'nights_stay',  bg: 'bg-violet-50 dark:bg-violet-900/20', border: 'border-violet-200 dark:border-violet-400/20', text: 'text-violet-700 dark:text-violet-300' },
+  challenge: { icon: 'quiz',         bg: 'bg-rose-50   dark:bg-rose-900/20',  border: 'border-rose-200   dark:border-rose-400/20',  text: 'text-rose-700   dark:text-rose-300'  },
+  character: { icon: 'person_search', bg: 'bg-fuchsia-50 dark:bg-fuchsia-900/20', border: 'border-fuchsia-200 dark:border-fuchsia-400/20', text: 'text-fuchsia-700 dark:text-fuchsia-300' },
 };
 
 export default function InspirationPalace() {
@@ -147,12 +147,12 @@ export default function InspirationPalace() {
               <span className="text-[32px]">🏛</span>
               <span>灵感宫殿</span>
             </h2>
-            <p className="text-stone-400 font-label text-sm mt-1">所有写作灵感汇聚于此</p>
+            <p className="text-on-surface-variant font-label text-sm mt-1">所有写作灵感汇聚于此</p>
           </div>
           {items.length > 0 && (
-            <div className="flex items-center space-x-4 text-sm font-label text-stone-500">
+            <div className="flex items-center space-x-4 text-sm font-label text-on-surface-variant">
               <span><strong className="text-on-surface">{stats.total}</strong> 条灵感</span>
-              <span className="text-stone-300">|</span>
+              <span className="text-outline-variant">|</span>
               <span><strong className="text-on-surface">{stats.totalWords.toLocaleString()}</strong> 字</span>
             </div>
           )}
@@ -163,7 +163,11 @@ export default function InspirationPalace() {
           <div className="flex items-center gap-2 mb-6 flex-wrap">
             <button
               onClick={() => setFilterMode('all')}
-              className={`px-4 py-2 rounded-full text-xs font-label font-medium transition-all ${filterMode === 'all' ? 'bg-stone-800 text-white' : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50'}`}
+              className={`px-4 py-2 rounded-full text-xs font-label font-medium transition-all ${
+                filterMode === 'all'
+                  ? 'bg-surface-container-high text-on-surface'
+                  : 'bg-surface-container text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high'
+              }`}
             >
               全部 <span className="ml-1 opacity-60">{stats.total}</span>
             </button>
@@ -178,7 +182,7 @@ export default function InspirationPalace() {
                   className={`px-4 py-2 rounded-full text-xs font-label font-medium transition-all flex items-center space-x-1.5 ${
                     filterMode === m.mode
                       ? `${style.bg} ${style.text} ${style.border} border`
-                      : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50'
+                      : 'bg-surface-container text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[14px]">{m.icon}</span>
@@ -190,13 +194,13 @@ export default function InspirationPalace() {
 
             {/* Search */}
             <div className="relative ml-auto">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-[16px]">search</span>
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[16px]">search</span>
               <input
                 type="text"
                 placeholder="搜索灵感..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="pl-9 pr-4 py-2 bg-white rounded-full border border-stone-200 text-xs font-label text-on-surface placeholder:text-stone-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all w-48"
+                className="pl-9 pr-4 py-2 bg-surface-container rounded-full border border-outline-variant/30 text-xs font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all w-48"
               />
             </div>
           </div>
@@ -206,13 +210,13 @@ export default function InspirationPalace() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
             <div className="w-8 h-8 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
-            <p className="mt-4 text-stone-400 text-sm font-label">加载中...</p>
+            <p className="mt-4 text-on-surface-variant text-sm font-label">加载中...</p>
           </div>
         ) : items.length === 0 ? (
           <div className="text-center py-24 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
             <span className="text-5xl mb-4 block">🏛</span>
-            <p className="text-stone-500 font-label text-lg mb-1">灵感宫殿还是空的</p>
-            <p className="text-stone-400 text-sm mt-2 max-w-sm mx-auto leading-relaxed">
+            <p className="text-on-surface-variant font-label text-lg mb-1">灵感宫殿还是空的</p>
+            <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
               选择一种灵感模式，写下你的第一条灵感吧！
             </p>
             <button
@@ -224,8 +228,8 @@ export default function InspirationPalace() {
           </div>
         ) : displayed.length === 0 ? (
           <div className="text-center py-16">
-            <span className="material-symbols-outlined text-4xl text-stone-200 mb-4">search_off</span>
-            <p className="text-stone-500 font-label">没有找到匹配的灵感记录</p>
+            <span className="material-symbols-outlined text-4xl text-outline mb-4">search_off</span>
+            <p className="text-on-surface-variant font-label">没有找到匹配的灵感记录</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -239,12 +243,12 @@ export default function InspirationPalace() {
                 <div
                   key={item.draft.id}
                   onClick={() => handleOpen(item)}
-                  className={`bg-white p-5 rounded-xl border border-stone-100 hover:border-primary/30 custom-shadow cursor-pointer group transition-all duration-300 hover:-translate-y-0.5 relative flex flex-col`}
+                  className={`bg-surface-container p-5 rounded-xl border border-outline-variant/15 hover:border-primary/30 cursor-pointer group transition-all duration-300 hover:-translate-y-0.5 relative flex flex-col`}
                 >
                   {/* Delete */}
                   <button
                     onClick={e => handleDelete(e, item.draft.id)}
-                    className="absolute top-3 right-3 text-stone-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                    className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
                     title="删除"
                   >
                     <span className="material-symbols-outlined text-[18px]">delete</span>
@@ -275,24 +279,24 @@ export default function InspirationPalace() {
                   )}
 
                   {/* Preview */}
-                  <p className="text-stone-500 text-sm line-clamp-3 mb-4 min-h-[54px] leading-relaxed flex-1">
+                  <p className="text-on-surface-variant text-sm line-clamp-3 mb-4 min-h-[54px] leading-relaxed flex-1">
                     {item.draft.content ? item.draft.content.replace(/[#*>_`\[\]]/g, '').slice(0, 150) : '没有任何内容...'}
                   </p>
 
                   {/* Bottom: word count + word chips */}
-                  <div className="flex items-center justify-between pt-3 border-t border-stone-50">
-                    <span className="text-[10px] tracking-wider uppercase bg-surface-container px-2 py-0.5 rounded text-stone-500 font-label font-medium">
+                  <div className="flex items-center justify-between pt-3 border-t border-outline-variant/10">
+                    <span className="text-[10px] tracking-wider uppercase bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-label font-medium">
                       {item.draft.wordCount} 字
                     </span>
                     {item.wordSet && item.wordSet.words.length > 0 && (
                       <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
                         {item.wordSet.words.slice(0, 4).map((w, idx) => (
-                          <span key={idx} className="px-1.5 py-0.5 bg-[#f5f4ef] text-stone-500 text-[9px] rounded border border-stone-200/50 font-label">
+                          <span key={idx} className="px-1.5 py-0.5 bg-surface-container-high text-on-surface-variant text-[12px] rounded border border-outline-variant/20 font-label">
                             {w.text}
                           </span>
                         ))}
                         {item.wordSet.words.length > 4 && (
-                          <span className="text-[9px] text-stone-400 font-label">+{item.wordSet.words.length - 4}</span>
+                          <span className="text-[12px] text-outline font-label">+{item.wordSet.words.length - 4}</span>
                         )}
                       </div>
                     )}

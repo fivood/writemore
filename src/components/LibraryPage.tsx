@@ -148,11 +148,11 @@ function ImportPreviewModal({
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl custom-shadow w-full max-w-3xl mx-4 max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-surface-container rounded-2xl w-full max-w-3xl mx-4 max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div className="p-6 pb-4 border-b border-stone-100">
+        <div className="p-6 pb-4 border-b border-outline-variant/15">
           <h3 className="font-headline text-xl font-bold text-on-surface flex items-center space-x-2 mb-4">
-            <span className="material-symbols-outlined text-primary text-[24px]">upload_file</span>
+            <span className="material-symbols-outlined text-primary text-[24px]">file_download</span>
             <span>导入预览</span>
           </h3>
 
@@ -196,12 +196,12 @@ function ImportPreviewModal({
         <div className="flex-1 overflow-y-auto p-4">
           {/* Select all / none */}
           <div className="flex items-center justify-between mb-3 px-2">
-            <span className="text-xs font-label text-stone-400">
-              已选中 <span className="font-bold text-stone-600">{selectedCount}</span> / {previewItems.length}
+            <span className="text-xs font-label text-on-surface-variant">
+              已选中 <span className="font-bold text-on-surface">{selectedCount}</span> / {previewItems.length}
             </span>
             <div className="flex space-x-2">
               <button onClick={() => toggleAll(true)} className="text-xs font-label text-primary hover:underline">全选</button>
-              <button onClick={() => toggleAll(false)} className="text-xs font-label text-stone-400 hover:underline">全不选</button>
+              <button onClick={() => toggleAll(false)} className="text-xs font-label text-on-surface-variant hover:underline">全不选</button>
             </div>
           </div>
 
@@ -210,13 +210,13 @@ function ImportPreviewModal({
               <div
                 key={idx}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg border transition-all ${
-                  item.selected ? 'bg-white border-stone-200' : 'bg-stone-50/50 border-transparent opacity-50'
+                  item.selected ? 'bg-surface-container-high border-outline-variant/30' : 'bg-surface-container/50 border-transparent opacity-50'
                 }`}
               >
                 {/* Checkbox */}
                 <button onClick={() => toggleItem(idx)} className="shrink-0">
                   <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
-                    item.selected ? 'bg-primary border-primary text-white' : 'border-stone-300 bg-white'
+                    item.selected ? 'bg-primary border-primary text-white' : 'border-outline bg-surface-container'
                   }`}>
                     {item.selected && <span className="material-symbols-outlined text-[12px]">check</span>}
                   </div>
@@ -231,10 +231,10 @@ function ImportPreviewModal({
                 </div>
 
                 {/* Category tag */}
-                <span className={`shrink-0 px-1.5 py-0.5 text-[9px] font-label font-bold rounded border tracking-wider ${
+                <span className={`shrink-0 px-1.5 py-0.5 text-[12px] font-label font-bold rounded border tracking-wider ${
                   CATEGORY_COLORS[item.resolvedCategory] || 'bg-purple-100 text-purple-700 border-purple-200'
                 }`}>
-                  {CATEGORY_META[item.resolvedCategory]?.icon ?? ''} {item.resolvedCategory}
+                  <span className="material-symbols-outlined text-[12px] leading-none align-middle mr-0.5">{CATEGORY_META[item.resolvedCategory]?.icon ?? 'label'}</span>{item.resolvedCategory}
                 </span>
 
                 {/* Word text */}
@@ -242,20 +242,20 @@ function ImportPreviewModal({
 
                 {/* Explanation */}
                 {item.parsed.explanation && (
-                  <span className="text-[11px] text-stone-400 truncate min-w-0 flex-1">{item.parsed.explanation}</span>
+                  <span className="text-[11px] text-stone-400 dark:text-on-surface-variant truncate min-w-0 flex-1">{item.parsed.explanation}</span>
                 )}
 
                 {/* Conflict info */}
                 {item.status === 'conflict' && item.existingWord && (
                   <div className="shrink-0 flex items-center space-x-1">
                     <span className="text-[10px] text-stone-400 font-label">现有:</span>
-                    <span className={`px-1.5 py-0.5 text-[9px] font-label font-bold rounded border tracking-wider ${CATEGORY_COLORS[item.existingWord.category] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>{item.existingWord.category}</span>
+                    <span className={`px-1.5 py-0.5 text-[12px] font-label font-bold rounded border tracking-wider ${CATEGORY_COLORS[item.existingWord.category] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>{item.existingWord.category}</span>
                     <span className="text-[10px] text-stone-400 font-label">→</span>
                     {/* Let user pick which category to use */}
                     <select
                       value={item.resolvedCategory}
                       onChange={(e) => updateCategory(idx, e.target.value)}
-                      className="text-[10px] font-label border border-stone-200 rounded px-1 py-0.5 bg-white text-on-surface focus:outline-none"
+                      className="text-[10px] font-label border border-stone-200 dark:border-outline-variant/30 rounded px-1 py-0.5 bg-white dark:bg-surface-container-high text-on-surface focus:outline-none"
                       onClick={e => e.stopPropagation()}
                     >
                       <option value={item.parsed.category}>{item.parsed.category} (导入)</option>
@@ -265,7 +265,7 @@ function ImportPreviewModal({
                 )}
 
                 {item.status === 'duplicate' && (
-                  <span className="text-[10px] text-stone-400 font-label shrink-0 italic">已存在 · 同分类</span>
+                  <span className="text-[10px] text-on-surface-variant font-label shrink-0 italic">已存在 · 同分类</span>
                 )}
               </div>
             ))}
@@ -273,8 +273,8 @@ function ImportPreviewModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-stone-100 flex items-center justify-between">
-          <p className="text-xs font-label text-stone-400">
+        <div className="p-4 border-t border-outline-variant/15 flex items-center justify-between">
+          <p className="text-xs font-label text-stone-400 dark:text-on-surface-variant">
             {unknownCategories.length > 0 && (
               <span className="text-purple-600">
                 <span className="material-symbols-outlined text-[12px] align-middle">info</span>
@@ -283,7 +283,7 @@ function ImportPreviewModal({
             )}
           </p>
           <div className="flex space-x-3">
-            <button onClick={onClose} className="px-5 py-2 rounded-lg text-sm font-label text-stone-500 hover:bg-stone-100 transition-colors">
+            <button onClick={onClose} className="px-5 py-2 rounded-lg text-sm font-label text-on-surface-variant hover:bg-surface-container-high transition-colors">
               取消
             </button>
             <button
@@ -534,32 +534,32 @@ export default function LibraryPage() {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-stone-600 hover:bg-stone-200/60 transition-all"
+              className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
             >
-              <span className="material-symbols-outlined text-[16px]">upload</span>
+              <span className="material-symbols-outlined text-[16px]">download</span>
               <span>导入</span>
             </button>
             <input ref={fileInputRef} type="file" accept=".json,.md,.txt" className="hidden" onChange={handleImport} />
             {/* Export dropdown */}
             <div className="relative group">
               <button
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-stone-600 hover:bg-stone-200/60 transition-all"
+                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
               >
-                <span className="material-symbols-outlined text-[16px]">download</span>
+                <span className="material-symbols-outlined text-[16px]">upload</span>
                 <span>导出</span>
                 <span className="material-symbols-outlined text-[12px] ml-0.5">expand_more</span>
               </button>
-              <div className="absolute right-0 top-full mt-1 bg-white rounded-lg border border-stone-200 custom-shadow opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 w-40">
+              <div className="absolute right-0 top-full mt-1 bg-surface-container-high rounded-lg border border-outline-variant/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 w-40">
                 <button
                   onClick={handleExport}
-                  className="w-full text-left px-4 py-2.5 text-xs font-label text-stone-600 hover:bg-stone-50 rounded-t-lg flex items-center space-x-2 transition-colors"
+                  className="w-full text-left px-4 py-2.5 text-xs font-label text-on-surface-variant hover:bg-surface-container-highest rounded-t-lg flex items-center space-x-2 transition-colors"
                 >
                   <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">JSON</span>
                   <span>导出为 .json</span>
                 </button>
                 <button
                   onClick={handleExportMd}
-                  className="w-full text-left px-4 py-2.5 text-xs font-label text-stone-600 hover:bg-stone-50 rounded-b-lg flex items-center space-x-2 border-t border-stone-100 transition-colors"
+                  className="w-full text-left px-4 py-2.5 text-xs font-label text-on-surface-variant hover:bg-surface-container-highest rounded-b-lg flex items-center space-x-2 border-t border-outline-variant/15 transition-colors"
                 >
                   <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">MD</span>
                   <span>导出为 .md</span>
@@ -580,7 +580,7 @@ export default function LibraryPage() {
         <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
           <button
             onClick={() => setSourceFilter('all')}
-            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'all' ? 'bg-white custom-shadow text-on-surface' : 'text-stone-500 hover:bg-white/50'}`}
+            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'all' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
           >
             <span className="material-symbols-outlined text-[18px] text-primary">dictionary</span>
             <span className="font-bold">{stats.total}</span>
@@ -589,7 +589,7 @@ export default function LibraryPage() {
           <div className="h-4 w-px bg-outline-variant/30" />
           <button
             onClick={() => setSourceFilter('builtin')}
-            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'builtin' ? 'bg-white custom-shadow text-on-surface' : 'text-stone-500 hover:bg-white/50'}`}
+            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'builtin' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
           >
             <span className="material-symbols-outlined text-[18px] text-amber-500">inventory_2</span>
             <span className="font-bold">{stats.builtin}</span>
@@ -598,7 +598,7 @@ export default function LibraryPage() {
           <div className="h-4 w-px bg-outline-variant/30" />
           <button
             onClick={() => setSourceFilter('user')}
-            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'user' ? 'bg-white custom-shadow text-on-surface' : 'text-stone-500 hover:bg-white/50'}`}
+            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'user' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
           >
             <span className="material-symbols-outlined text-[18px] text-green-500">person</span>
             <span className="font-bold">{stats.user}</span>
@@ -607,7 +607,7 @@ export default function LibraryPage() {
           {stats.disabled > 0 && (
             <>
               <div className="h-4 w-px bg-outline-variant/30" />
-              <div className="flex items-center space-x-2 text-sm font-label text-stone-400">
+              <div className="flex items-center space-x-2 text-sm font-label text-stone-400 dark:text-on-surface-variant">
                 <span className="material-symbols-outlined text-[18px]">visibility_off</span>
                 <span className="font-bold">{stats.disabled}</span>
                 <span>已禁用</span>
@@ -627,10 +627,10 @@ export default function LibraryPage() {
                 className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium border transition-all ${
                   categoryFilter === c
                     ? 'bg-primary text-white border-primary'
-                    : 'bg-white text-stone-500 border-stone-200/80 hover:border-stone-300'
+                    : 'bg-surface-container text-on-surface-variant border-outline-variant/30 hover:border-outline-variant'
                 }`}
               >
-                {meta && <span className="text-sm leading-none">{meta.icon}</span>}
+                {meta && <span className="material-symbols-outlined text-[14px] leading-none">{meta.icon}</span>}
                 <span>{c === 'all' ? '全部类型' : c}</span>
                 {c !== 'all' && (
                   <span className="opacity-70">({stats.categoryCounts.get(c) || 0})</span>
@@ -642,16 +642,16 @@ export default function LibraryPage() {
 
         {/* Search bar */}
         <div className="relative mb-6">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-[18px]">search</span>
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 dark:text-outline text-[18px]">search</span>
           <input
             type="text"
             placeholder="搜索词条或释义..."
             value={searchQuery}
             onChange={e => { setSearchQuery(e.target.value); setPage(0); }}
-            className="w-full pl-10 pr-4 py-2.5 bg-white rounded-lg border border-stone-200/80 text-sm font-label text-on-surface placeholder:text-stone-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/30 text-sm font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-300 hover:text-stone-500">
+            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant">
               <span className="material-symbols-outlined text-[16px]">close</span>
             </button>
           )}
@@ -659,8 +659,8 @@ export default function LibraryPage() {
 
         {/* Result count */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-xs font-label text-stone-400">
-            共 <span className="font-bold text-stone-600">{filtered.length}</span> 个词条
+          <p className="text-xs font-label text-on-surface-variant">
+            共 <span className="font-bold text-on-surface">{filtered.length}</span> 个词条
             {searchQuery && <span> · 搜索「<span className="text-primary">{searchQuery}</span>」</span>}
           </p>
           {totalPages > 1 && (
@@ -668,15 +668,15 @@ export default function LibraryPage() {
               <button
                 onClick={() => setPage(p => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="p-1 rounded hover:bg-stone-100 disabled:opacity-30 transition-colors"
+                className="p-1 rounded hover:bg-surface-container-high disabled:opacity-30 transition-colors"
               >
                 <span className="material-symbols-outlined text-[18px]">chevron_left</span>
               </button>
-              <span className="text-xs font-label text-stone-500">{page + 1} / {totalPages}</span>
+              <span className="text-xs font-label text-on-surface-variant">{page + 1} / {totalPages}</span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
                 disabled={page >= totalPages - 1}
-                className="p-1 rounded hover:bg-stone-100 disabled:opacity-30 transition-colors"
+                className="p-1 rounded hover:bg-surface-container-high disabled:opacity-30 transition-colors"
               >
                 <span className="material-symbols-outlined text-[18px]">chevron_right</span>
               </button>
@@ -687,23 +687,23 @@ export default function LibraryPage() {
         {/* Word grid */}
         {paginated.length === 0 ? (
           <div className="text-center py-16">
-            <span className="material-symbols-outlined text-4xl text-stone-200 mb-4">search_off</span>
-            <p className="text-stone-500 font-label">没有找到匹配的词条</p>
+            <span className="material-symbols-outlined text-4xl text-stone-200 dark:text-outline mb-4">search_off</span>
+            <p className="text-stone-500 dark:text-on-surface-variant font-label">没有找到匹配的词条</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {paginated.map(w => (
               <div
                 key={w.id}
-                className={`group relative bg-white p-3 rounded-lg border transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                  w.enabled === false ? 'opacity-40 border-stone-200' : 'border-stone-100/80'
+                className={`group relative bg-surface-container p-3 rounded-lg border transition-all hover:-translate-y-0.5 hover:bg-surface-container-high ${
+                  w.enabled === false ? 'opacity-40 border-outline-variant/20' : 'border-outline-variant/15'
                 }`}
               >
                 {/* Top-right actions (hover) */}
                 <div className="absolute top-1.5 right-1.5 flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleToggleEnabled(w)}
-                    className="p-0.5 rounded hover:bg-stone-100 text-stone-400 hover:text-stone-600 transition-colors"
+                    className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-on-surface-variant transition-colors"
                     title={w.enabled !== false ? '禁用' : '启用'}
                   >
                     <span className="material-symbols-outlined text-[14px]">{w.enabled !== false ? 'visibility' : 'visibility_off'}</span>
@@ -712,14 +712,14 @@ export default function LibraryPage() {
                     <>
                       <button
                         onClick={() => openEditModal(w)}
-                        className="p-0.5 rounded hover:bg-stone-100 text-stone-400 hover:text-primary transition-colors"
+                        className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-primary transition-colors"
                         title="编辑"
                       >
                         <span className="material-symbols-outlined text-[14px]">edit</span>
                       </button>
                       <button
                         onClick={() => handleDeleteWord(w)}
-                        className="p-0.5 rounded hover:bg-stone-100 text-stone-400 hover:text-red-500 transition-colors"
+                        className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-red-500 transition-colors"
                         title="删除"
                       >
                         <span className="material-symbols-outlined text-[14px]">delete</span>
@@ -729,8 +729,8 @@ export default function LibraryPage() {
                 </div>
 
                 {/* Category badge */}
-                <span className={`inline-block px-1.5 py-0.5 text-[9px] font-label font-bold rounded border tracking-wider mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['意象'] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>
-                  {CATEGORY_META[w.category]?.icon ?? ''} {w.category}
+                <span className={`inline-block px-1.5 py-0.5 text-[12px] font-label font-bold rounded border tracking-wider mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['意象'] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>
+                  <span className="material-symbols-outlined text-[12px] leading-none align-middle mr-0.5">{CATEGORY_META[w.category]?.icon ?? 'label'}</span>{w.category}
                 </span>
 
                 {/* Word text */}
@@ -738,7 +738,7 @@ export default function LibraryPage() {
 
                 {/* Explanation */}
                 {w.explanation && (
-                  <p className="text-[11px] text-stone-500 leading-relaxed line-clamp-2">{w.explanation}</p>
+                  <p className="text-[11px] text-on-surface-variant leading-relaxed line-clamp-2">{w.explanation}</p>
                 )}
 
                 {/* Source badge */}
@@ -758,29 +758,29 @@ export default function LibraryPage() {
             <button
               onClick={() => setPage(0)}
               disabled={page === 0}
-              className="px-3 py-1.5 rounded-md text-xs font-label border border-stone-200 text-stone-500 hover:bg-stone-50 disabled:opacity-30 transition-colors"
+              className="px-3 py-1.5 rounded-md text-xs font-label border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high disabled:opacity-30 transition-colors"
             >
               首页
             </button>
             <button
               onClick={() => setPage(p => Math.max(0, p - 1))}
               disabled={page === 0}
-              className="px-3 py-1.5 rounded-md text-xs font-label border border-stone-200 text-stone-500 hover:bg-stone-50 disabled:opacity-30 transition-colors"
+              className="px-3 py-1.5 rounded-md text-xs font-label border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high disabled:opacity-30 transition-colors"
             >
               上一页
             </button>
-            <span className="px-4 py-1.5 text-xs font-label text-stone-600 font-medium">{page + 1} / {totalPages}</span>
+            <span className="px-4 py-1.5 text-xs font-label text-on-surface font-medium">{page + 1} / {totalPages}</span>
             <button
               onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
-              className="px-3 py-1.5 rounded-md text-xs font-label border border-stone-200 text-stone-500 hover:bg-stone-50 disabled:opacity-30 transition-colors"
+              className="px-3 py-1.5 rounded-md text-xs font-label border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high disabled:opacity-30 transition-colors"
             >
               下一页
             </button>
             <button
               onClick={() => setPage(totalPages - 1)}
               disabled={page >= totalPages - 1}
-              className="px-3 py-1.5 rounded-md text-xs font-label border border-stone-200 text-stone-500 hover:bg-stone-50 disabled:opacity-30 transition-colors"
+              className="px-3 py-1.5 rounded-md text-xs font-label border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high disabled:opacity-30 transition-colors"
             >
               末页
             </button>
@@ -791,7 +791,7 @@ export default function LibraryPage() {
       {/* Add/Edit Modal */}
       {showModal && editing && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setShowModal(false)}>
-          <div className="bg-white rounded-2xl custom-shadow w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-surface-container rounded-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
             <h3 className="font-headline text-xl font-bold text-on-surface mb-6 flex items-center space-x-2">
               <span className="material-symbols-outlined text-primary text-[24px]">{editing.id ? 'edit' : 'add_circle'}</span>
               <span>{editing.id ? '编辑词条' : '添加词条'}</span>
@@ -799,30 +799,30 @@ export default function LibraryPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-label font-medium text-stone-600 mb-1.5 block">词条文本 *</label>
+                <label className="text-xs font-label font-medium text-on-surface-variant mb-1.5 block">词条文本 *</label>
                 <input
                   type="text"
                   value={editing.text}
                   onChange={e => setEditing({ ...editing, text: e.target.value })}
                   placeholder="输入词条..."
-                  className="w-full px-4 py-2.5 bg-surface-container-low rounded-lg border border-stone-200 text-sm font-headline text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                  className="w-full px-4 py-2.5 bg-surface-container-low rounded-lg border border-outline-variant/30 text-sm font-headline text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label className="text-xs font-label font-medium text-stone-600 mb-1.5 block">释义（可选）</label>
+                <label className="text-xs font-label font-medium text-on-surface-variant mb-1.5 block">释义（可选）</label>
                 <textarea
                   value={editing.explanation}
                   onChange={e => setEditing({ ...editing, explanation: e.target.value })}
                   placeholder="输入释义或解释..."
                   rows={3}
-                  className="w-full px-4 py-2.5 bg-surface-container-low rounded-lg border border-stone-200 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all resize-none"
+                  className="w-full px-4 py-2.5 bg-surface-container-low rounded-lg border border-outline-variant/30 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all resize-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-label font-medium text-stone-600 mb-1.5 block">词条分类</label>
+                <label className="text-xs font-label font-medium text-on-surface-variant mb-1.5 block">词条分类</label>
                 <div className="flex flex-wrap gap-2">
                   {WORD_CATEGORIES.map(c => (
                     <button
@@ -831,10 +831,10 @@ export default function LibraryPage() {
                       className={`flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs font-label font-medium border transition-all ${
                         editing.category === c
                           ? 'bg-primary text-white border-primary'
-                          : 'bg-white text-stone-500 border-stone-200 hover:border-stone-300'
+                          : 'bg-surface-container-high text-on-surface-variant border-outline-variant/30 hover:border-outline-variant'
                       }`}
                     >
-                      <span>{CATEGORY_META[c]?.icon}</span>
+                      <span className="material-symbols-outlined text-[14px] leading-none">{CATEGORY_META[c]?.icon}</span>
                       <span>{c}</span>
                     </button>
                   ))}
@@ -845,7 +845,7 @@ export default function LibraryPage() {
             <div className="flex justify-end space-x-3 mt-8">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-5 py-2 rounded-lg text-sm font-label text-stone-500 hover:bg-stone-100 transition-colors"
+                className="px-5 py-2 rounded-lg text-sm font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
               >
                 取消
               </button>

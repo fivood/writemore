@@ -27,6 +27,34 @@ export const BUILTIN_CHALLENGES: WritingChallenge[] = [
   { id: 'wc018', text: '用新鲜的、原创性的语言改造这句陈词滥调：经过第二次短暂的停留后，他继续在薄冰上走着。', source: 'builtin' },
   { id: 'wc019', text: '用新鲜的、原创性的语言改造这句陈词滥调：她的胸平得跟飞机场一样。', source: 'builtin' },
   { id: 'wc020', text: '用新鲜的、原创性的语言改造这句陈词滥调：千方百计，不遗余力。', source: 'builtin' },
+  // 感官与观察练习
+  { 
+    id: 'wc021', 
+    text: '观察练习：走到户外一小时，注意吸引你注意力的事物。回家后写一篇文章描述所见所闻、被唤醒的记忆和你的发现。', 
+    source: 'builtin' 
+  },
+  { 
+    id: 'wc022', 
+    text: '视角转换：透过孩子或小动物的眼睛写一首诗，捕捉她第一次体验某件重要小事（如发现抽水马桶）时的神奇瞬间。', 
+    source: 'builtin' 
+  },
+  { 
+    id: 'wc023', 
+    text: '日常解构：连续一周关注日常自动化行为（如刷牙、切菜）中的声音、气味和动作，周末写下你从中发现的细节。', 
+    source: 'builtin' 
+  },
+  { 
+    id: 'wc024', 
+    text: '侦探观察：去一个熟悉的地方并假装从未去过，像侦探找线索一样观察并写下你以前从未注意过的微小细节。', 
+    source: 'builtin' 
+  },
+  { 
+    id: 'wc025', 
+    text: '内在通感：回想一个待过的地方，不描述物理空间，只描述它在内心深处带来的感觉、特定的光影或细微的声音。', 
+    source: 'builtin' 
+  },
+
+
 ];
 
 export function pickRandomChallenge(

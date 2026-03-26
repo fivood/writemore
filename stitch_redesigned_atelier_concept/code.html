@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400;1,600&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#69f6b8",
+              "on-tertiary-fixed": "#2a1700",
+              "surface-variant": "#282523",
+              "on-surface-variant": "#afaaa8",
+              "outline": "#797473",
+              "primary-fixed": "#ae8dff",
+              "on-primary-fixed": "#000000",
+              "on-error-container": "#ffb2b9",
+              "secondary": "#69f6b8",
+              "outline-variant": "#4b4746",
+              "surface-container": "#1c1918",
+              "background": "#100e0d",
+              "on-primary-fixed-variant": "#370086",
+              "on-secondary-container": "#e1ffec",
+              "tertiary": "#ffb148",
+              "on-secondary-fixed": "#00452d",
+              "on-error": "#490013",
+              "surface-bright": "#2f2b2a",
+              "error-dim": "#d73357",
+              "surface": "#100e0d",
+              "surface-container-high": "#221f1d",
+              "secondary-dim": "#58e7ab",
+              "on-tertiary": "#573500",
+              "error-container": "#a70138",
+              "inverse-primary": "#6e3bd7",
+              "on-primary": "#39008c",
+              "surface-dim": "#100e0d",
+              "tertiary-container": "#f8a010",
+              "primary": "#ba9eff",
+              "surface-container-low": "#151312",
+              "on-background": "#ffffff",
+              "primary-dim": "#8455ef",
+              "error": "#ff6e84",
+              "inverse-surface": "#fff8f5",
+              "surface-tint": "#ba9eff",
+              "on-primary-container": "#2b006e",
+              "inverse-on-surface": "#585453",
+              "on-secondary": "#005a3c",
+              "surface-container-lowest": "#000000",
+              "tertiary-dim": "#e79400",
+              "primary-fixed-dim": "#a27cff",
+              "tertiary-fixed": "#f8a010",
+              "primary-container": "#ae8dff",
+              "on-surface": "#ffffff",
+              "on-tertiary-container": "#4a2c00",
+              "tertiary-fixed-dim": "#e79400",
+              "on-secondary-fixed-variant": "#006544",
+              "secondary-container": "#006c49",
+              "on-tertiary-fixed-variant": "#563400",
+              "secondary-fixed-dim": "#58e7ab",
+              "surface-container-highest": "#282523"
+            },
+            fontFamily: {
+              "headline": ["Newsreader"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-glow-amber:hover { box-shadow: 0 0 40px -10px rgba(255, 177, 72, 0.15); }
+        .bento-glow-green:hover { box-shadow: 0 0 40px -10px rgba(105, 246, 184, 0.15); }
+        .bento-glow-blue:hover { box-shadow: 0 0 40px -10px rgba(174, 141, 255, 0.15); }
+        .bento-glow-purple:hover { box-shadow: 0 0 40px -10px rgba(186, 158, 255, 0.15); }
+        .glass-card { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar -->
+<header class="bg-[#100e0d]/60 backdrop-blur-xl docked full-width top-0 sticky z-50 border-b border-[#4b4746]/15 shadow-2xl shadow-black/40">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="font-['Newsreader'] italic text-2xl text-[#ba9eff] tracking-tight">Curator</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-[#ba9eff] border-b-2 border-[#ba9eff] pb-1 font-['Manrope'] font-bold" href="#">词条</a>
+<a class="text-[#4b4746] hover:text-[#ba9eff]/80 font-['Manrope'] font-medium transition-colors" href="#">词库</a>
+<a class="text-[#4b4746] hover:text-[#ba9eff]/80 font-['Manrope'] font-medium transition-colors" href="#">收藏</a>
+<a class="text-[#4b4746] hover:text-[#ba9eff]/80 font-['Manrope'] font-medium transition-colors" href="#">历史</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-[#282523]/50 transition-all duration-300 active:scale-95 text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full border border-outline-variant/30 overflow-hidden">
+<img alt="User profile avatar" data-alt="close-up portrait of a person with calm expression, soft cinematic lighting, dark atmospheric background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfrgc3bWkkU_MQp8zgPY6th_nUY-KjfbdR5GF74SuAH9G0TmIUvxRS-HkLwLZ85ci9KKJKN73APp6L0CdwfWX7By6p2A1bCo770iqWVYTAVCJ8AAKeeD1cV0Ed1DfTYss81FGK0DmkPNp0zd4AeJaqB1HPcZdVtXZynH5VhwSSEAaKoab756Gst_NvG3AOoLpOMABhXA-07BaQIks0QM1bb60mjfY-8vxsLiYWkPzoRqu9KzOYqarTQGb2toRNOnMvJ4UiPUS6CVY"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 pt-12 pb-32">
+<!-- Hero Title -->
+<div class="mb-16 text-center md:text-left">
+<h1 class="font-headline italic text-5xl md:text-7xl text-on-background mb-4 tracking-tighter">笔尖下的宁静</h1>
+<p class="font-body text-on-surface-variant text-lg max-w-xl">Every word is a brushstroke on the canvas of your soul. Begin your daily ritual of quiet contemplation and creative release.</p>
+</div>
+<!-- Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[240px]">
+<!-- Vocabulary Card (Amber) -->
+<div class="md:col-span-8 glass-card bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-8 flex flex-col justify-between group bento-glow-amber transition-all duration-500 overflow-hidden relative">
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-tertiary/5 blur-[80px] rounded-full group-hover:bg-tertiary/10 transition-colors"></div>
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="p-3 rounded-2xl bg-tertiary/10 text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+</span>
+<h2 class="font-headline text-2xl text-on-surface">词汇灵感</h2>
+</div>
+<p class="text-on-surface-variant max-w-md leading-relaxed">捕捉闪烁在思想边缘的词汇。今日关键词：<span class="text-tertiary italic">「侘寂」</span> — 在残缺中寻找纯粹的美感。</p>
+</div>
+<div class="flex items-center justify-between mt-4">
+<span class="font-label uppercase tracking-widest text-[10px] text-on-surface-variant">Explore 12 new concepts</span>
+<button class="px-6 py-2.5 bg-tertiary/20 text-tertiary-container rounded-full font-label text-sm font-bold border border-tertiary/20 hover:bg-tertiary/30 transition-all">开启探索</button>
+</div>
+</div>
+<!-- Dreams Card (Lavender) -->
+<div class="md:col-span-4 glass-card bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-8 flex flex-col justify-between group bento-glow-purple transition-all duration-500 overflow-hidden relative">
+<div class="absolute -right-10 -bottom-10 w-48 h-48 bg-primary/5 blur-[60px] rounded-full group-hover:bg-primary/10 transition-colors"></div>
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="p-3 rounded-2xl bg-primary/10 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bedtime</span>
+</span>
+<h2 class="font-headline text-2xl text-on-surface">梦境记录</h2>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed">在清晨的第一缕阳光消失前，固化那些潜意识里的幻象。</p>
+</div>
+<button class="mt-4 flex items-center gap-2 text-primary font-label font-bold text-sm group-hover:translate-x-1 transition-transform">
+                    记录碎片 <span class="material-symbols-outlined text-sm">arrow_forward_ios</span>
+</button>
+</div>
+<!-- Scene Card (Blue) -->
+<div class="md:col-span-5 glass-card bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-8 flex flex-col justify-between group bento-glow-blue transition-all duration-500 overflow-hidden relative">
+<div class="absolute left-0 top-0 w-full h-full opacity-20 group-hover:opacity-30 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="cinematic wide shot of misty blue mountains at dusk with deep shadows and soft atmospheric light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHHThJw8heLdhi_fT8ImqGojfJ0lRKrjlKDF5ZU00L7YaHNxTp55r1uWJAhZCKoj5ZOytMiSPJvIoi5VyDnsBG6hK9aktNYy7z50vnvMcekOU16pQlYFC3VFRJ_mUH4XKGQkQKoxnv_rcxQZl8Udv1KciUckbq3ICtGh_ZH68oqyuY6U8h8hn4jMX8J91hNwvngeg4EvFEos3UtbTmjIACxaUz2TVPDNkRH1nPdwGEk5kJDGr82TSU4dxOWm5oMZ14EuNhZsWLPug"/>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-4">
+<span class="p-3 rounded-2xl bg-primary-container/20 text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">landscape</span>
+</span>
+<h2 class="font-headline text-2xl text-on-surface">场景描写</h2>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed">描述一座雨中的古城，或者一片寂静的深林。练习感官的敏锐度。</p>
+</div>
+<div class="relative z-10">
+<span class="text-primary-container font-label text-xs">Recommended: "The Silent Peak" prompt</span>
+</div>
+</div>
+<!-- Free Writing Card (Green) -->
+<div class="md:col-span-7 glass-card bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-8 flex flex-col justify-between group bento-glow-green transition-all duration-500 overflow-hidden relative">
+<div class="absolute -left-20 -bottom-20 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full group-hover:bg-secondary/10 transition-colors"></div>
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="p-3 rounded-2xl bg-secondary/10 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stylus_note</span>
+</span>
+<h2 class="font-headline text-2xl text-on-surface">自由发挥</h2>
+</div>
+<p class="text-on-surface-variant max-w-sm leading-relaxed">无拘无束的意识流写作。让思想在纸面上自由奔跑，不设终点。</p>
+</div>
+<div class="h-24 w-24 flex items-center justify-center border border-secondary/20 rounded-full relative">
+<div class="absolute inset-0 border-2 border-secondary/40 rounded-full border-t-transparent animate-spin-slow"></div>
+<span class="text-secondary font-bold text-xl">Go</span>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-variant/40 border border-outline-variant/10 rounded-full text-[10px] text-on-surface-variant">UNTIMED</span>
+<span class="px-3 py-1 bg-surface-variant/40 border border-outline-variant/10 rounded-full text-[10px] text-on-surface-variant">ZEN MODE</span>
+</div>
+</div>
+</div>
+<!-- Streak Visualization Section -->
+<section class="mt-16 bg-surface-container-low rounded-[1.5rem] p-10 relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div>
+<h3 class="font-headline text-3xl mb-2 text-on-surface">12 Days Streak</h3>
+<p class="text-on-surface-variant font-label text-xs uppercase tracking-widest">Consistency is the secret of the masters</p>
+</div>
+<div class="flex items-center gap-1">
+<!-- Simulated Streak Graph -->
+<div class="flex items-end gap-1.5 h-16">
+<div class="w-3 bg-secondary/20 h-4 rounded-t-sm"></div>
+<div class="w-3 bg-secondary/30 h-8 rounded-t-sm"></div>
+<div class="w-3 bg-secondary/40 h-6 rounded-t-sm"></div>
+<div class="w-3 bg-secondary/50 h-10 rounded-t-sm"></div>
+<div class="w-3 bg-secondary/60 h-12 rounded-t-sm"></div>
+<div class="w-3 bg-secondary/70 h-14 rounded-t-sm"></div>
+<div class="w-3 bg-secondary h-16 rounded-t-sm shadow-[0_-4px_12px_rgba(105,246,184,0.3)]"></div>
+<div class="w-3 bg-secondary h-15 rounded-t-sm shadow-[0_-4px_12px_rgba(105,246,184,0.3)]"></div>
+<div class="w-3 bg-secondary h-16 rounded-t-sm shadow-[0_-4px_12px_rgba(105,246,184,0.3)]"></div>
+<div class="w-3 bg-secondary h-14 rounded-t-sm shadow-[0_-4px_12px_rgba(105,246,184,0.3)]"></div>
+<div class="w-3 bg-secondary h-16 rounded-t-sm shadow-[0_-4px_12px_rgba(105,246,184,0.3)]"></div>
+<div class="w-3 bg-secondary h-16 rounded-t-sm shadow-[0_-4px_12px_rgba(105,246,184,0.3)]"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/10 grid grid-cols-2 md:grid-cols-4 gap-6">
+<div>
+<div class="text-on-surface-variant font-label text-[10px] uppercase tracking-wider mb-1">Words Today</div>
+<div class="text-2xl font-bold text-secondary">842</div>
+</div>
+<div>
+<div class="text-on-surface-variant font-label text-[10px] uppercase tracking-wider mb-1">Total Chapters</div>
+<div class="text-2xl font-bold text-on-surface">34</div>
+</div>
+<div>
+<div class="text-on-surface-variant font-label text-[10px] uppercase tracking-wider mb-1">Vocabulary Mastery</div>
+<div class="text-2xl font-bold text-tertiary">1,240</div>
+</div>
+<div>
+<div class="text-on-surface-variant font-label text-[10px] uppercase tracking-wider mb-1">Global Rank</div>
+<div class="text-2xl font-bold text-primary">Top 4%</div>
+</div>
+</div>
+</div>
+<!-- Background abstraction -->
+<div class="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
+<svg viewbox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M44.7,-76.4C58.1,-69.2,70.3,-58.5,78.5,-45.3C86.7,-32.1,90.9,-16.1,89.7,-0.7C88.5,14.6,81.8,29.3,72.7,42.4C63.6,55.5,52.1,67,38.6,74.5C25.1,82,9.6,85.5,-5.5,82.4C-20.6,79.2,-35.3,69.5,-48.5,59.3C-61.7,49.1,-73.4,38.4,-79.8,25.3C-86.2,12.2,-87.3,-3.3,-83.4,-17.5C-79.5,-31.7,-70.6,-44.6,-59.1,-52.8C-47.5,-61.1,-33.4,-64.7,-20.5,-72.1C-7.6,-79.5,4.1,-90.7,18.4,-88.4C32.7,-86.1,44.7,-76.4,44.7,-76.4Z" fill="#69f6b8" transform="translate(100 100)"></path>
+</svg>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#1c1918] docked full-width bottom-0 fixed z-40 border-t border-[#4b4746]/10">
+<div class="flex justify-between items-center w-full px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="font-['Manrope'] text-[10px] uppercase tracking-widest text-[#69f6b8] font-bold">
+                Daily Streak: 12 Days • Goal: 1,200/2,000 words
+            </div>
+<div class="flex gap-8">
+<a class="font-['Manrope'] text-[10px] uppercase tracking-widest text-[#4b4746] hover:text-white transition-colors" href="#">Writing Guide</a>
+<a class="font-['Manrope'] text-[10px] uppercase tracking-widest text-[#4b4746] hover:text-white transition-colors" href="#">Community Guidelines</a>
+<a class="font-['Manrope'] text-[10px] uppercase tracking-widest text-[#4b4746] hover:text-white transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+<!-- FAB (Suppressed on Home/Dashboard as per instructions, but adding one subtle action button for inspiration) -->
+<div class="fixed bottom-24 right-8 z-50">
+<button class="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-dim shadow-2xl shadow-primary/20 flex items-center justify-center text-on-primary active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">edit_square</span>
+</button>
+</div>
+</body></html>

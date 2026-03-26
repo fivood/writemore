@@ -123,7 +123,7 @@ export default function FavoritesPage() {
           {favorites.length > 0 && (
             <button
               onClick={() => { setSelectMode(!selectMode); setSelectedIds(new Set()); }}
-              className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium transition-all ${selectMode ? 'bg-amber-500 text-white' : 'bg-surface-container text-stone-600 hover:bg-stone-200/60'}`}
+              className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium transition-all ${selectMode ? 'bg-amber-500 text-white' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'}`}
             >
               <span className="material-symbols-outlined text-[16px]">{selectMode ? 'close' : 'checklist'}</span>
               <span>{selectMode ? '退出选择' : '批量管理'}</span>
@@ -134,7 +134,7 @@ export default function FavoritesPage() {
         {/* Stats bar */}
         {favorites.length > 0 && (
           <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
-            <div className="flex items-center space-x-2 text-sm font-label text-stone-600">
+            <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
               <span className="material-symbols-outlined text-[18px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>collections_bookmark</span>
               <span className="font-bold text-on-surface">{favorites.length}</span>
               <span>组收藏</span>
@@ -142,7 +142,7 @@ export default function FavoritesPage() {
             <div className="h-4 w-px bg-outline-variant/30" />
             <div className="flex flex-wrap gap-1.5">
               {genreStats.map(([genre, count]) => (
-                <span key={genre} className="px-2 py-0.5 bg-amber-50 text-amber-800 text-[10px] font-label font-semibold rounded border border-amber-100 tracking-wide">
+                <span key={genre} className="px-2 py-0.5 bg-amber-50 dark:bg-primary/10 text-amber-800 dark:text-primary text-[10px] font-label font-semibold rounded border border-amber-100 dark:border-primary/20 tracking-wide">
                   {genre} ×{count}
                 </span>
               ))}
@@ -154,31 +154,31 @@ export default function FavoritesPage() {
         {favorites.length > 0 && (
           <div className="flex items-center gap-3 mb-6">
             <div className="relative flex-1">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-[18px]">search</span>
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
               <input
                 type="text"
                 placeholder="搜索词条关键词..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white rounded-lg border border-stone-200/80 text-sm font-label text-on-surface placeholder:text-stone-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/30 text-sm font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
               />
               {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-300 hover:text-stone-500">
+                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant">
                   <span className="material-symbols-outlined text-[16px]">close</span>
                 </button>
               )}
             </div>
-            <div className="flex bg-white rounded-lg border border-stone-200/80 overflow-hidden">
+            <div className="flex bg-surface-container rounded-lg border border-outline-variant/30 overflow-hidden">
               <button
                 onClick={() => setSortMode('date')}
-                className={`px-3 py-2 text-[11px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'date' ? 'bg-amber-500 text-white' : 'text-stone-500 hover:bg-stone-50'}`}
+                className={`px-3 py-2 text-[11px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'date' ? 'bg-amber-500 text-white' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
               >
                 <span className="material-symbols-outlined text-[14px]">schedule</span>
                 <span>按时间</span>
               </button>
               <button
                 onClick={() => setSortMode('genre')}
-                className={`px-3 py-2 text-[11px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'genre' ? 'bg-amber-500 text-white' : 'text-stone-500 hover:bg-stone-50'}`}
+                className={`px-3 py-2 text-[11px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'genre' ? 'bg-amber-500 text-white' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
               >
                 <span className="material-symbols-outlined text-[14px]">category</span>
                 <span>按类型</span>
@@ -189,8 +189,8 @@ export default function FavoritesPage() {
 
         {/* Batch action bar */}
         {selectMode && selectedIds.size > 0 && (
-          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between animate-[fadeIn_0.2s_ease-out]">
-            <span className="text-sm font-label text-amber-800">
+          <div className="mb-4 p-3 bg-amber-50 dark:bg-primary/10 border border-amber-200 dark:border-primary/20 rounded-lg flex items-center justify-between animate-[fadeIn_0.2s_ease-out]">
+            <span className="text-sm font-label text-amber-800 dark:text-primary">
               已选择 <span className="font-bold">{selectedIds.size}</span> 项
             </span>
             <button
@@ -207,13 +207,13 @@ export default function FavoritesPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
             <div className="w-8 h-8 rounded-full border-4 border-amber-500/30 border-t-amber-500 animate-spin" />
-            <p className="mt-4 text-stone-400 text-sm font-label">加载中...</p>
+            <p className="mt-4 text-on-surface-variant text-sm font-label">加载中...</p>
           </div>
         ) : favorites.length === 0 ? (
           <div className="text-center py-24 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
-            <span className="material-symbols-outlined text-5xl text-stone-200 mb-4">stars</span>
-            <p className="text-stone-500 font-label text-lg mb-1">空空如也</p>
-            <p className="text-stone-400 text-sm mt-2 max-w-sm mx-auto leading-relaxed">
+            <span className="material-symbols-outlined text-5xl text-outline mb-4">stars</span>
+            <p className="text-on-surface-variant font-label text-lg mb-1">空空如也</p>
+            <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
               在「✦ 词条」页面看到喜欢的灵感组合时，点击 <span className="inline-block text-amber-500 align-text-bottom"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span></span> 收藏吧！
             </p>
             <button
@@ -225,8 +225,8 @@ export default function FavoritesPage() {
           </div>
         ) : displayed.length === 0 ? (
           <div className="text-center py-16">
-            <span className="material-symbols-outlined text-4xl text-stone-200 mb-4">search_off</span>
-            <p className="text-stone-500 font-label">
+            <span className="material-symbols-outlined text-4xl text-outline mb-4">search_off</span>
+            <p className="text-on-surface-variant font-label">
               没有找到包含「<span className="font-medium text-amber-600">{searchQuery}</span>」的收藏
             </p>
           </div>
@@ -235,8 +235,8 @@ export default function FavoritesPage() {
             {displayed.map((ws) => (
               <div
                 key={ws.id}
-                className={`bg-white p-5 rounded-xl border hover:border-amber-500/30 custom-shadow group transition-all duration-300 hover:-translate-y-0.5 flex flex-col relative ${
-                  selectMode && selectedIds.has(ws.id) ? 'border-amber-500 ring-2 ring-amber-200' : 'border-stone-100/80'
+                className={`bg-surface-container p-5 rounded-xl border hover:border-amber-500/30 group transition-all duration-300 hover:-translate-y-0.5 flex flex-col relative ${
+                  selectMode && selectedIds.has(ws.id) ? 'border-amber-500 dark:border-primary ring-2 ring-amber-200 dark:ring-primary/20' : 'border-outline-variant/15'
                 }`}
                 onClick={() => selectMode && toggleSelect(ws.id)}
               >
@@ -244,7 +244,7 @@ export default function FavoritesPage() {
                 {selectMode && (
                   <div className="absolute top-3 left-3 z-10">
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                      selectedIds.has(ws.id) ? 'bg-amber-500 border-amber-500 text-white' : 'border-stone-300 bg-white'
+                      selectedIds.has(ws.id) ? 'bg-amber-500 border-amber-500 text-white' : 'border-outline bg-surface-container'
                     }`}>
                       {selectedIds.has(ws.id) && <span className="material-symbols-outlined text-[14px]">check</span>}
                     </div>
@@ -255,13 +255,13 @@ export default function FavoritesPage() {
                 <div className={`text-xs font-label text-outline mb-3 flex items-center justify-between ${selectMode ? 'pl-7' : ''}`}>
                   <span>{new Date(ws.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'numeric', day: 'numeric' })}</span>
                   <div className="flex items-center space-x-2">
-                    <span className="bg-amber-50 text-amber-700 font-bold px-2 py-0.5 rounded tracking-widest text-[10px] uppercase border border-amber-100">
+                    <span className="bg-amber-50 dark:bg-primary/10 text-amber-700 dark:text-primary font-bold px-2 py-0.5 rounded tracking-widest text-[10px] uppercase border border-amber-100 dark:border-primary/20">
                       {ws.genre}
                     </span>
                     {!selectMode && (
                       <button
                         onClick={(e) => handleUnfavorite(e, ws)}
-                        className="text-amber-500 hover:text-stone-400 transition-colors"
+                        className="text-amber-500 hover:text-outline transition-colors"
                         title="取消收藏"
                       >
                         <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
@@ -276,14 +276,14 @@ export default function FavoritesPage() {
                     {ws.words.length > 0 ? ws.words.map((w, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1.5 bg-surface-container-low text-on-surface font-headline font-bold text-sm rounded-md border border-stone-200/60 shadow-sm cursor-default"
+                        className="px-3 py-1.5 bg-surface-container-high text-on-surface font-headline font-bold text-sm rounded-md border border-outline-variant/20 shadow-sm cursor-default"
                         title={w.explanation || undefined}
                       >
                         {w.text}
-                        {w.explanation && <span className="ml-1 text-stone-300 text-[10px]">释</span>}
+                        {w.explanation && <span className="ml-1 text-outline text-[10px]">释</span>}
                       </span>
                     )) : (
-                      <span className="text-stone-400 italic text-sm">空的词组</span>
+                      <span className="text-on-surface-variant italic text-sm">空的词组</span>
                     )}
                   </div>
                 </div>
@@ -292,7 +292,7 @@ export default function FavoritesPage() {
                 {!selectMode && (
                   <button
                     onClick={() => handleUsePrompt(ws)}
-                    className="w-full mt-3 py-2 border border-amber-500/20 text-amber-700 font-label text-xs font-semibold rounded-md hover:bg-amber-50 transition-colors flex items-center justify-center space-x-1"
+                    className="w-full mt-3 py-2 border border-amber-500/20 dark:border-primary/20 text-amber-700 dark:text-primary font-label text-xs font-semibold rounded-md hover:bg-amber-50 dark:hover:bg-primary/10 transition-colors flex items-center justify-center space-x-1"
                   >
                     <span className="material-symbols-outlined text-[14px]">edit</span>
                     <span>使用此灵感创作</span>
