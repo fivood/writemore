@@ -36,7 +36,7 @@ export default function InspirationPalace() {
 
   async function fetchItems() {
     try {
-      const drafts = await db.drafts.reverse().sortBy('updatedAt');
+      const drafts = await db.drafts.orderBy('updatedAt').reverse().toArray();
       const result: PalaceItem[] = [];
       for (const draft of drafts) {
         if (draft.deletedFromPalace) continue;

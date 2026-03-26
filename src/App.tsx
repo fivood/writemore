@@ -1196,10 +1196,12 @@ export default function App() {
                   </div>
 
                   {layer && (
-                    <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg border text-xs font-label ${layer.color}`}>
-                      <span className="material-symbols-outlined text-[16px]">{layer.icon}</span>
-                      <span className="font-medium">{layer.name}</span>
-                      <span className="opacity-60 flex-1 truncate">{layer.description}</span>
+                    <div className={`flex items-start space-x-2 px-3 py-2 rounded-lg border text-xs font-label ${layer.color}`}>
+                      <span className="material-symbols-outlined text-[16px] shrink-0 mt-0.5">{layer.icon}</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-medium">{layer.name}</span>
+                        <span className="opacity-70 leading-relaxed mt-0.5">{layer.description}</span>
+                      </div>
                     </div>
                   )}
 

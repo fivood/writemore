@@ -143,10 +143,10 @@ export default function HistoryPage() {
 
   async function fetchHistory() {
     try {
-      const drafts = await db.drafts.reverse().sortBy('updatedAt');
+      const drafts = await db.drafts.orderBy('updatedAt').reverse().toArray();
       const items: HistoryItem[] = [];
       for (const draft of drafts) {
-        const wordSet = await db.wordSets.get(draft.wordSetId);
+        const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
         items.push({ draft, wordSet });
       }
       setHistory(items);
