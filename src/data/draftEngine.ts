@@ -11,6 +11,7 @@ export async function saveDraftToDb(
   writingMode?: WritingMode | null,
   sceneId?: string | null,
   challengeId?: string | null,
+  characterPromptId?: string | null,
 ): Promise<{ wordSetId: string; draftId: string }> {
   
   let wordSetId = existingWordSetId;
@@ -66,6 +67,7 @@ export async function saveDraftToDb(
       writingMode: writingMode || undefined,
       sceneId: sceneId || undefined,
       challengeId: challengeId || undefined,
+      characterPromptId: characterPromptId || undefined,
     };
     await db.drafts.put(draft);
   }

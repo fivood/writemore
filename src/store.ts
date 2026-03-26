@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Genre, WordCategory, WordCount, Theme, TimerDuration, Word, WritingMode, ScenePrompt } from './types';
 import type { WritingChallenge } from './data/challenges';
+import type { CharacterPrompt, CharacterLayerId } from './data/characterPrompts';
 
 interface AppState {
   // Theme
@@ -81,6 +82,10 @@ interface AppState {
   setCurrentScene: (s: ScenePrompt | null) => void;
   currentChallenge: WritingChallenge | null;
   setCurrentChallenge: (c: WritingChallenge | null) => void;
+  currentCharacterPrompt: CharacterPrompt | null;
+  setCurrentCharacterPrompt: (p: CharacterPrompt | null) => void;
+  selectedCharacterLayer: CharacterLayerId | null;
+  setSelectedCharacterLayer: (l: CharacterLayerId | null) => void;
 
   // Font size
   fontSize: 'small' | 'medium' | 'large';
@@ -174,6 +179,10 @@ export const useStore = create<AppState>()(
       setCurrentScene: (s) => set({ currentScene: s }),
       currentChallenge: null,
       setCurrentChallenge: (c) => set({ currentChallenge: c }),
+      currentCharacterPrompt: null,
+      setCurrentCharacterPrompt: (p) => set({ currentCharacterPrompt: p }),
+      selectedCharacterLayer: null,
+      setSelectedCharacterLayer: (l) => set({ selectedCharacterLayer: l }),
 
       fontSize: 'medium',
       setFontSize: (s) => set({ fontSize: s }),
@@ -200,6 +209,8 @@ export const useStore = create<AppState>()(
         writingMode: s.writingMode,
         currentScene: s.currentScene,
         currentChallenge: s.currentChallenge,
+        currentCharacterPrompt: s.currentCharacterPrompt,
+        selectedCharacterLayer: s.selectedCharacterLayer,
       }),
     }
   )

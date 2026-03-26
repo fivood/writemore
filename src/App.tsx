@@ -4,6 +4,7 @@ import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngin
 import { saveDraftToDb, toggleFavoriteWordSet } from './data/draftEngine';
 import { pickRandomScene } from './data/scenes';
 import { pickRandomChallenge } from './data/challenges';
+import { pickRandomCharacterPrompt, CHARACTER_LAYERS } from './data/characterPrompts';
 import { db } from './db';
 import type { Word, WritingMode } from './types';
 import { WORD_CATEGORIES, CATEGORY_META, WRITING_MODES } from './types';
@@ -16,6 +17,7 @@ import InspirationPalace from './components/InspirationPalace';
 export default function App() {
   const store = useStore();
   const [toast, setToast] = useState('');
+  const [wordsSubView, setWordsSubView] = useState<'write' | 'library'>('write');
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
   // Init
@@ -64,6 +66,7 @@ export default function App() {
     if (store.editorContent.trim() || store.editorTitle.trim()) {
       handleSave();
     }
+    setWordsSubView('write');
     store.setWritingMode(mode);
     store.setEditorTitle('');
     store.setEditorContent('');
@@ -85,6 +88,12 @@ export default function App() {
       store.setCurrentWords([]);
       store.setCurrentScene(null);
       pickAndSetChallenge();
+    } else if (mode === 'character') {
+      store.setCurrentWords([]);
+      store.setCurrentScene(null);
+      store.setCurrentChallenge(null);
+      store.setSelectedCharacterLayer(null);
+      pickAndSetCharacterPrompt();
     } else {
       store.setCurrentWords([]);
       store.setCurrentScene(null);
@@ -96,10 +105,13 @@ export default function App() {
     if (store.editorContent.trim() || store.editorTitle.trim()) {
       handleSave();
     }
+    setWordsSubView('write');
     store.setWritingMode(null);
     store.setCurrentWords([]);
     store.setCurrentScene(null);
     store.setCurrentChallenge(null);
+    store.setCurrentCharacterPrompt(null);
+    store.setSelectedCharacterLayer(null);
     store.setEditorTitle('');
     store.setEditorContent('');
     store.setCurrentWordSetId(null);
@@ -109,6 +121,13 @@ export default function App() {
   async function pickAndSetChallenge(excludeId?: string) {
     const userChallenges = await db.challenges.toArray();
     store.setCurrentChallenge(pickRandomChallenge(excludeId, userChallenges));
+  }
+
+  async function pickAndSetCharacterPrompt(excludeId?: string) {
+    const userPrompts = await db.characterPrompts.toArray();
+    store.setCurrentCharacterPrompt(
+      pickRandomCharacterPrompt(store.selectedCharacterLayer, excludeId, userPrompts)
+    );
   }
 
   async function handleDraw() {
@@ -152,6 +171,7 @@ export default function App() {
         store.writingMode,
         store.currentScene?.id,
         store.currentChallenge?.id,
+        store.currentCharacterPrompt?.id,
       );
       store.setCurrentWordSetId(wordSetId);
       store.setCurrentDraftId(draftId);
@@ -211,7 +231,6 @@ export default function App() {
         <nav className="flex space-x-8 items-center font-headline text-base tracking-tight">
           <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('inspire')}>✦ 灵感</button>
           <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'palace' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('palace')}>🏛 灵感宫殿</button>
-          <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'library' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('library')}>📚 词库</button>
           <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'favorites' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('favorites')}>⭐ 收藏</button>
           <button className={`transition-all duration-300 ease-in-out ${store.activeTab === 'history' ? 'text-[#8a5038] border-b-2 border-[#8a5038] pb-1' : 'text-stone-500 hover:text-[#8a5038]'}`} onClick={() => store.setActiveTab('history')}>📋 历史</button>
         </nav>
@@ -298,6 +317,19 @@ export default function App() {
                           </button>
                         ))}
                       </div>
+                    </div>
+                    <div className="pt-4">
+                      <button
+                        onClick={() => setWordsSubView(v => v === 'library' ? 'write' : 'library')}
+                        className={`w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-lg text-xs font-label transition-all ${
+                          wordsSubView === 'library'
+                            ? 'bg-amber-100 text-amber-800 font-medium'
+                            : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50 hover:text-amber-700'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">menu_book</span>
+                        <span>词库管理</span>
+                      </button>
                     </div>
                   </nav>
                 </>
@@ -407,6 +439,87 @@ export default function App() {
                         e.target.value = '';
                       }} />
                     </label>
+                    <div className="bg-stone-50 border border-stone-100 rounded-lg px-3 py-2.5 text-[10px] font-label text-stone-400 leading-relaxed">
+                      <p className="text-stone-500 font-medium mb-1">文件格式示例</p>
+                      <p className="text-[9px] text-stone-400 mb-1.5">每行一条提示，空行忽略，支持 - / * / • 开头</p>
+                      <pre className="font-mono text-[9px] text-stone-500 whitespace-pre-wrap leading-relaxed">{`- 只用动作展示愤怒，不提情绪\n用感官细节描写一场分离\n• 在对话中藏一个人说谎的信号`}</pre>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Character mode sidebar */}
+              {store.writingMode === 'character' && (
+                <>
+                  <div className="mb-5">
+                    <h2 className="font-headline text-lg font-semibold text-stone-800">人物描写</h2>
+                    <p className="text-[10px] font-label uppercase tracking-widest text-stone-500 mt-1">六个维度深挖角色</p>
+                  </div>
+                  <div className="flex-1 flex flex-col space-y-2 overflow-y-auto">
+                    {/* Layer filter */}
+                    <p className="text-[10px] font-label text-stone-400 uppercase tracking-widest mb-1">切换维度</p>
+                    <button
+                      onClick={() => { store.setSelectedCharacterLayer(null); pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id); }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left text-xs font-label transition-all ${
+                        store.selectedCharacterLayer === null
+                          ? 'bg-fuchsia-100 text-fuchsia-800 font-medium'
+                          : 'text-stone-600 hover:bg-stone-100'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[14px]">shuffle</span>
+                      <span>全部维度</span>
+                    </button>
+                    {CHARACTER_LAYERS.map(layer => (
+                      <button
+                        key={layer.id}
+                        onClick={() => {
+                          store.setSelectedCharacterLayer(layer.id);
+                          pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id);
+                        }}
+                        className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left text-xs font-label transition-all ${
+                          store.selectedCharacterLayer === layer.id
+                            ? `${layer.color} font-medium`
+                            : 'text-stone-600 hover:bg-stone-100'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">{layer.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div>{layer.name}</div>
+                        </div>
+                      </button>
+                    ))}
+
+                    <div className="pt-3 space-y-2">
+                      <label className="flex items-center justify-center space-x-2 px-3 py-2 bg-white border border-stone-200 rounded-lg text-xs font-label text-stone-600 hover:text-fuchsia-600 hover:border-fuchsia-300 transition-all cursor-pointer">
+                        <span className="material-symbols-outlined text-[14px]">upload_file</span>
+                        <span>导入提示 (.md)</span>
+                        <input type="file" accept=".md,.txt" className="hidden" onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const text = await file.text();
+                          const lines = text.split('\n')
+                            .map(l => l.trim())
+                            .filter(l => l.length > 0)
+                            .map(l => l.replace(/^[\u25cf\u2022\-*]\s*/, ''));
+                          if (lines.length === 0) return;
+                          const layer = store.selectedCharacterLayer || 'inner';
+                          const newPrompts = lines.map((t, i) => ({
+                            id: `char_user_${Date.now()}_${i}`,
+                            text: t,
+                            layer,
+                            source: 'user' as const,
+                          }));
+                          await db.characterPrompts.bulkPut(newPrompts);
+                          pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id);
+                          e.target.value = '';
+                        }} />
+                      </label>
+                      <div className="bg-stone-50 border border-stone-100 rounded-lg px-3 py-2.5 text-[10px] font-label text-stone-400 leading-relaxed">
+                        <p className="text-stone-500 font-medium mb-1">文件格式示例</p>
+                        <p className="text-[9px] text-stone-400 mb-1.5">每行一条提示，将归入当前选中维度</p>
+                        <pre className="font-mono text-[9px] text-stone-500 whitespace-pre-wrap leading-relaxed">{`- 他最害怕失去什么？\n她能原谅什么，不能原谅什么？\n• 他的沉默意味着什么`}</pre>
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
@@ -438,7 +551,7 @@ export default function App() {
             )}
 
             {/* Word Inspiration Panel */}
-            {store.writingMode === 'words' && (
+            {store.writingMode === 'words' && wordsSubView !== 'library' && (
               <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
@@ -538,7 +651,38 @@ export default function App() {
               </section>
             )}
 
-            {/* Main Editor */}
+            {/* Character Prompt Panel */}
+            {store.writingMode === 'character' && store.currentCharacterPrompt && (() => {
+              const layer = CHARACTER_LAYERS.find(l => l.id === store.currentCharacterPrompt!.layer);
+              return (
+                <section className="w-80 bg-surface-container-low p-8 flex flex-col space-y-6 overflow-y-auto shrink-0 border-r border-outline-variant/10">
+                  <div className="mb-2">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-label text-[10px] uppercase tracking-[0.2em] text-outline">人物描写</span>
+                      <button className="p-1 hover:bg-stone-200/50 rounded group transition-all" title="换一题" onClick={() => pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id)}>
+                        <span className="material-symbols-outlined text-[18px] text-stone-400 group-hover:text-primary transition-colors">refresh</span>
+                      </button>
+                    </div>
+                    <h3 className="font-headline text-2xl text-on-surface">角色练习</h3>
+                  </div>
+
+                  {layer && (
+                    <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg border text-xs font-label ${layer.color}`}>
+                      <span className="material-symbols-outlined text-[14px]">{layer.icon}</span>
+                      <span className="font-medium">{layer.name}</span>
+                      <span className="opacity-60 flex-1 truncate">{layer.description}</span>
+                    </div>
+                  )}
+
+                  <div className="bg-[#fcfaf7] p-6 custom-shadow rounded-lg border border-stone-100 relative overflow-hidden flex-1">
+                    <span className="material-symbols-outlined text-[28px] text-fuchsia-400 mb-4 block">person_search</span>
+                    <p className="text-base text-stone-800 leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
+                  </div>
+                </section>
+              );
+            })()}
+            {store.writingMode === 'words' && wordsSubView === 'library' ? <LibraryPage /> : (
             <main className="flex-1 bg-surface relative overflow-y-auto">
               {store.timerActive && (
                 <div className="absolute top-0 left-0 right-0 h-1 bg-surface-dim">
@@ -571,7 +715,7 @@ export default function App() {
                   </div>
                   <input 
                     className="w-full bg-transparent border-none focus:ring-0 font-headline text-4xl font-black text-on-surface placeholder:text-surface-dim outline-none mb-6" 
-                    placeholder={store.writingMode === 'dream' ? '给你的梦起个名字...' : store.writingMode === 'scene' ? '给这段描写起个标题...' : store.writingMode === 'challenge' ? '就这题写点什么...' : '给你的灵感起个名字...'}
+                    placeholder={store.writingMode === 'dream' ? '给你的梦起个名字...' : store.writingMode === 'scene' ? '给这段描写起个标题...' : store.writingMode === 'challenge' ? '就这题写点什么...' : store.writingMode === 'character' ? '这个角色叫什么名字...' : '给你的灵感起个名字...'}
                     type="text" 
                     value={store.editorTitle}
                     onChange={(e) => store.setEditorTitle(e.target.value)}
@@ -592,8 +736,8 @@ export default function App() {
                         : store.writingMode === 'scene'
                         ? "仔细想象这个场景，描写你看到的、听到的、感受到的..."
                         : store.writingMode === 'challenge'
-                        ? "看看题目，写下你的笄1…"
-                        : "在这里开始你的故事（支持 Markdown 格式）..."
+                        ? "看看题目，写下你的想法"                        : store.writingMode === 'character'
+                        ? "就这个提示，写下关于这个角色的一个片段…"                        : "在这里开始你的故事（支持 Markdown 格式）..."
                     }}
                     style={{ backgroundColor: 'transparent', boxShadow: 'none' }}
                   />
@@ -616,6 +760,7 @@ export default function App() {
                 </button>
               </div>
             </main>
+            )}
           </>
         )}
 
@@ -623,7 +768,6 @@ export default function App() {
         {store.activeTab === 'palace' && <InspirationPalace />}
         {store.activeTab === 'history' && <HistoryPage />}
         {store.activeTab === 'favorites' && <FavoritesPage />}
-        {store.activeTab === 'library' && <LibraryPage />}
       </div>
 
       {/* Footer */}

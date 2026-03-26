@@ -3,6 +3,7 @@ import { db } from '../db';
 import { useStore } from '../store';
 import { SCENE_PROMPTS } from '../data/scenes';
 import { BUILTIN_CHALLENGES, pickRandomChallenge } from '../data/challenges';
+import { BUILTIN_CHARACTER_PROMPTS, pickRandomCharacterPrompt } from '../data/characterPrompts';
 import type { Draft, WordSet, WritingMode } from '../types';
 import { WRITING_MODES } from '../types';
 
@@ -16,7 +17,8 @@ const MODE_STYLE: Record<WritingMode, { icon: string; bg: string; border: string
   free:      { icon: 'edit_note',   bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700' },
   scene:     { icon: 'landscape',   bg: 'bg-blue-50',    border: 'border-blue-200',    text: 'text-blue-700'    },
   dream:     { icon: 'nights_stay', bg: 'bg-violet-50',  border: 'border-violet-200',  text: 'text-violet-700'  },
-  challenge: { icon: 'quiz',        bg: 'bg-rose-50',    border: 'border-rose-200',    text: 'text-rose-700'    },
+  challenge:  { icon: 'quiz',         bg: 'bg-rose-50',    border: 'border-rose-200',    text: 'text-rose-700'    },
+  character:  { icon: 'person_search', bg: 'bg-fuchsia-50', border: 'border-fuchsia-200', text: 'text-fuchsia-700' },
 };
 
 export default function InspirationPalace() {
@@ -96,6 +98,22 @@ export default function InspirationPalace() {
         }
       } else {
         store.setCurrentChallenge(pickRandomChallenge());
+      }
+    }
+    if (mode === 'character') {
+      const cid = item.draft.characterPromptId;
+      if (cid) {
+        const builtin = BUILTIN_CHARACTER_PROMPTS.find(c => c.id === cid);
+        if (builtin) {
+          store.setCurrentCharacterPrompt(builtin);
+        } else {
+          db.characterPrompts.get(cid).then(c => {
+            if (c) store.setCurrentCharacterPrompt(c);
+            else store.setCurrentCharacterPrompt(pickRandomCharacterPrompt());
+          });
+        }
+      } else {
+        store.setCurrentCharacterPrompt(pickRandomCharacterPrompt());
       }
     }
     store.setActiveTab('inspire');
