@@ -1,4 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+
+// ── 填入你的 GitHub 用户名/仓库名 ──────────────────────────────
+const GITHUB_REPO = 'fivood/writemore';
+declare const __APP_VERSION__: string;
+const APP_VERSION: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
 import { useStore } from './store';
 import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngine';
 import { saveDraftToDb, toggleFavoriteWordSet } from './data/draftEngine';
@@ -23,6 +28,7 @@ export default function App() {
   const [todayOtherDraftsWords, setTodayOtherDraftsWords] = useState(0);
   const [showAiSettings, setShowAiSettings] = useState(false);
   const [aiTestStatus, setAiTestStatus] = useState<'idle' | 'testing' | 'success' | 'fail'>('idle');
+  const [updateBanner, setUpdateBanner] = useState<{ version: string; url: string } | null>(null);
   const [aiWordHint, setAiWordHint] = useState('');
   const [aiWordHintLoading, setAiWordHintLoading] = useState(false);
   const [aiSceneExtra, setAiSceneExtra] = useState('');
@@ -56,6 +62,28 @@ export default function App() {
   useEffect(() => {
     loadUserData();
     store.updateStreak();
+  }, []);
+
+  // 版本更新检测（每天检查一次）
+  useEffect(() => {
+    const CHECK_KEY = 'update_last_check';
+    const last = localStorage.getItem(CHECK_KEY);
+    const today = new Date().toISOString().slice(0, 10);
+    if (last === today) return;
+    if (!GITHUB_REPO || GITHUB_REPO.startsWith('your-')) return;
+    fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`, {
+      headers: { Accept: 'application/vnd.github+json' },
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data) return;
+        localStorage.setItem(CHECK_KEY, today);
+        const latest = (data.tag_name as string).replace(/^v/, '');
+        if (latest !== APP_VERSION) {
+          setUpdateBanner({ version: data.tag_name, url: data.html_url });
+        }
+      })
+      .catch(() => {/* 离线时静默失败 */});
   }, []);
 
   // Timer
@@ -415,6 +443,27 @@ export default function App() {
           </button>
         </div>
       </header>
+
+      {/* 更新横幅 */}
+      {updateBanner && (
+        <div className="fixed top-[72px] left-0 right-0 z-40 flex items-center justify-between px-6 py-2 bg-primary text-on-primary text-xs font-label">
+          <span className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[14px]">new_releases</span>
+            新版本 <strong>{updateBanner.version}</strong> 已发布！
+          </span>
+          <div className="flex items-center gap-3">
+            <a
+              href={updateBanner.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:opacity-80"
+            >查看更新内容</a>
+            <button onClick={() => setUpdateBanner(null)} className="opacity-70 hover:opacity-100 transition-opacity">
+              <span className="material-symbols-outlined text-[16px]">close</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="flex h-screen pt-[72px] pb-[45px]">
 
