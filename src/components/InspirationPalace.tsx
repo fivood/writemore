@@ -168,6 +168,33 @@ export default function InspirationPalace() {
     store.setActiveTab('inspire');
   }
 
+  function handleExportAll() {
+    if (items.length === 0) return;
+    const lines: string[] = [`# WriteMore 灵感宫殿导出`, `导出时间：${new Date().toLocaleString('zh-CN')}`, `共 ${items.length} 条灵感`, '', '---', ''];
+    items.forEach((item, i) => {
+      const title = item.draft.title || '未命名灵感';
+      const date = new Date(item.draft.updatedAt).toLocaleString('zh-CN');
+      const mode = item.draft.writingMode || 'words';
+      const wordsLine = item.wordSet?.words.length
+        ? `**灵感词条**：${item.wordSet.words.map(w => w.text).join(' · ')}\n\n`
+        : '';
+      lines.push(`## ${i + 1}. ${title}`);
+      lines.push(``);
+      lines.push(`> 模式：${mode}　｜　更新：${date}　｜　字数：${item.draft.wordCount}`);
+      lines.push(``);
+      if (wordsLine) lines.push(wordsLine);
+      lines.push(item.draft.content || '（无内容）');
+      lines.push('', '---', '');
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `writemore_palace_${new Date().toISOString().slice(0, 10)}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <main className="flex-1 bg-surface relative overflow-y-auto p-8 md:p-12">
       <div className="max-w-6xl mx-auto pb-20">
@@ -195,6 +222,14 @@ export default function InspirationPalace() {
                   <span>{aiRemixLoading ? '生成中…' : 'AI 再创作'}</span>
                 </button>
               )}
+              <button
+                onClick={handleExportAll}
+                title="导出全部为 Markdown"
+                className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-surface-container border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
+              >
+                <span className="material-symbols-outlined text-[16px]">download</span>
+                <span>导出全部</span>
+              </button>
             </div>
           )}
         </div>

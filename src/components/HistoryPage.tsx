@@ -245,6 +245,33 @@ export default function HistoryPage() {
     });
   };
 
+  function handleExportAll() {
+    if (history.length === 0) return;
+    const lines: string[] = [`# WriteMore 写作历史导出`, `导出时间：${new Date().toLocaleString('zh-CN')}`, `共 ${history.length} 篇草稿　｜　累计 ${stats.totalWords.toLocaleString()} 字`, '', '---', ''];
+    history.forEach((item, i) => {
+      const title = item.draft.title || '未命名灵感';
+      const date = new Date(item.draft.updatedAt).toLocaleString('zh-CN');
+      const mode = item.draft.writingMode || 'words';
+      const wordsLine = item.wordSet?.words.length
+        ? `**灵感词条**：${item.wordSet.words.map(w => w.text).join(' · ')}\n\n`
+        : '';
+      lines.push(`## ${i + 1}. ${title}`);
+      lines.push(``);
+      lines.push(`> 模式：${mode}　｜　更新：${date}　｜　字数：${item.draft.wordCount}`);
+      lines.push(``);
+      if (wordsLine) lines.push(wordsLine);
+      lines.push(item.draft.content || '（无内容）');
+      lines.push('', '---', '');
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `writemore_history_${new Date().toISOString().slice(0, 10)}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <main className="flex-1 bg-surface relative overflow-y-auto p-8 md:p-12">
       <div className="max-w-5xl mx-auto pb-20">
@@ -274,6 +301,14 @@ export default function HistoryPage() {
                     <span className="material-symbols-outlined text-[18px]">calendar_month</span>
                   </button>
                 </div>
+                <button
+                  onClick={handleExportAll}
+                  title="导出全部为 Markdown"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[18px]">download</span>
+                  <span>导出全部</span>
+                </button>
                 <button
                   onClick={() => { setSelectMode(!selectMode); setSelectedIds(new Set()); }}
                   className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium transition-all ${selectMode ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'}`}
