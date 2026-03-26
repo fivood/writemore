@@ -1462,7 +1462,7 @@ export default function App() {
       {/* AI Settings Modal */}
       {showAiSettings && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowAiSettings(false)}>
-          <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">
                 <span className="material-symbols-outlined text-primary text-[26px]">smart_toy</span>
@@ -1539,7 +1539,7 @@ export default function App() {
               {/* Model */}
               <div>
                 <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">模型</label>
-                <div className="flex gap-2 mb-2">
+                <div className="flex flex-col sm:flex-row gap-2 mb-2">
                   <input
                     type="text"
                     value={store.aiConfig.model}
@@ -1656,7 +1656,7 @@ export default function App() {
       {/* Cloud Login Modal */}
       {showCloudLogin && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowCloudLogin(false)}>
-          <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">
                 <span className="material-symbols-outlined text-primary text-[26px]">cloud</span>
