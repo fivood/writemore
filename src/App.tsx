@@ -18,8 +18,8 @@ import HistoryPage from './components/HistoryPage';
 import FavoritesPage from './components/FavoritesPage';
 import LibraryPage from './components/LibraryPage';
 import InspirationPalace from './components/InspirationPalace';
-import { API_PRESETS, testConnection, chatCompletion } from './services/ai';
-import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt } from './services/prompts';
+import { API_PRESETS, testConnection, chatCompletion, chatCompletionStream } from './services/ai';
+import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt } from './services/prompts';
 
 export default function App() {
   const store = useStore();
@@ -39,6 +39,9 @@ export default function App() {
   const [aiChallengeLoading, setAiChallengeLoading] = useState(false);
   const [aiCharacterExtra, setAiCharacterExtra] = useState('');
   const [aiCharacterLoading, setAiCharacterLoading] = useState(false);
+  const [aiContinueLoading, setAiContinueLoading] = useState(false);
+  const [aiFeedback, setAiFeedback] = useState('');
+  const [aiFeedbackLoading, setAiFeedbackLoading] = useState(false);
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
   // Theme
@@ -361,6 +364,41 @@ export default function App() {
       console.error(e);
     } finally {
       setAiCharacterLoading(false);
+    }
+  }
+
+  async function handleAiContinue() {
+    if (!store.aiEnabled || !store.editorContent.trim()) return;
+    setAiContinueLoading(true);
+    const baseContent = store.editorContent;
+    const accumulated = { text: '' };
+    try {
+      const msgs = buildContinueWritingPrompt(store.editorTitle, baseContent, store.writingMode);
+      await chatCompletionStream(store.aiConfig, msgs, (chunk) => {
+        accumulated.text += chunk;
+        store.setEditorContent(baseContent + '\n\n' + accumulated.text);
+      }, { maxTokens: 400 });
+    } catch (e) {
+      showToast('AI 续写失败');
+      console.error(e);
+    } finally {
+      setAiContinueLoading(false);
+    }
+  }
+
+  async function handleAiFeedback() {
+    if (!store.aiEnabled || !store.editorContent.trim()) return;
+    setAiFeedbackLoading(true);
+    setAiFeedback('');
+    try {
+      const msgs = buildWritingFeedbackPrompt(store.editorTitle, store.editorContent);
+      const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
+      setAiFeedback(result);
+    } catch (e) {
+      showToast('AI 反馈失败');
+      console.error(e);
+    } finally {
+      setAiFeedbackLoading(false);
     }
   }
 
@@ -1163,6 +1201,21 @@ export default function App() {
                     style={{ backgroundColor: 'transparent', boxShadow: 'none' }}
                   />
                 </div>
+
+                {/* AI 写后反馈面板 */}
+                {aiFeedback && (
+                  <div className="mt-6 bg-emerald-50/70 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-2xl p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-[10px] font-label uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[13px]">rate_review</span>AI 写作反馈
+                      </p>
+                      <button onClick={() => setAiFeedback('')} className="text-emerald-500/60 hover:text-emerald-500 transition-colors">
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
+                    </div>
+                    <p className="text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
+                  </div>
+                )}
               </div>
               
               {/* Zen Toolbar */}
@@ -1173,6 +1226,26 @@ export default function App() {
                 <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all" title="保存 (Ctrl+S)" onClick={handleSave}>
                   <span className="material-symbols-outlined">save</span>
                 </button>
+                {store.aiEnabled && store.editorContent.trim().length > 20 && (
+                  <>
+                    <button
+                      onClick={handleAiContinue}
+                      disabled={aiContinueLoading}
+                      title="AI 续写"
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-violet-500 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all disabled:opacity-40"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">{aiContinueLoading ? 'hourglass_top' : 'auto_fix_high'}</span>
+                    </button>
+                    <button
+                      onClick={handleAiFeedback}
+                      disabled={aiFeedbackLoading}
+                      title="AI 写后反馈"
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-emerald-500 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all disabled:opacity-40"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">{aiFeedbackLoading ? 'hourglass_top' : 'rate_review'}</span>
+                    </button>
+                  </>
+                )}
                 <div className="h-px w-6 bg-outline-variant/20 mx-auto"></div>
                 <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all" title="全屏专注" onClick={() => {
                   if (document.fullscreenElement) { document.exitFullscreen(); } else { document.documentElement.requestFullscreen(); }

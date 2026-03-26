@@ -116,3 +116,46 @@ ${excerpts}
     },
   ];
 }
+
+/**
+ * AI 续写 — 基于已写内容自然续写
+ */
+export function buildContinueWritingPrompt(title: string, content: string, mode: string | null): ChatMessage[] {
+  const modeHint: Record<string, string> = {
+    scene: '（这是一篇场景描写练习）',
+    dream: '（这是一篇梦境记录）',
+    challenge: '（这是一篇习作练习）',
+    character: '（这是一篇人物描写练习）',
+  };
+  return [
+    { role: 'system', content: SYSTEM_BASE },
+    {
+      role: 'user',
+      content: `这是一篇正在写作中的文章${mode && modeHint[mode] ? modeHint[mode] : ''}：
+
+标题：${title || '（无标题）'}
+
+${content.slice(-600)}
+
+请自然地续写上面的内容，保持风格和节奏一致，续写 80—150 字。只返回续写内容，不要重复已有内容。`,
+    },
+  ];
+}
+
+/**
+ * AI 写后反馈 — 分析已写内容，给出建议
+ */
+export function buildWritingFeedbackPrompt(title: string, content: string): ChatMessage[] {
+  return [
+    { role: 'system', content: SYSTEM_BASE },
+    {
+      role: 'user',
+      content: `请为以下创意写作给出简短反馈（100 字以内）：
+
+标题：${title || '（无标题）'}
+${content.slice(0, 800)}
+
+请选拡一个亮点和一个可提升方向，面向下列维度进行选择：感官描写、节奏感、画面感、情感表达、语言新鲜度。语气以鼓励为主。`,
+    },
+  ];
+}
