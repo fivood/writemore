@@ -562,8 +562,7 @@ export default function App() {
           >
             <span className="material-symbols-outlined text-[22px]" style={store.aiEnabled ? { fontVariationSettings: "'FILL' 1" } : {}}>smart_toy</span>
           </button>
-          {/* 云同步按鈕：凭据未配置时隐藏 */}
-          {SUPABASE_ENABLED && (
+          {/* 云同步按钮 */}
           <button
             onClick={() => store.cloudUser ? (syncFromCloud(store.cloudUser.id), showToast('☁️ 同步中…')) : setShowCloudLogin(true)}
             title={store.cloudUser ? `已登录: ${store.cloudUser.email}（点击同步）` : '登录云同步'}
@@ -576,7 +575,6 @@ export default function App() {
             </span>
             {cloudSyncing && <span className="absolute inset-0 rounded-full animate-spin border-2 border-primary/30 border-t-primary" />}
           </button>
-          )}
           <button
             onClick={() => store.setTheme(store.theme === 'dark' ? 'light' : store.theme === 'light' ? 'system' : 'dark')}
             title={store.theme === 'dark' ? '暗色模式' : store.theme === 'light' ? '亮色模式' : '跟随系统'}
@@ -1583,7 +1581,7 @@ export default function App() {
       )}
 
       {/* Cloud Login Modal */}
-      {SUPABASE_ENABLED && showCloudLogin && (
+      {showCloudLogin && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowCloudLogin(false)}>
           <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
@@ -1619,6 +1617,20 @@ export default function App() {
                 >
                   <span className="material-symbols-outlined text-[20px]">logout</span>退出登录
                 </button>
+              </div>
+            ) : !SUPABASE_ENABLED ? (
+              <div className="space-y-6 text-center">
+                <span className="material-symbols-outlined text-[48px] text-on-surface-variant/40">cloud_off</span>
+                <div>
+                  <p className="font-label font-medium text-on-surface mb-1">云同步未启用</p>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">
+                    当前版本未配置 Supabase 凭据。<br />如需云同步功能，请联系开发者配置，<br />或在项目 <code className="bg-surface-container px-1 rounded text-xs">.env.local</code> 中填入凭据后重新构建。
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowCloudLogin(false)}
+                  className="w-full py-2.5 border border-outline-variant/30 rounded-xl text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
+                >关闭</button>
               </div>
             ) : (
               <div className="space-y-4">
