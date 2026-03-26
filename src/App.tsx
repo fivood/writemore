@@ -51,6 +51,7 @@ export default function App() {
   const [aiFeedback, setAiFeedback] = useState('');
   const [aiFeedbackLoading, setAiFeedbackLoading] = useState(false);
   const editorRef = useRef<HTMLTextAreaElement>(null);
+  const isSavingRef = useRef(false);
 
   // Theme
   useEffect(() => {
@@ -298,32 +299,37 @@ export default function App() {
   }
 
   async function handleSave() {
-    if (!store.editorContent.trim() && !store.editorTitle.trim()) return;
-    
+    if (isSavingRef.current) return;
+    // 每次都从 store 读最新状态，避免 setTimeout 捕获的 stale closure 导致重复创建草稿
+    const s = useStore.getState();
+    if (!s.editorContent.trim() && !s.editorTitle.trim()) return;
+    isSavingRef.current = true;
     try {
       const { wordSetId, draftId } = await saveDraftToDb(
-        store.editorTitle || '未命名灵感',
-        store.editorContent,
-        store.currentWords,
-        store.currentWordSetId,
-        store.currentDraftId,
-        store.drawnGenre,
-        store.writingMode,
-        store.currentScene?.id,
-        store.currentChallenge?.id,
-        store.currentCharacterPrompt?.id,
+        s.editorTitle || '未命名灵感',
+        s.editorContent,
+        s.currentWords,
+        s.currentWordSetId,
+        s.currentDraftId,
+        s.drawnGenre,
+        s.writingMode,
+        s.currentScene?.id,
+        s.currentChallenge?.id,
+        s.currentCharacterPrompt?.id,
       );
       store.setCurrentWordSetId(wordSetId);
       store.setCurrentDraftId(draftId);
-      showToast(`💾 已保存 (${store.editorContent.replace(/\s/g, '').length}字)`);
+      showToast(`💾 已保存 (${s.editorContent.replace(/\s/g, '').length}字)`);
       refreshTodayWords();
       // 后台推送到云端
-      if (SUPABASE_ENABLED && store.cloudUser) {
+      if (SUPABASE_ENABLED && s.cloudUser) {
         const saved = await db.drafts.get(draftId);
-        if (saved) pushDraft(saved, store.cloudUser.id).catch(console.error);
+        if (saved) pushDraft(saved, s.cloudUser.id).catch(console.error);
       }
     } catch (e) {
       console.error('Failed to save draft', e);
+    } finally {
+      isSavingRef.current = false;
     }
   }
 

@@ -129,6 +129,11 @@ export default function InspirationPalace() {
     if (confirm('确定要删除这条灵感记录吗？')) {
       await db.drafts.update(id, { deletedFromPalace: true });
       setItems(prev => prev.filter(it => it.draft.id !== id));
+      // 如果删除的正是当前编辑器里打开的稿件，解除关联，下次保存时会创建新条目
+      if (store.currentDraftId === id) {
+        store.setCurrentDraftId(null);
+        store.setCurrentWordSetId(null);
+      }
     }
   };
 

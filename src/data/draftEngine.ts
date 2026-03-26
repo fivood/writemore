@@ -46,13 +46,30 @@ export async function saveDraftToDb(
   const wordCount = content.replace(/\s+/g, '').length; // Simple Chinese word count
 
   if (draftId) {
-    // Update existing draft
-    await db.drafts.update(draftId, {
+    // Update existing draft; if it was hard-deleted (update returns 0), fall back to creating a new one
+    const updated = await db.drafts.update(draftId, {
       title,
       content,
       wordCount,
       updatedAt: now,
     });
+    if (updated === 0) {
+      draftId = `draft_${Date.now()}`;
+      const draft: Draft = {
+        id: draftId,
+        wordSetId,
+        title,
+        content,
+        wordCount,
+        createdAt: now,
+        updatedAt: now,
+        writingMode: writingMode || undefined,
+        sceneId: sceneId || undefined,
+        challengeId: challengeId || undefined,
+        characterPromptId: characterPromptId || undefined,
+      };
+      await db.drafts.put(draft);
+    }
   } else {
     // Create new draft
     draftId = `draft_${Date.now()}`;
