@@ -85,6 +85,7 @@ export interface Draft {
   sceneId?: string;
   challengeId?: string;
   characterPromptId?: string;
+  deletedFromPalace?: boolean;
 }
 
 export const GENRE_COLORS: Record<Genre, string> = {

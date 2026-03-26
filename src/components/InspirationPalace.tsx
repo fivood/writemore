@@ -35,6 +35,7 @@ export default function InspirationPalace() {
       const drafts = await db.drafts.reverse().sortBy('updatedAt');
       const result: PalaceItem[] = [];
       for (const draft of drafts) {
+        if (draft.deletedFromPalace) continue;
         const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
         result.push({ draft, wordSet });
       }
@@ -122,7 +123,7 @@ export default function InspirationPalace() {
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm('确定要删除这条灵感记录吗？')) {
-      await db.drafts.delete(id);
+      await db.drafts.update(id, { deletedFromPalace: true });
       setItems(prev => prev.filter(it => it.draft.id !== id));
     }
   };
