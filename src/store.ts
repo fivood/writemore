@@ -97,6 +97,10 @@ interface AppState {
   setAiConfig: (c: Partial<AIConfig>) => void;
   aiEnabled: boolean;
   setAiEnabled: (e: boolean) => void;
+
+  // Cloud auth
+  cloudUser: { id: string; email: string } | null;
+  setCloudUser: (u: { id: string; email: string } | null) => void;
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -198,6 +202,9 @@ export const useStore = create<AppState>()(
       setAiConfig: (c) => set(s => ({ aiConfig: { ...s.aiConfig, ...c } })),
       aiEnabled: false,
       setAiEnabled: (e) => set({ aiEnabled: e }),
+
+      cloudUser: null,
+      setCloudUser: (u) => set({ cloudUser: u }),
     }),
     {
       name: 'writemore-store',
@@ -214,6 +221,7 @@ export const useStore = create<AppState>()(
         fontSize: s.fontSize,
         aiConfig: s.aiConfig,
         aiEnabled: s.aiEnabled,
+        cloudUser: s.cloudUser,
         editorTitle: s.editorTitle,
         editorContent: s.editorContent,
         currentWordSetId: s.currentWordSetId,

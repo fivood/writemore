@@ -20,6 +20,7 @@ import LibraryPage from './components/LibraryPage';
 import InspirationPalace from './components/InspirationPalace';
 import { API_PRESETS, testConnection, chatCompletion, chatCompletionStream } from './services/ai';
 import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt } from './services/prompts';
+import { supabase, signIn, signUp, signOut, pushDraft, pullDrafts } from './services/supabase';
 
 export default function App() {
   const store = useStore();
@@ -31,6 +32,13 @@ export default function App() {
   const [aiTestError, setAiTestError] = useState('');
   const [aiAvailModels, setAiAvailModels] = useState<string[]>([]);
   const [aiModelsLoading, setAiModelsLoading] = useState(false);
+  const [showCloudLogin, setShowCloudLogin] = useState(false);
+  const [cloudEmail, setCloudEmail] = useState('');
+  const [cloudPassword, setCloudPassword] = useState('');
+  const [cloudAuthMode, setCloudAuthMode] = useState<'login' | 'register'>('login');
+  const [cloudAuthLoading, setCloudAuthLoading] = useState(false);
+  const [cloudAuthError, setCloudAuthError] = useState('');
+  const [cloudSyncing, setCloudSyncing] = useState(false);
   const [updateBanner, setUpdateBanner] = useState<{ version: string; url: string } | null>(null);
   const [aiWordHint, setAiWordHint] = useState('');
   const [aiWordHintLoading, setAiWordHintLoading] = useState(false);
@@ -69,6 +77,68 @@ export default function App() {
     loadUserData();
     store.updateStreak();
   }, []);
+
+  // Cloud auth 初始化
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        store.setCloudUser({ id: session.user.id, email: session.user.email! });
+        syncFromCloud(session.user.id);
+      }
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        store.setCloudUser({ id: session.user.id, email: session.user.email! });
+      } else {
+        store.setCloudUser(null);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function syncFromCloud(userId: string) {
+    try {
+      setCloudSyncing(true);
+      const cloudDrafts = await pullDrafts(userId);
+      for (const cd of cloudDrafts) {
+        const local = await db.drafts.get(cd.id);
+        if (!local || new Date(cd.updatedAt) > new Date(local.updatedAt)) {
+          await db.drafts.put(cd);
+        }
+      }
+    } catch (e) {
+      console.error('Cloud sync failed', e);
+    } finally {
+      setCloudSyncing(false);
+    }
+  }
+
+  async function handleCloudAuth() {
+    setCloudAuthLoading(true);
+    setCloudAuthError('');
+    try {
+      const fn = cloudAuthMode === 'login' ? signIn : signUp;
+      const { error } = await fn(cloudEmail, cloudPassword);
+      if (error) {
+        const msg = error.message;
+        if (msg.includes('Invalid login credentials')) throw new Error('邮箱或密码错误，或邮箱尚未验证');
+        if (msg.includes('Email not confirmed')) throw new Error('邮箱未验证，请先去邮箱点击确认链接');
+        if (msg.includes('User already registered')) throw new Error('该邮箱已注册，请直接登录');
+        throw error;
+      }
+      if (cloudAuthMode === 'register') {
+        showToast('📧 注册成功！请去邮箱点击确认链接后再登录');
+        setCloudAuthMode('login');
+      } else {
+        setShowCloudLogin(false);
+        showToast('☁️ 登录成功，数据将自动同步');
+      }
+    } catch (e) {
+      setCloudAuthError(e instanceof Error ? e.message : '操作失败');
+    } finally {
+      setCloudAuthLoading(false);
+    }
+  }
 
   // 版本更新检测（每天检查一次）
   useEffect(() => {
@@ -245,6 +315,11 @@ export default function App() {
       store.setCurrentDraftId(draftId);
       showToast(`💾 已保存 (${store.editorContent.replace(/\s/g, '').length}字)`);
       refreshTodayWords();
+      // 后台推送到云端
+      if (store.cloudUser) {
+        const saved = await db.drafts.get(draftId);
+        if (saved) pushDraft(saved, store.cloudUser.id).catch(console.error);
+      }
     } catch (e) {
       console.error('Failed to save draft', e);
     }
@@ -478,6 +553,19 @@ export default function App() {
             className={`p-2 rounded-full hover:bg-surface-container transition-colors ${store.aiEnabled ? 'text-primary' : 'text-on-surface-variant'}`}
           >
             <span className="material-symbols-outlined text-[20px]" style={store.aiEnabled ? { fontVariationSettings: "'FILL' 1" } : {}}>smart_toy</span>
+          </button>
+          {/* 云同步按鈕 */}
+          <button
+            onClick={() => store.cloudUser ? (syncFromCloud(store.cloudUser.id), showToast('☁️ 同步中…')) : setShowCloudLogin(true)}
+            title={store.cloudUser ? `已登录: ${store.cloudUser.email}（点击同步）` : '登录云同步'}
+            className={`p-2 rounded-full hover:bg-surface-container transition-colors relative ${
+              store.cloudUser ? 'text-primary' : 'text-on-surface-variant'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[20px]" style={store.cloudUser ? { fontVariationSettings: "'FILL' 1" } : {}}>
+              {cloudSyncing ? 'sync' : 'cloud'}
+            </span>
+            {cloudSyncing && <span className="absolute inset-0 rounded-full animate-spin border-2 border-primary/30 border-t-primary" />}
           </button>
           <button
             onClick={() => store.setTheme(store.theme === 'dark' ? 'light' : store.theme === 'light' ? 'system' : 'dark')}
@@ -1478,6 +1566,90 @@ export default function App() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cloud Login Modal */}
+      {showCloudLogin && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowCloudLogin(false)}>
+          <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center space-x-2">
+                <span className="material-symbols-outlined text-primary text-[24px]">cloud</span>
+                <h2 className="font-headline text-xl font-bold text-on-surface">云端同步</h2>
+              </div>
+              <button onClick={() => setShowCloudLogin(false)} className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            {store.cloudUser ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-3 bg-emerald-50/60 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-xl">
+                  <span className="material-symbols-outlined text-emerald-500 text-[20px]">check_circle</span>
+                  <div>
+                    <p className="text-sm font-label font-medium text-on-surface">已登录</p>
+                    <p className="text-xs text-on-surface-variant">{store.cloudUser.email}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => { await syncFromCloud(store.cloudUser!.id); showToast('✅ 同步完成'); }}
+                  disabled={cloudSyncing}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-label font-medium hover:bg-primary/15 transition-colors disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-[18px]">{cloudSyncing ? 'hourglass_top' : 'sync'}</span>
+                  {cloudSyncing ? '同步中…' : '立即从云端同步'}
+                </button>
+                <button
+                  onClick={async () => { await signOut(); showToast('已退出登录'); setShowCloudLogin(false); }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-outline-variant/30 rounded-xl text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[18px]">logout</span>退出登录
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex rounded-xl overflow-hidden border border-outline-variant/30">
+                  <button
+                    onClick={() => setCloudAuthMode('login')}
+                    className={`flex-1 py-2 text-sm font-label font-medium transition-colors ${cloudAuthMode === 'login' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
+                  >登录</button>
+                  <button
+                    onClick={() => setCloudAuthMode('register')}
+                    className={`flex-1 py-2 text-sm font-label font-medium transition-colors ${cloudAuthMode === 'register' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
+                  >注册</button>
+                </div>
+                <input
+                  type="email"
+                  placeholder="邮箱"
+                  value={cloudEmail}
+                  onChange={e => setCloudEmail(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                />
+                <input
+                  type="password"
+                  placeholder="密码（至少6位）"
+                  value={cloudPassword}
+                  onChange={e => setCloudPassword(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleCloudAuth()}
+                  className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                />
+                {cloudAuthError && (
+                  <p className="text-xs text-red-500 font-label">{cloudAuthError}</p>
+                )}
+                <button
+                  onClick={handleCloudAuth}
+                  disabled={cloudAuthLoading || !cloudEmail || !cloudPassword}
+                  className="w-full py-2.5 bg-primary text-on-primary rounded-xl text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
+                >
+                  {cloudAuthLoading ? '处理中…' : cloudAuthMode === 'login' ? '登录' : '注册'}
+                </button>
+                <p className="text-xs text-on-surface-variant text-center font-label">
+                  数据加密存储于 Supabase，仅你自己可见
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
