@@ -13,12 +13,23 @@ import HistoryPage from './components/HistoryPage';
 import FavoritesPage from './components/FavoritesPage';
 import LibraryPage from './components/LibraryPage';
 import InspirationPalace from './components/InspirationPalace';
+import { API_PRESETS, testConnection, chatCompletion } from './services/ai';
+import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt } from './services/prompts';
 
 export default function App() {
   const store = useStore();
   const [toast, setToast] = useState('');
   const [wordsSubView, setWordsSubView] = useState<'write' | 'library'>('write');
   const [todayOtherDraftsWords, setTodayOtherDraftsWords] = useState(0);
+  const [showAiSettings, setShowAiSettings] = useState(false);
+  const [aiTestStatus, setAiTestStatus] = useState<'idle' | 'testing' | 'success' | 'fail'>('idle');
+  const [aiWordHint, setAiWordHint] = useState('');
+  const [aiWordHintLoading, setAiWordHintLoading] = useState(false);
+  const [aiSceneExtra, setAiSceneExtra] = useState('');
+  const [aiSceneLoading, setAiSceneLoading] = useState(false);
+  const [aiChallengeLoading, setAiChallengeLoading] = useState(false);
+  const [aiCharacterExtra, setAiCharacterExtra] = useState('');
+  const [aiCharacterLoading, setAiCharacterLoading] = useState(false);
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
   // Theme
@@ -149,6 +160,7 @@ export default function App() {
     store.setCurrentCharacterPrompt(
       pickRandomCharacterPrompt(store.selectedCharacterLayer, excludeId, userPrompts)
     );
+    setAiCharacterExtra('');
   }
 
   async function handleDraw() {
@@ -160,6 +172,7 @@ export default function App() {
     store.setCurrentWords(words);
     store.setDrawnGenre(pickRandomGenre(store.selectedGenres));
     store.updateStreak();
+    setAiWordHint('');
   }
 
   async function handleToggleFavorite() {
@@ -213,6 +226,105 @@ export default function App() {
     a.download = `${title}.md`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  // ── AI 增强功能 ──
+
+  async function handleAiWordHint() {
+    if (!store.aiEnabled || store.currentWords.length === 0) return;
+    setAiWordHintLoading(true);
+    setAiWordHint('');
+    try {
+      const msgs = buildWordInspirationPrompt(store.currentWords, store.drawnGenre);
+      const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200 });
+      setAiWordHint(result);
+    } catch (e) {
+      showToast('AI 生成失败，请检查设置');
+      console.error(e);
+    } finally {
+      setAiWordHintLoading(false);
+    }
+  }
+
+  async function handleAiScene() {
+    if (!store.aiEnabled) return;
+    setAiSceneLoading(true);
+    try {
+      const existing = store.currentScene ? [store.currentScene.title] : [];
+      const msgs = buildSceneGeneratePrompt(existing);
+      const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
+      const parsed = JSON.parse(result);
+      if (parsed.title && parsed.description) {
+        store.setCurrentScene({
+          id: `ai_${Date.now()}`,
+          title: parsed.title,
+          description: parsed.description,
+          tags: parsed.tags || [],
+        });
+      }
+    } catch (e) {
+      showToast('AI 场景生成失败');
+      console.error(e);
+    } finally {
+      setAiSceneLoading(false);
+    }
+  }
+
+  async function handleAiSceneDeepDive() {
+    if (!store.aiEnabled || !store.currentScene) return;
+    setAiSceneLoading(true);
+    setAiSceneExtra('');
+    try {
+      const msgs = buildSceneDeepDivePrompt(store.currentScene.title, store.currentScene.description);
+      const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200 });
+      setAiSceneExtra(result);
+    } catch (e) {
+      showToast('AI 生成失败');
+      console.error(e);
+    } finally {
+      setAiSceneLoading(false);
+    }
+  }
+
+  async function handleAiChallenge() {
+    if (!store.aiEnabled) return;
+    setAiChallengeLoading(true);
+    try {
+      const existing = store.currentChallenge ? [store.currentChallenge.text] : [];
+      const msgs = buildChallengeGeneratePrompt(existing);
+      const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
+      const lines = result.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length > 0) {
+        const picked = lines[Math.floor(Math.random() * lines.length)];
+        store.setCurrentChallenge({
+          id: `ai_${Date.now()}`,
+          text: picked,
+          source: 'user',
+        });
+      }
+    } catch (e) {
+      showToast('AI 出题失败');
+      console.error(e);
+    } finally {
+      setAiChallengeLoading(false);
+    }
+  }
+
+  async function handleAiCharacterDeep() {
+    if (!store.aiEnabled || !store.currentCharacterPrompt) return;
+    setAiCharacterLoading(true);
+    setAiCharacterExtra('');
+    try {
+      const layerName = CHARACTER_LAYERS.find(l => l.id === store.currentCharacterPrompt!.layer)?.name || '';
+      const msgs = buildCharacterDeepPrompt(store.currentCharacterPrompt.text, layerName);
+      const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200 });
+      setAiCharacterExtra(result);
+    } catch (e) {
+      showToast('AI 生成失败');
+      console.error(e);
+    } finally {
+      setAiCharacterLoading(false);
+    }
   }
 
   // Auto-save
@@ -285,6 +397,13 @@ export default function App() {
           </button>
         </nav>
         <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setShowAiSettings(true)}
+            title="AI 设置"
+            className={`p-2 rounded-full hover:bg-surface-container transition-colors ${store.aiEnabled ? 'text-primary' : 'text-on-surface-variant'}`}
+          >
+            <span className="material-symbols-outlined text-[20px]" style={store.aiEnabled ? { fontVariationSettings: "'FILL' 1" } : {}}>smart_toy</span>
+          </button>
           <button
             onClick={() => store.setTheme(store.theme === 'dark' ? 'light' : store.theme === 'light' ? 'system' : 'dark')}
             title={store.theme === 'dark' ? '暗色模式' : store.theme === 'light' ? '亮色模式' : '跟随系统'}
@@ -718,6 +837,29 @@ export default function App() {
                   </div>
                 )}
 
+                {/* AI 写作引导 */}
+                {store.aiEnabled && store.currentWords.length > 0 && (
+                  <div className="bg-amber-50/60 dark:bg-amber-500/5 border border-amber-200/40 dark:border-amber-400/10 rounded-xl p-3">
+                    {aiWordHint ? (
+                      <div>
+                        <p className="text-[10px] font-label uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1.5 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[12px]">auto_awesome</span>AI 灵感引导
+                        </p>
+                        <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">{aiWordHint}</p>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleAiWordHint}
+                        disabled={aiWordHintLoading}
+                        className="w-full flex items-center justify-center gap-1.5 py-1 text-xs font-label text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 transition-colors disabled:opacity-50"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">{aiWordHintLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                        <span>{aiWordHintLoading ? 'AI 思考中…' : 'AI 帮我找灵感'}</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 <div className="space-y-4">
                   {store.currentWords.map((w, i) => {
                     const CATEGORY_STYLE: Record<string, { badge: string; glow: string }> = {
@@ -779,6 +921,36 @@ export default function App() {
                   </div>
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                 </div>
+
+                {/* AI 场景增强 */}
+                {store.aiEnabled && (
+                  <div className="space-y-2">
+                    <button
+                      onClick={handleAiSceneDeepDive}
+                      disabled={aiSceneLoading}
+                      className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">{aiSceneLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                      <span>{aiSceneLoading ? '生成中…' : 'AI 补充感官细节'}</span>
+                    </button>
+                    <button
+                      onClick={handleAiScene}
+                      disabled={aiSceneLoading}
+                      className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">smart_toy</span>
+                      <span>AI 生成新场景</span>
+                    </button>
+                    {aiSceneExtra && (
+                      <div className="bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl p-3">
+                        <p className="text-[10px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-1.5 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[12px]">auto_awesome</span>感官引导
+                        </p>
+                        <p className="text-sm text-blue-900 dark:text-blue-200 leading-relaxed whitespace-pre-line">{aiSceneExtra}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </section>
             )}
 
@@ -800,6 +972,18 @@ export default function App() {
                   <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                 </div>
+
+                {/* AI 出题 */}
+                {store.aiEnabled && (
+                  <button
+                    onClick={handleAiChallenge}
+                    disabled={aiChallengeLoading}
+                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50/60 dark:bg-rose-500/5 border border-rose-200/40 dark:border-rose-400/10 rounded-xl text-xs font-label text-rose-700 dark:text-rose-400 hover:bg-rose-100/60 dark:hover:bg-rose-500/10 transition-colors disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">{aiChallengeLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                    <span>{aiChallengeLoading ? '出题中…' : 'AI 出一道题'}</span>
+                  </button>
+                )}
               </section>
             )}
 
@@ -831,6 +1015,28 @@ export default function App() {
                     <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                   </div>
+
+                  {/* AI 角色深挖 */}
+                  {store.aiEnabled && (
+                    <div className="space-y-2">
+                      <button
+                        onClick={handleAiCharacterDeep}
+                        disabled={aiCharacterLoading}
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">{aiCharacterLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                        <span>{aiCharacterLoading ? '思考中…' : 'AI 深挖角色'}</span>
+                      </button>
+                      {aiCharacterExtra && (
+                        <div className="bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl p-3">
+                          <p className="text-[10px] font-label uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-400 mb-1.5 flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[12px]">auto_awesome</span>AI 追问
+                          </p>
+                          <p className="text-sm text-fuchsia-900 dark:text-fuchsia-200 leading-relaxed">{aiCharacterExtra}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </section>
               );
             })()}
@@ -943,6 +1149,149 @@ export default function App() {
       {toast && (
         <div className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-surface-container-high text-on-surface border border-outline/20 shadow-lg px-6 py-3 rounded-full font-label text-sm z-[100] animate-bounce">
           {toast}
+        </div>
+      )}
+
+      {/* AI Settings Modal */}
+      {showAiSettings && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowAiSettings(false)}>
+          <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center space-x-2">
+                <span className="material-symbols-outlined text-primary text-[24px]">smart_toy</span>
+                <h2 className="font-headline text-xl font-bold text-on-surface">AI 设置</h2>
+              </div>
+              <button onClick={() => setShowAiSettings(false)} className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div className="space-y-5">
+              {/* Enable toggle */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-label text-sm font-medium text-on-surface">启用 AI 功能</p>
+                  <p className="text-xs text-on-surface-variant">开启后可使用 AI 生成灵感、续写等辅助功能</p>
+                </div>
+                <button
+                  onClick={() => store.setAiEnabled(!store.aiEnabled)}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${store.aiEnabled ? 'bg-primary' : 'bg-outline-variant/40'}`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${store.aiEnabled ? 'translate-x-5' : ''}`} />
+                </button>
+              </div>
+
+              {/* Preset */}
+              <div>
+                <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">快速选择</label>
+                <div className="flex gap-2 flex-wrap">
+                  {API_PRESETS.map(p => (
+                    <button
+                      key={p.label}
+                      onClick={() => {
+                        store.setAiConfig({ apiBase: p.base, model: p.models[0] });
+                        setAiTestStatus('idle');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-label border transition-colors ${
+                        store.aiConfig.apiBase === p.base
+                          ? 'bg-primary/10 border-primary/30 text-primary font-medium'
+                          : 'bg-surface-container border-outline-variant/20 text-on-surface-variant hover:bg-surface-container-high'
+                      }`}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* API Base */}
+              <div>
+                <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">API 地址</label>
+                <input
+                  type="url"
+                  value={store.aiConfig.apiBase}
+                  onChange={e => { store.setAiConfig({ apiBase: e.target.value }); setAiTestStatus('idle'); }}
+                  placeholder="https://api.openai.com/v1"
+                  className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                />
+              </div>
+
+              {/* API Key */}
+              <div>
+                <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">API Key</label>
+                <input
+                  type="password"
+                  value={store.aiConfig.apiKey}
+                  onChange={e => { store.setAiConfig({ apiKey: e.target.value }); setAiTestStatus('idle'); }}
+                  placeholder="sk-..."
+                  className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                />
+                <p className="text-[11px] text-on-surface-variant mt-1">密钥仅存储在浏览器本地，不会上传到任何服务器</p>
+              </div>
+
+              {/* Model */}
+              <div>
+                <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">模型</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={store.aiConfig.model}
+                    onChange={e => { store.setAiConfig({ model: e.target.value }); setAiTestStatus('idle'); }}
+                    placeholder="gpt-4o-mini"
+                    className="flex-1 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                  />
+                  {/* Quick model buttons for current preset */}
+                  {(() => {
+                    const preset = API_PRESETS.find(p => store.aiConfig.apiBase.includes(new URL(p.base).host));
+                    if (!preset || preset.models.length <= 1) return null;
+                    return (
+                      <div className="flex gap-1">
+                        {preset.models.map(m => (
+                          <button
+                            key={m}
+                            onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
+                            className={`px-2 py-1 rounded text-[11px] font-label border transition-colors ${
+                              store.aiConfig.model === m
+                                ? 'bg-primary/10 border-primary/30 text-primary'
+                                : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'
+                            }`}
+                          >
+                            {m}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+
+              {/* Test connection */}
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={async () => {
+                    setAiTestStatus('testing');
+                    const ok = await testConnection(store.aiConfig);
+                    setAiTestStatus(ok ? 'success' : 'fail');
+                  }}
+                  disabled={aiTestStatus === 'testing'}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-[16px]">{aiTestStatus === 'testing' ? 'hourglass_top' : 'wifi_tethering'}</span>
+                  <span>{aiTestStatus === 'testing' ? '测试中…' : '测试连接'}</span>
+                </button>
+                {aiTestStatus === 'success' && (
+                  <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-sm font-label">
+                    <span className="material-symbols-outlined text-[16px]">check_circle</span>连接成功
+                  </span>
+                )}
+                {aiTestStatus === 'fail' && (
+                  <span className="flex items-center gap-1 text-red-600 dark:text-red-400 text-sm font-label">
+                    <span className="material-symbols-outlined text-[16px]">error</span>连接失败，请检查配置
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

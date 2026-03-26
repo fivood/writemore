@@ -6,6 +6,8 @@ import { BUILTIN_CHALLENGES, pickRandomChallenge } from '../data/challenges';
 import { BUILTIN_CHARACTER_PROMPTS, pickRandomCharacterPrompt } from '../data/characterPrompts';
 import type { Draft, WordSet, WritingMode } from '../types';
 import { WRITING_MODES } from '../types';
+import { chatCompletion } from '../services/ai';
+import { buildInspirationRemixPrompt } from '../services/prompts';
 
 interface PalaceItem {
   draft: Draft;
@@ -27,6 +29,8 @@ export default function InspirationPalace() {
   const [loading, setLoading] = useState(true);
   const [filterMode, setFilterMode] = useState<WritingMode | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [aiRemixResult, setAiRemixResult] = useState('');
+  const [aiRemixLoading, setAiRemixLoading] = useState(false);
 
   useEffect(() => { fetchItems(); }, []);
 
@@ -138,6 +142,32 @@ export default function InspirationPalace() {
     return SCENE_PROMPTS.find(s => s.id === sceneId)?.title;
   };
 
+  async function handleAiRemix() {
+    if (!store.aiEnabled || items.length < 2) return;
+    setAiRemixLoading(true);
+    setAiRemixResult('');
+    try {
+      const shuffled = [...items].sort(() => Math.random() - 0.5);
+      const picked = shuffled.slice(0, Math.min(5, shuffled.length)).map(it => it.draft);
+      const msgs = buildInspirationRemixPrompt(picked);
+      const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
+      setAiRemixResult(result);
+    } catch {
+      setAiRemixResult('AI 生成失败，请检查 AI 设置');
+    } finally {
+      setAiRemixLoading(false);
+    }
+  }
+
+  function handleStartFromRemix() {
+    store.setWritingMode('free');
+    store.setEditorTitle('');
+    store.setEditorContent('');
+    store.setCurrentDraftId(null);
+    store.setCurrentWordSetId(null);
+    store.setActiveTab('inspire');
+  }
+
   return (
     <main className="flex-1 bg-surface relative overflow-y-auto p-8 md:p-12">
       <div className="max-w-6xl mx-auto pb-20">
@@ -155,9 +185,46 @@ export default function InspirationPalace() {
               <span><strong className="text-on-surface">{stats.total}</strong> 条灵感</span>
               <span className="text-outline-variant">|</span>
               <span><strong className="text-on-surface">{stats.totalWords.toLocaleString()}</strong> 字</span>
+              {store.aiEnabled && items.length >= 2 && (
+                <button
+                  onClick={handleAiRemix}
+                  disabled={aiRemixLoading}
+                  className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-violet-50/60 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-lg text-xs font-label text-violet-700 dark:text-violet-400 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-[14px]">{aiRemixLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                  <span>{aiRemixLoading ? '生成中…' : 'AI 再创作'}</span>
+                </button>
+              )}
             </div>
           )}
         </div>
+
+        {/* AI Remix Result */}
+        {aiRemixResult && (
+          <div className="mb-6 bg-violet-50/60 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-xl p-4">
+            <p className="text-[10px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-400 mb-2 flex items-center gap-1">
+              <span className="material-symbols-outlined text-[12px]">auto_awesome</span>AI 灵感再创作
+            </p>
+            <p className="text-sm text-violet-900 dark:text-violet-200 leading-relaxed mb-3">{aiRemixResult}</p>
+            <div className="flex gap-2">
+              <button
+                onClick={handleStartFromRemix}
+                className="flex items-center gap-1 px-3 py-1.5 bg-violet-600 text-white rounded-lg text-xs font-label hover:bg-violet-700 transition-colors"
+              >
+                <span className="material-symbols-outlined text-[14px]">edit</span>
+                <span>以此开始写作</span>
+              </button>
+              <button
+                onClick={handleAiRemix}
+                disabled={aiRemixLoading}
+                className="flex items-center gap-1 px-3 py-1.5 border border-violet-300 dark:border-violet-400/20 rounded-lg text-xs font-label text-violet-700 dark:text-violet-400 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined text-[14px]">refresh</span>
+                <span>再来一个</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Filter tabs */}
         {items.length > 0 && (

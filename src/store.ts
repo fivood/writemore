@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { Genre, WordCategory, WordCount, Theme, TimerDuration, Word, WritingMode, ScenePrompt } from './types';
 import type { WritingChallenge } from './data/challenges';
 import type { CharacterPrompt, CharacterLayerId } from './data/characterPrompts';
+import type { AIConfig } from './services/ai';
 
 interface AppState {
   // Theme
@@ -90,6 +91,12 @@ interface AppState {
   // Font size
   fontSize: 'small' | 'medium' | 'large';
   setFontSize: (s: 'small' | 'medium' | 'large') => void;
+
+  // AI settings
+  aiConfig: AIConfig;
+  setAiConfig: (c: Partial<AIConfig>) => void;
+  aiEnabled: boolean;
+  setAiEnabled: (e: boolean) => void;
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -186,6 +193,11 @@ export const useStore = create<AppState>()(
 
       fontSize: 'medium',
       setFontSize: (s) => set({ fontSize: s }),
+
+      aiConfig: { apiKey: '', apiBase: 'https://api.openai.com/v1', model: 'gpt-4o-mini' },
+      setAiConfig: (c) => set(s => ({ aiConfig: { ...s.aiConfig, ...c } })),
+      aiEnabled: false,
+      setAiEnabled: (e) => set({ aiEnabled: e }),
     }),
     {
       name: 'writemore-store',
@@ -200,6 +212,8 @@ export const useStore = create<AppState>()(
         streak: s.streak,
         lastActiveDate: s.lastActiveDate,
         fontSize: s.fontSize,
+        aiConfig: s.aiConfig,
+        aiEnabled: s.aiEnabled,
         editorTitle: s.editorTitle,
         editorContent: s.editorContent,
         currentWordSetId: s.currentWordSetId,
