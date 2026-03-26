@@ -1622,19 +1622,31 @@ export default function App() {
               </div>
             ) : (
               <div className="space-y-4">
+                {/* 模式切换 */}
                 <div className="flex rounded-xl overflow-hidden border border-outline-variant/30">
                   <button
-                    onClick={() => setCloudAuthMode('login')}
+                    onClick={() => { setCloudAuthMode('login'); setCloudAuthError(''); }}
                     className={`flex-1 py-2 text-sm font-label font-medium transition-colors ${cloudAuthMode === 'login' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
                   >登录</button>
                   <button
-                    onClick={() => setCloudAuthMode('register')}
+                    onClick={() => { setCloudAuthMode('register'); setCloudAuthError(''); }}
                     className={`flex-1 py-2 text-sm font-label font-medium transition-colors ${cloudAuthMode === 'register' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
-                  >注册</button>
+                  >注册账号</button>
                 </div>
+
+                {/* 注册说明 */}
+                {cloudAuthMode === 'register' && (
+                  <div className="flex gap-2.5 p-3 bg-primary/5 border border-primary/15 rounded-xl">
+                    <span className="material-symbols-outlined text-primary text-[18px] mt-0.5 shrink-0">info</span>
+                    <p className="text-xs text-on-surface-variant font-label leading-relaxed">
+                      直接填写<strong className="text-on-surface">任意邮箱 + 自定义密码</strong>即可注册，无需邮箱验证。注册后即登录，文章数据加密存储于云端，跨设备同步。
+                    </p>
+                  </div>
+                )}
+
                 <input
                   type="email"
-                  placeholder="邮箱"
+                  placeholder="邮箱地址"
                   value={cloudEmail}
                   onChange={e => setCloudEmail(e.target.value)}
                   className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
@@ -1655,11 +1667,20 @@ export default function App() {
                   disabled={cloudAuthLoading || !cloudEmail || !cloudPassword}
                   className="w-full py-2.5 bg-primary text-on-primary rounded-xl text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
                 >
-                  {cloudAuthLoading ? '处理中…' : cloudAuthMode === 'login' ? '登录' : '注册'}
+                  {cloudAuthLoading ? '处理中…' : cloudAuthMode === 'login' ? '登录' : '注册并登录'}
                 </button>
-                <p className="text-xs text-on-surface-variant text-center font-label">
-                  数据加密存储于 Supabase，仅你自己可见
-                </p>
+
+                {/* 底部提示 */}
+                <div className="flex items-center justify-center gap-1.5 text-xs text-on-surface-variant font-label">
+                  <span className="material-symbols-outlined text-[14px]">lock</span>
+                  <span>数据仅你本人可见，任何人无法访问</span>
+                </div>
+
+                {cloudAuthMode === 'login' && (
+                  <p className="text-xs text-on-surface-variant text-center font-label">
+                    没有账号？点击上方<button className="text-primary underline-offset-2 hover:underline ml-0.5" onClick={() => { setCloudAuthMode('register'); setCloudAuthError(''); }}>注册账号</button>
+                  </p>
+                )}
               </div>
             )}
           </div>

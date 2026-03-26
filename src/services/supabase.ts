@@ -4,8 +4,9 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Draft, WordSet } from '../types';
 
-const SUPABASE_URL = '';
-const SUPABASE_KEY = '';
+// 构建时从环境变量注入（本地填 .env.local，Actions 用 Secrets）
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? '';
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY ?? '';
 
 /** 凭据为空时云功能全部禁用，用户纯本地使用 */
 export const SUPABASE_ENABLED = !!(SUPABASE_URL && SUPABASE_KEY);
