@@ -278,6 +278,27 @@
   box-shadow: 0 10px 30px -5px rgba(0,0,0,0.3), 0 20px 60px -10px rgba(0,0,0,0.5);
 }
 
+/* ── Custom scrollbar ── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 9999px;
+  opacity: 0.5;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-outline-variant) transparent;
+}
+
 .dark .bento-glow-amber:hover  { box-shadow: 0 0 50px -8px rgba(255, 177, 72, 0.18); }
 .dark .bento-glow-green:hover  { box-shadow: 0 0 50px -8px rgba(105, 246, 184, 0.18); }
 .dark .bento-glow-rose:hover   { box-shadow: 0 0 50px -8px rgba(255, 100, 120, 0.18); }
