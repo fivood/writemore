@@ -128,23 +128,23 @@ export async function chatCompletionStream(
 }
 
 /**
- * 测试 API 连接是否正常
+ * 测试 API 连接是否正常，成功返回 null，失败返回错误信息字符串
  */
-export async function testConnection(config: AIConfig): Promise<boolean> {
+export async function testConnection(config: AIConfig): Promise<string | null> {
   try {
     const result = await chatCompletion(config, [
-      { role: 'user', content: '回复"连接成功"四个字。' },
-    ], { maxTokens: 20 });
-    return result.length > 0;
-  } catch {
-    return false;
+      { role: 'user', content: '回复"ok"两个字母。' },
+    ], { maxTokens: 10 });
+    return result.length > 0 ? null : '返回内容为空';
+  } catch (e) {
+    return e instanceof Error ? e.message : String(e);
   }
 }
 
 /** 预设的 API 供应商 */
 export const API_PRESETS: { label: string; base: string; models: string[] }[] = [
   { label: 'OpenAI',   base: 'https://api.openai.com/v1',  models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1-nano'] },
-  { label: 'Gemini',   base: 'https://generativelanguage.googleapis.com/v1beta/openai', models: ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash', 'gemini-1.5-pro'] },
+  { label: 'Gemini',   base: 'https://generativelanguage.googleapis.com/v1beta/openai', models: ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-lite'] },
   { label: 'DeepSeek', base: 'https://api.deepseek.com/v1', models: ['deepseek-chat'] },
   { label: 'Ollama (本地)', base: 'http://localhost:11434/v1', models: ['qwen2.5', 'llama3', 'mistral'] },
 ];

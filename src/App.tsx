@@ -28,6 +28,9 @@ export default function App() {
   const [todayOtherDraftsWords, setTodayOtherDraftsWords] = useState(0);
   const [showAiSettings, setShowAiSettings] = useState(false);
   const [aiTestStatus, setAiTestStatus] = useState<'idle' | 'testing' | 'success' | 'fail'>('idle');
+  const [aiTestError, setAiTestError] = useState('');
+  const [aiAvailModels, setAiAvailModels] = useState<string[]>([]);
+  const [aiModelsLoading, setAiModelsLoading] = useState(false);
   const [updateBanner, setUpdateBanner] = useState<{ version: string; url: string } | null>(null);
   const [aiWordHint, setAiWordHint] = useState('');
   const [aiWordHintLoading, setAiWordHintLoading] = useState(false);
@@ -324,11 +327,17 @@ export default function App() {
       const lines = result.split('\n').map(l => l.trim()).filter(l => l.length > 0);
       if (lines.length > 0) {
         const picked = lines[Math.floor(Math.random() * lines.length)];
-        store.setCurrentChallenge({
+        const newChallenge = {
           id: `ai_${Date.now()}`,
           text: picked,
-          source: 'user',
-        });
+          source: 'user' as const,
+        };
+        store.setCurrentChallenge(newChallenge);
+        // 同时存入本地数据库，其余两条也存入
+        await db.challenges.bulkPut(
+          lines.map((text, i) => ({ id: `ai_${Date.now()}_${i}`, text, source: 'user' as const }))
+        );
+        showToast(`✨ AI 出了 ${lines.length} 道题并已保存到题库`);
       }
     } catch (e) {
       showToast('AI 出题失败');
@@ -1019,6 +1028,11 @@ export default function App() {
                 <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                   <span className="material-symbols-outlined text-[32px] text-rose-400 dark:text-rose-300 mb-4 block">quiz</span>
                   <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
+                  {store.currentChallenge.id.startsWith('ai_') && (
+                    <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100/80 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-400/20 text-[10px] font-label text-rose-600 dark:text-rose-400">
+                      <span className="material-symbols-outlined text-[11px]">auto_awesome</span>AI 出题
+                    </span>
+                  )}
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                 </div>
 
@@ -1281,20 +1295,61 @@ export default function App() {
               {/* Model */}
               <div>
                 <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">模型</label>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mb-2">
                   <input
                     type="text"
                     value={store.aiConfig.model}
                     onChange={e => { store.setAiConfig({ model: e.target.value }); setAiTestStatus('idle'); }}
-                    placeholder="gpt-4o-mini"
+                    placeholder="gemini-1.5-flash"
                     className="flex-1 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                   />
+                  {store.aiConfig.apiKey && (
+                    <button
+                      onClick={async () => {
+                        setAiModelsLoading(true);
+                        setAiAvailModels([]);
+                        try {
+                          const base = store.aiConfig.apiBase.replace(/\/+$/, '');
+                          const res = await fetch(`${base}/models`, {
+                            headers: { Authorization: `Bearer ${store.aiConfig.apiKey}` },
+                          });
+                          const data = await res.json();
+                          const ids: string[] = (data.data ?? data.models ?? []).map((m: Record<string,string>) => m.id ?? m.name?.replace('models/', '') ?? '').filter(Boolean);
+                          setAiAvailModels(ids);
+                        } catch { setAiAvailModels([]); }
+                        finally { setAiModelsLoading(false); }
+                      }}
+                      disabled={aiModelsLoading}
+                      title="获取该 Key 可用的模型列表"
+                      className="px-3 py-2 border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors disabled:opacity-50 whitespace-nowrap"
+                    >
+                      {aiModelsLoading ? '获取中…' : '可用模型'}
+                    </button>
+                  )}
+                </div>
+                {aiAvailModels.length > 0 && (
+                  <div className="max-h-32 overflow-y-auto flex flex-wrap gap-1 mb-1">
+                    {aiAvailModels.map(m => (
+                      <button
+                        key={m}
+                        onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
+                        className={`px-2 py-0.5 rounded text-[11px] font-label border transition-colors ${
+                          store.aiConfig.model === m
+                            ? 'bg-primary/10 border-primary/30 text-primary'
+                            : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'
+                        }`}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                )}
                   {/* Quick model buttons for current preset */}
-                  {(() => {
+                  {aiAvailModels.length === 0 && (() => {
                     const preset = API_PRESETS.find(p => store.aiConfig.apiBase.includes(new URL(p.base).host));
                     if (!preset || preset.models.length <= 1) return null;
                     return (
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 flex-wrap">
                         {preset.models.map(m => (
                           <button
                             key={m}
@@ -1311,7 +1366,6 @@ export default function App() {
                       </div>
                     );
                   })()}
-                </div>
               </div>
 
               {/* Test connection */}
@@ -1319,8 +1373,14 @@ export default function App() {
                 <button
                   onClick={async () => {
                     setAiTestStatus('testing');
-                    const ok = await testConnection(store.aiConfig);
-                    setAiTestStatus(ok ? 'success' : 'fail');
+                    setAiTestError('');
+                    const err = await testConnection(store.aiConfig);
+                    if (err === null) {
+                      setAiTestStatus('success');
+                    } else {
+                      setAiTestStatus('fail');
+                      setAiTestError(err);
+                    }
                   }}
                   disabled={aiTestStatus === 'testing'}
                   className="flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
@@ -1334,9 +1394,14 @@ export default function App() {
                   </span>
                 )}
                 {aiTestStatus === 'fail' && (
-                  <span className="flex items-center gap-1 text-red-600 dark:text-red-400 text-sm font-label">
-                    <span className="material-symbols-outlined text-[16px]">error</span>连接失败，请检查配置
-                  </span>
+                  <div className="flex flex-col gap-1">
+                    <span className="flex items-center gap-1 text-red-600 dark:text-red-400 text-sm font-label">
+                      <span className="material-symbols-outlined text-[16px]">error</span>连接失败
+                    </span>
+                    {aiTestError && (
+                      <span className="text-[11px] text-red-500/80 dark:text-red-400/70 font-mono break-all max-w-xs">{aiTestError}</span>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
