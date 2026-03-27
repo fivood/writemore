@@ -242,9 +242,14 @@ export default function App() {
     return () => window.removeEventListener('keydown', handler);
   }, [store.currentWords, store.selectedGenres, store.wordCount, store.lockedIndices, store.editorContent, store.editorTitle, store.writingMode]);
 
+  function hasMeaningfulContent(content: string) {
+    // Ignore whitespace and zero-width characters that can be produced by IME/editor internals.
+    return content.replace(/[\s\u200B-\u200D\uFEFF]/g, '').length > 0;
+  }
+
   // ── Mode Selection ──
   function selectMode(mode: WritingMode) {
-    if (store.editorContent.trim()) {
+    if (hasMeaningfulContent(store.editorContent)) {
       handleSave();
     }
     setWordsSubView('write');
@@ -283,7 +288,7 @@ export default function App() {
   }
 
   function handleBackToModeSelect() {
-    if (store.editorContent.trim()) {
+    if (hasMeaningfulContent(store.editorContent)) {
       handleSave();
     }
     setWordsSubView('write');
@@ -297,6 +302,21 @@ export default function App() {
     store.setEditorContent('');
     store.setCurrentWordSetId(null);
     store.setCurrentDraftId(null);
+  }
+
+  function handleTopTabChange(tab: string) {
+    if (tab === 'inspire' && store.activeTab !== 'inspire') {
+      // Re-entering Inspire from other tabs should always land on mode selection.
+      setWordsSubView('write');
+      setMobilePanel(false);
+      store.setWritingMode(null);
+      store.setCurrentWords([]);
+      store.setCurrentScene(null);
+      store.setCurrentChallenge(null);
+      store.setCurrentCharacterPrompt(null);
+      store.setSelectedCharacterLayer(null);
+    }
+    store.setActiveTab(tab);
   }
 
   async function pickAndSetChallenge(excludeId?: string) {
@@ -346,7 +366,7 @@ export default function App() {
     // 每次都从 store 读最新状态，避免 setTimeout 捕获的 stale closure 导致重复创建草稿
     const s = useStore.getState();
     // 内容为空时不保存（标题可能是自动生成的，不算有效内容）
-    if (!s.editorContent.trim()) return;
+    if (!hasMeaningfulContent(s.editorContent)) return;
     isSavingRef.current = true;
     try {
       const { wordSetId, draftId } = await saveDraftToDb(
@@ -531,10 +551,11 @@ export default function App() {
 
   // Auto-save
   useEffect(() => {
-    if (!store.editorContent.trim() && !store.editorTitle.trim()) return;
+    if (store.activeTab !== 'inspire' || store.writingMode === null) return;
+    if (!hasMeaningfulContent(store.editorContent)) return;
     const timer = setTimeout(handleSave, 30000);
     return () => clearTimeout(timer);
-  }, [store.editorContent, store.editorTitle]);
+  }, [store.activeTab, store.writingMode, store.editorContent]);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -622,19 +643,19 @@ export default function App() {
       <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-surface/70 dark:bg-[#100e0d]/75 border-b border-outline-variant/10 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full safe-area-top">
         <div className="text-lg md:text-xl font-bold text-primary italic font-headline tracking-tight">每日写作灵感</div>
         <nav className="hidden md:flex space-x-8 items-center font-headline text-base tracking-tight">
-          <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('inspire')}>
+          <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => handleTopTabChange('inspire')}>
             <Sparkles size={20} />
             <span>灵感</span>
           </button>
-          <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'palace' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('palace')}>
+          <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'palace' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => handleTopTabChange('palace')}>
             <Landmark size={20} />
             <span>灵感宫殿</span>
           </button>
-          <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'favorites' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('favorites')}>
+          <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'favorites' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => handleTopTabChange('favorites')}>
             <Star size={20} />
             <span>收藏</span>
           </button>
-          <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'history' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('history')}>
+          <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'history' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => handleTopTabChange('history')}>
             <BookOpen size={20} />
             <span>历史</span>
           </button>
@@ -697,7 +718,7 @@ export default function App() {
           { tab: 'favorites', Icon: Star, label: '收藏' },
           { tab: 'history', Icon: BookOpen, label: '历史' },
         ].map(t => (
-          <button key={t.tab} onClick={() => store.setActiveTab(t.tab)} className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors ${store.activeTab === t.tab ? 'text-primary' : 'text-on-surface-variant'}`}>
+          <button key={t.tab} onClick={() => handleTopTabChange(t.tab)} className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors ${store.activeTab === t.tab ? 'text-primary' : 'text-on-surface-variant'}`}>
             <t.Icon size={22} />
             <span className="text-[10px] font-label mt-0.5">{t.label}</span>
           </button>
