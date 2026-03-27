@@ -11,6 +11,7 @@ import { saveDraftToDb, toggleFavoriteWordSet } from './data/draftEngine';
 import { pickRandomScene } from './data/scenes';
 import { pickRandomChallenge } from './data/challenges';
 import { pickRandomCharacterPrompt, CHARACTER_LAYERS } from './data/characterPrompts';
+import type { CharacterLayerId } from './data/characterPrompts';
 import { db } from './db';
 import type { Word, WritingMode } from './types';
 import { WORD_CATEGORIES, WRITING_MODES } from './types';
@@ -303,10 +304,11 @@ export default function App() {
     store.setCurrentChallenge(pickRandomChallenge(excludeId, userChallenges));
   }
 
-  async function pickAndSetCharacterPrompt(excludeId?: string) {
+  async function pickAndSetCharacterPrompt(excludeId?: string, layerOverride?: CharacterLayerId | null) {
     const userPrompts = await db.characterPrompts.toArray();
+    const layer = layerOverride !== undefined ? layerOverride : store.selectedCharacterLayer;
     store.setCurrentCharacterPrompt(
-      pickRandomCharacterPrompt(store.selectedCharacterLayer, excludeId, userPrompts)
+      pickRandomCharacterPrompt(layer, excludeId, userPrompts)
     );
     setAiCharacterExtra('');
   }
@@ -822,7 +824,7 @@ export default function App() {
         {store.activeTab === 'inspire' && isWriting && (
           <>
             {/* Sidebar */}
-            <aside className={`transition-all duration-300 hidden md:flex ${store.sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'w-64 glass-panel bg-surface-container-low/80 flex-col p-6 border-r border-outline-variant/10 shrink-0'}`}>
+            <aside className={`transition-all duration-300 hidden md:flex ${store.sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'w-64 glass-panel bg-surface-container-low/40 flex-col p-6 border-r border-outline-variant/10 shrink-0'}`}>
               <button onClick={handleBackToModeSelect} className="flex items-center space-x-2 text-on-surface-variant hover:text-primary transition-colors mb-6 group">
                 <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
                 <span className="font-label text-xs">返回选择</span>
@@ -1000,10 +1002,10 @@ export default function App() {
                     {/* Layer filter */}
                     <p className="text-[12px] font-label text-on-surface-variant uppercase tracking-widest mb-1">切换维度</p>
                     <button
-                      onClick={() => { store.setSelectedCharacterLayer(null); pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id); }}
+                      onClick={() => { store.setSelectedCharacterLayer(null); pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id, null); }}
                       className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left text-xs font-label transition-all ${
                         store.selectedCharacterLayer === null
-                          ? 'bg-fuchsia-100 text-fuchsia-800 font-medium dark:bg-[rgb(136_41_211/40%)] dark:text-[#c7b8ed]'
+                          ? 'bg-stone-100 text-fuchsia-800 font-medium dark:bg-[rgb(136_41_211/40%)] dark:text-[#c7b8ed]'
                           : 'text-on-surface-variant hover:bg-surface-container dark:hover:bg-white/5'
                       }`}
                     >
@@ -1015,7 +1017,7 @@ export default function App() {
                         key={layer.id}
                         onClick={() => {
                           store.setSelectedCharacterLayer(layer.id);
-                          pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id);
+                          pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id, layer.id);
                         }}
                         className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left text-xs font-label transition-all ${
                           store.selectedCharacterLayer === layer.id
