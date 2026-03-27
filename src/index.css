@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Tailwind v4: 使用 .dark 类控制暗色模式（而非系统媒体查询），与 CSS 变量系统保持一致 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-background: #f0ece5;
   --color-surface-container-high: #e9e8e3;
