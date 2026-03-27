@@ -237,7 +237,7 @@ export default function App() {
 
   // ── Mode Selection ──
   function selectMode(mode: WritingMode) {
-    if (store.editorContent.trim() || store.editorTitle.trim()) {
+    if (store.editorContent.trim()) {
       handleSave();
     }
     setWordsSubView('write');
@@ -276,7 +276,7 @@ export default function App() {
   }
 
   function handleBackToModeSelect() {
-    if (store.editorContent.trim() || store.editorTitle.trim()) {
+    if (store.editorContent.trim()) {
       handleSave();
     }
     setWordsSubView('write');
@@ -337,7 +337,8 @@ export default function App() {
     if (isSavingRef.current) return;
     // 每次都从 store 读最新状态，避免 setTimeout 捕获的 stale closure 导致重复创建草稿
     const s = useStore.getState();
-    if (!s.editorContent.trim() && !s.editorTitle.trim()) return;
+    // 内容为空时不保存（标题可能是自动生成的，不算有效内容）
+    if (!s.editorContent.trim()) return;
     isSavingRef.current = true;
     try {
       const { wordSetId, draftId } = await saveDraftToDb(
