@@ -108,8 +108,8 @@ const today = () => new Date().toISOString().slice(0, 10);
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
-      theme: 'system',
-      setTheme: (t) => set({ theme: t }),
+      theme: 'light',
+      setTheme: (t) => set({ theme: t === 'dark' ? 'dark' : 'light' }),
 
       selectedGenres: [],
       toggleGenre: (g) => {
@@ -208,6 +208,15 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'writemore-store',
+      version: 2,
+      migrate: (persistedState: any, version) => {
+        if (!persistedState || typeof persistedState !== 'object') return persistedState;
+        if (version < 2 && persistedState.theme === 'system') {
+          const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          return { ...persistedState, theme: prefersDark ? 'dark' : 'light' };
+        }
+        return persistedState;
+      },
       partialize: (s) => ({
         theme: s.theme,
         selectedGenres: s.selectedGenres,

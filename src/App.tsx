@@ -54,25 +54,30 @@ export default function App() {
   const isSavingRef = useRef(false);
 
   const [mobilePanel, setMobilePanel] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   // Theme
   useEffect(() => {
     const el = document.documentElement;
+
     const apply = (t: string) => {
-      if (t === 'dark') el.classList.add('dark');
-      else if (t === 'light') el.classList.remove('dark');
-      else {
-        const sys = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        sys ? el.classList.add('dark') : el.classList.remove('dark');
-      }
+      const dark = t === 'dark';
+      el.classList.toggle('dark', dark);
+      el.setAttribute('data-color-mode', dark ? 'dark' : 'light');
+      setIsDarkTheme(dark);
+
+      // Keep browser chrome (Android title/nav bars) aligned with in-app theme.
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta) themeMeta.setAttribute('content', dark ? '#100e0d' : '#fbf9f5');
+
+      // Hint UA form controls / virtual keyboard / scrollbars to follow current theme.
+      el.style.colorScheme = dark ? 'dark' : 'light';
+
+      const appleStatus = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+      if (appleStatus) appleStatus.setAttribute('content', dark ? 'black-translucent' : 'default');
     };
+
     apply(store.theme);
-    if (store.theme === 'system') {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      const handler = (e: MediaQueryListEvent) => { if (store.theme === 'system') apply(e.matches ? 'dark' : 'light'); };
-      mq.addEventListener('change', handler);
-      return () => mq.removeEventListener('change', handler);
-    }
   }, [store.theme]);
 
   // Init
@@ -612,12 +617,12 @@ export default function App() {
             {cloudSyncing && <span className="absolute inset-0 rounded-full animate-spin border-2 border-primary/30 border-t-primary" />}
           </button>
           <button
-            onClick={() => store.setTheme(store.theme === 'dark' ? 'light' : store.theme === 'light' ? 'system' : 'dark')}
-            title={store.theme === 'dark' ? '暗色模式' : store.theme === 'light' ? '亮色模式' : '跟随系统'}
+            onClick={() => store.setTheme(store.theme === 'dark' ? 'light' : 'dark')}
+            title={store.theme === 'dark' ? '切换到浅色' : '切换到深色'}
             className="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
           >
             <span className="material-symbols-outlined text-[22px]">
-              {store.theme === 'dark' ? 'dark_mode' : store.theme === 'light' ? 'light_mode' : 'brightness_auto'}
+              {store.theme === 'dark' ? 'dark_mode' : 'light_mode'}
             </span>
           </button>
         </div>
@@ -1353,7 +1358,10 @@ export default function App() {
                   />
                 </div>
                 
-                <div className="flex-1 w-full relative -mx-4 overflow-visible markdown-editor-container">
+                <div
+                  className="flex-1 w-full relative -mx-4 overflow-visible markdown-editor-container"
+                  data-color-mode={isDarkTheme ? 'dark' : 'light'}
+                >
                   <MDEditor
                     value={store.editorContent}
                     onChange={(val) => store.setEditorContent(val || '')}

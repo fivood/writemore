@@ -48,7 +48,7 @@ export interface DayRecord {
   totalWords: number;
 }
 
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark';
 export type WordCount = 3 | 4 | 5;
 export type TimerDuration = 10 | 15 | 20 | 30 | 60;
 
