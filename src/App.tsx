@@ -1,9 +1,10 @@
-﻿import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 
 // ── 填入你的 GitHub 用户名/仓库名 ──────────────────────────────
 const GITHUB_REPO = 'fivood/writemore';
 declare const __APP_VERSION__: string;
 const APP_VERSION: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
+const CUSTOM_CATEGORY_STORAGE_KEY = 'writemore_custom_categories_v1';
 import { useStore } from './store';
 import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost, Brain, Users, Mic, Accessibility, History, Eye, Wifi, CheckCircle2, AlertCircle, LogOut, CloudOff, Package, Zap, Layers, Map as MapIcon, Tag } from 'lucide-react';
 import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngine';
@@ -57,6 +58,42 @@ export default function App() {
 
   const [mobilePanel, setMobilePanel] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [customCategoryIconKeyMap, setCustomCategoryIconKeyMap] = useState<Record<string, string>>({});
+
+  const customCategoryIconPool: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+    tag: Tag,
+    sparkles: Sparkles,
+    package: Package,
+    zap: Zap,
+    layers: Layers,
+    eye: Eye,
+    brain: Brain,
+    user: User,
+    map: MapIcon,
+    scroll: ScrollText,
+    book: BookOpen,
+    pencil: PencilLine,
+  };
+
+  const loadCustomCategoryIconKeyMap = () => {
+    try {
+      const raw = localStorage.getItem(CUSTOM_CATEGORY_STORAGE_KEY);
+      if (!raw) return {};
+      const list = JSON.parse(raw);
+      if (!Array.isArray(list)) return {};
+      const next: Record<string, string> = {};
+      list.forEach((item: any) => {
+        if (item && typeof item.name === 'string' && typeof item.iconKey === 'string') {
+          const name = item.name.trim();
+          const iconKey = item.iconKey.trim();
+          if (name) next[name] = iconKey;
+        }
+      });
+      return next;
+    } catch {
+      return {};
+    }
+  };
 
   // Theme
   useEffect(() => {
@@ -86,6 +123,17 @@ export default function App() {
   useEffect(() => {
     loadUserData();
     store.updateStreak();
+  }, []);
+
+  useEffect(() => {
+    const updateCustomCategoryIcons = () => setCustomCategoryIconKeyMap(loadCustomCategoryIconKeyMap());
+    updateCustomCategoryIcons();
+    window.addEventListener('writemore:custom-categories-updated', updateCustomCategoryIcons as EventListener);
+    window.addEventListener('storage', updateCustomCategoryIcons);
+    return () => {
+      window.removeEventListener('writemore:custom-categories-updated', updateCustomCategoryIcons as EventListener);
+      window.removeEventListener('storage', updateCustomCategoryIcons);
+    };
   }, []);
 
   // Cloud auth 初始化
@@ -660,17 +708,24 @@ export default function App() {
     edge: Eye,
   };
 
-  const categoryIconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-    '意象': Sparkles,
-    '实物': Package,
-    '动作': Zap,
-    '状态': Layers,
-    '感官': Eye,
-    '抽象': Brain,
-    '人物': User,
-    '地名': MapIcon,
-    '典故': ScrollText,
-  };
+  const categoryIconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = useMemo(() => {
+    const base: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+      '意象': Sparkles,
+      '实物': Package,
+      '动作': Zap,
+      '状态': Layers,
+      '感官': Eye,
+      '抽象': Brain,
+      '人物': User,
+      '地名': MapIcon,
+      '典故': ScrollText,
+    };
+    Object.entries(customCategoryIconKeyMap).forEach(([name, iconKey]) => {
+      const Icon = customCategoryIconPool[iconKey];
+      if (Icon) base[name] = Icon;
+    });
+    return base;
+  }, [customCategoryIconKeyMap]);
 
   const isWriting = store.writingMode !== null && store.activeTab === 'inspire';
 

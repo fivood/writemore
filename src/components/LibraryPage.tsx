@@ -4,6 +4,49 @@ import type { Word, Genre, WordCategory } from '../types';
 import { WORD_CATEGORIES, CATEGORY_META } from '../types';
 import { PlusCircle, Copy, AlertTriangle, Download, Tag, Check, Info, Upload, ChevronDown, Plus, BookOpen, Package, User, EyeOff, Eye, Search, X, ChevronLeft, ChevronRight, SearchX, Pencil, Trash2, Sparkles, Zap, Layers, Map as MapIcon, ScrollText, Brain } from 'lucide-react';
 
+const CUSTOM_CATEGORY_STORAGE_KEY = 'writemore_custom_categories_v1';
+const MAX_CATEGORY_NAME_LENGTH = 8;
+
+interface CustomCategoryDef {
+  name: string;
+  iconKey: string;
+}
+
+const CUSTOM_ICON_POOL: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  tag: Tag,
+  sparkles: Sparkles,
+  package: Package,
+  zap: Zap,
+  layers: Layers,
+  eye: Eye,
+  brain: Brain,
+  user: User,
+  map: MapIcon,
+  scroll: ScrollText,
+  book: BookOpen,
+  pencil: Pencil,
+};
+
+function loadCustomCategories(): CustomCategoryDef[] {
+  try {
+    const raw = localStorage.getItem(CUSTOM_CATEGORY_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter((item: any) => item && typeof item.name === 'string' && typeof item.iconKey === 'string')
+      .map((item: any) => ({ name: item.name.trim(), iconKey: item.iconKey.trim() }))
+      .filter((item: CustomCategoryDef) => item.name.length > 0);
+  } catch {
+    return [];
+  }
+}
+
+function saveCustomCategories(list: CustomCategoryDef[]) {
+  localStorage.setItem(CUSTOM_CATEGORY_STORAGE_KEY, JSON.stringify(list));
+  window.dispatchEvent(new Event('writemore:custom-categories-updated'));
+}
+
 const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   '意象': Sparkles,
   '实物': Package,
@@ -17,8 +60,6 @@ const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; cla
 };
 
 type ViewFilter = 'all' | 'builtin' | 'user';
-
-const CATEGORY_OPTIONS: (WordCategory | 'all')[] = ['all', ...WORD_CATEGORIES];
 
 const CATEGORY_COLORS: Record<string, string> = Object.fromEntries(
   WORD_CATEGORIES.map(c => [c, CATEGORY_META[c]?.color ?? 'bg-stone-100 text-stone-600 border-stone-200'])
@@ -111,15 +152,17 @@ function parseJsonImport(content: string): ParsedImportItem[] {
 // ── Import Preview Modal ──
 function ImportPreviewModal({
   items,
+  knownCategories,
   onConfirm,
   onClose,
 }: {
   items: ImportPreviewItem[];
+  knownCategories: string[];
   onConfirm: (items: ImportPreviewItem[]) => void;
   onClose: () => void;
 }) {
   const [previewItems, setPreviewItems] = useState(items);
-  const KNOWN_CATEGORIES = new Set(WORD_CATEGORIES);
+  const KNOWN_CATEGORIES = new Set(knownCategories);
 
   const newWords = previewItems.filter(i => i.status === 'new');
   const duplicates = previewItems.filter(i => i.status === 'duplicate');
@@ -324,10 +367,40 @@ export default function LibraryPage() {
   const [editing, setEditing] = useState<EditingWord | null>(null);
   const [page, setPage] = useState(0);
   const [importPreview, setImportPreview] = useState<ImportPreviewItem[] | null>(null);
+  const [customCategories, setCustomCategories] = useState<CustomCategoryDef[]>(() => loadCustomCategories());
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showCategoryManageModal, setShowCategoryManageModal] = useState(false);
+  const [manageDraftCategories, setManageDraftCategories] = useState<CustomCategoryDef[]>([]);
+  const [manageBaseCategories, setManageBaseCategories] = useState<CustomCategoryDef[]>([]);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryIconKey, setNewCategoryIconKey] = useState('tag');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const PAGE_SIZE = 60;
 
   const allWords = useMemo(() => getAllWords(), [refreshKey]);
+
+  const customCategoryIconMap = useMemo(() => {
+    return Object.fromEntries(customCategories.map(c => [c.name, c.iconKey]));
+  }, [customCategories]);
+
+  const categoryOptions = useMemo(() => {
+    const dynamic = new Set<string>(WORD_CATEGORIES);
+    customCategories.forEach(c => dynamic.add(c.name));
+    allWords.forEach(w => dynamic.add(w.category));
+    return ['all', ...Array.from(dynamic)] as (WordCategory | 'all')[];
+  }, [allWords, customCategories]);
+
+  const selectableCategories = useMemo(
+    () => categoryOptions.filter(c => c !== 'all') as WordCategory[],
+    [categoryOptions]
+  );
+
+  const getCategoryIcon = (category: string) => {
+    const builtIn = CATEGORY_ICON_MAP[category];
+    if (builtIn) return builtIn;
+    const key = customCategoryIconMap[category];
+    return (key && CUSTOM_ICON_POOL[key]) || Tag;
+  };
 
   // Stats
   const stats = useMemo(() => {
@@ -369,13 +442,101 @@ export default function LibraryPage() {
 
   // Add / Edit word
   const openAddModal = () => {
-    setEditing({ text: '', explanation: '', category: '意象', genres: ['通用'] });
+    setEditing({ text: '', explanation: '', category: (selectableCategories[0] || '意象') as WordCategory, genres: ['通用'] });
     setShowModal(true);
   };
 
   const openEditModal = (w: Word) => {
     setEditing({ id: w.id, text: w.text, explanation: w.explanation || '', category: w.category || '意象', genres: w.genres || ['通用'] });
     setShowModal(true);
+  };
+
+  const handleCreateCategory = () => {
+    const name = newCategoryName.trim();
+    if (!name) return;
+    if (name.length > MAX_CATEGORY_NAME_LENGTH) {
+      alert(`分类名称最多 ${MAX_CATEGORY_NAME_LENGTH} 个字`);
+      return;
+    }
+    const exists = categoryOptions.some(c => c !== 'all' && c.toLowerCase() === name.toLowerCase());
+    if (exists) {
+      alert('该分类已存在');
+      return;
+    }
+    const next = [...customCategories, { name, iconKey: newCategoryIconKey }];
+    setCustomCategories(next);
+    saveCustomCategories(next);
+    setNewCategoryName('');
+    setNewCategoryIconKey('tag');
+    setShowCategoryModal(false);
+  };
+
+  const openManageCategoryModal = () => {
+    setManageBaseCategories(customCategories);
+    setManageDraftCategories(customCategories.map(c => ({ ...c })));
+    setShowCategoryManageModal(true);
+  };
+
+  const updateManageCategory = (idx: number, patch: Partial<CustomCategoryDef>) => {
+    setManageDraftCategories(prev => prev.map((item, i) => i === idx ? { ...item, ...patch } : item));
+  };
+
+  const removeManageCategory = (idx: number) => {
+    setManageDraftCategories(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleSaveCategoryManage = () => {
+    const normalized = manageDraftCategories
+      .map(c => ({ name: c.name.trim(), iconKey: c.iconKey }))
+      .filter(c => c.name.length > 0);
+
+    for (const c of normalized) {
+      if (c.name.length > MAX_CATEGORY_NAME_LENGTH) {
+        alert(`分类名称最多 ${MAX_CATEGORY_NAME_LENGTH} 个字`);
+        return;
+      }
+    }
+
+    const lowerSet = new Set<string>();
+    for (const c of normalized) {
+      const key = c.name.toLowerCase();
+      if (lowerSet.has(key)) {
+        alert('分类名称不能重复');
+        return;
+      }
+      lowerSet.add(key);
+    }
+
+    const oldToNew = new Map<string, string>();
+    manageBaseCategories.forEach((oldItem, idx) => {
+      const nextItem = normalized[idx];
+      if (!nextItem) return;
+      if (oldItem.name !== nextItem.name) {
+        oldToNew.set(oldItem.name, nextItem.name);
+      }
+    });
+
+    const deleted = manageBaseCategories
+      .map(c => c.name)
+      .filter(name => !normalized.some(n => n.name === name));
+
+    if (oldToNew.size > 0 || deleted.length > 0) {
+      allWords.forEach(w => {
+        if (w.source !== 'user') return;
+        if (oldToNew.has(w.category)) {
+          updateUserWord(w.id, { category: oldToNew.get(w.category)! as WordCategory });
+          return;
+        }
+        if (deleted.includes(w.category)) {
+          updateUserWord(w.id, { category: '意象' });
+        }
+      });
+      refresh();
+    }
+
+    setCustomCategories(normalized);
+    saveCustomCategories(normalized);
+    setShowCategoryManageModal(false);
   };
 
   const handleSaveWord = () => {
@@ -586,6 +747,20 @@ export default function LibraryPage() {
               <Plus size={18} />
               <span>添加词条</span>
             </button>
+            <button
+              onClick={() => setShowCategoryModal(true)}
+              className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
+            >
+              <Tag size={18} />
+              <span>新增分类</span>
+            </button>
+            <button
+              onClick={openManageCategoryModal}
+              className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
+            >
+              <Pencil size={18} />
+              <span>管理分类</span>
+            </button>
           </div>
 
           <div className="md:ml-auto md:max-w-[440px] px-3 py-2 rounded-lg border border-outline-variant/20 bg-surface-container-low/60 text-[12px] font-label text-on-surface-variant leading-relaxed flex items-start gap-2">
@@ -639,8 +814,7 @@ export default function LibraryPage() {
 
         {/* Category filter pills */}
         <div className="flex flex-wrap gap-2 mb-5">
-          {CATEGORY_OPTIONS.map(c => {
-            const meta = c !== 'all' ? CATEGORY_META[c] : null;
+          {categoryOptions.map(c => {
             return (
               <button
                 key={c}
@@ -651,7 +825,7 @@ export default function LibraryPage() {
                     : 'bg-surface-container text-on-surface-variant border-outline-variant/30 hover:border-outline-variant'
                 }`}
               >
-                {meta && (() => { const CatIcon = CATEGORY_ICON_MAP[c]; return CatIcon ? <CatIcon size={16} /> : null; })()}
+                {c !== 'all' && (() => { const CatIcon = getCategoryIcon(c); return <CatIcon size={16} />; })()}
                 <span>{c === 'all' ? '全部类型' : c}</span>
                 {c !== 'all' && (
                   <span className="opacity-70">({stats.categoryCounts.get(c) || 0})</span>
@@ -751,7 +925,7 @@ export default function LibraryPage() {
 
                 {/* Category badge */}
                 <span className={`inline-block px-1.5 py-0.5 text-[14px] font-label font-bold rounded border tracking-wider mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['意象'] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>
-                  {(() => { const CatIcon = CATEGORY_ICON_MAP[w.category]; return CatIcon ? <CatIcon size={14} className="inline-block align-middle mr-0.5" /> : <Tag size={14} className="inline-block align-middle mr-0.5" />; })()}{w.category}
+                  {(() => { const CatIcon = getCategoryIcon(w.category); return <CatIcon size={14} className="inline-block align-middle mr-0.5" />; })()}{w.category}
                 </span>
 
                 {/* Word text */}
@@ -845,7 +1019,7 @@ export default function LibraryPage() {
               <div>
                 <label className="text-xs font-label font-medium text-on-surface-variant mb-1.5 block">词条分类</label>
                 <div className="flex flex-wrap gap-2">
-                  {WORD_CATEGORIES.map(c => (
+                  {selectableCategories.map(c => (
                     <button
                       key={c}
                       onClick={() => setEditing({ ...editing!, category: c })}
@@ -855,7 +1029,7 @@ export default function LibraryPage() {
                           : 'bg-surface-container-high text-on-surface-variant border-outline-variant/30 hover:border-outline-variant'
                       }`}
                     >
-                      {(() => { const CatIcon = CATEGORY_ICON_MAP[c]; return CatIcon ? <CatIcon size={16} className="inline-block" /> : null; })()}
+                      {(() => { const CatIcon = getCategoryIcon(c); return <CatIcon size={16} className="inline-block" />; })()}
                       <span>{c}</span>
                     </button>
                   ))}
@@ -886,9 +1060,134 @@ export default function LibraryPage() {
       {importPreview && (
         <ImportPreviewModal
           items={importPreview}
+          knownCategories={selectableCategories}
           onConfirm={handleConfirmImport}
           onClose={() => setImportPreview(null)}
         />
+      )}
+
+      {showCategoryModal && (
+        <div className="fixed inset-0 z-[210] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setShowCategoryModal(false)}>
+          <div className="bg-surface-container rounded-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <h3 className="font-headline text-xl font-bold text-on-surface mb-5 flex items-center space-x-2">
+              <Tag size={24} className="text-primary" />
+              <span>新增分类</span>
+            </h3>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-label font-medium text-on-surface-variant mb-1.5 block">分类名称</label>
+                <input
+                  type="text"
+                  value={newCategoryName}
+                  onChange={e => setNewCategoryName(e.target.value)}
+                  placeholder="例如：职业、自然、情绪..."
+                  maxLength={MAX_CATEGORY_NAME_LENGTH}
+                  className="w-full px-4 py-2.5 bg-surface-container-low rounded-lg border border-outline-variant/30 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                />
+                <p className="mt-1 text-[12px] font-label text-on-surface-variant">最多 {MAX_CATEGORY_NAME_LENGTH} 个字</p>
+              </div>
+
+              <div>
+                <label className="text-xs font-label font-medium text-on-surface-variant mb-1.5 block">图标</label>
+                <div className="grid grid-cols-6 gap-2">
+                  {Object.entries(CUSTOM_ICON_POOL).map(([key, Icon]) => (
+                    <button
+                      key={key}
+                      onClick={() => setNewCategoryIconKey(key)}
+                      className={`h-9 rounded-lg border flex items-center justify-center transition-colors ${newCategoryIconKey === key ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high'}`}
+                      title={key}
+                    >
+                      <Icon size={16} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 mt-7">
+              <button
+                onClick={() => setShowCategoryModal(false)}
+                className="px-5 py-2 rounded-lg text-sm font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleCreateCategory}
+                disabled={!newCategoryName.trim()}
+                className="px-5 py-2 rounded-lg text-sm font-label font-medium bg-primary text-white hover:bg-primary-dim disabled:opacity-40 transition-colors"
+              >
+                创建
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCategoryManageModal && (
+        <div className="fixed inset-0 z-[210] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setShowCategoryManageModal(false)}>
+          <div className="bg-surface-container rounded-2xl w-full max-w-3xl mx-4 p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <h3 className="font-headline text-xl font-bold text-on-surface mb-5 flex items-center space-x-2">
+              <Pencil size={24} className="text-primary" />
+              <span>管理分类</span>
+            </h3>
+
+            {manageDraftCategories.length === 0 ? (
+              <p className="text-sm font-label text-on-surface-variant">暂无自定义分类，可先通过“新增分类”创建。</p>
+            ) : (
+              <div className="space-y-3">
+                {manageDraftCategories.map((item, idx) => (
+                  <div key={`${idx}_${item.name}`} className="rounded-xl border border-outline-variant/20 p-3 bg-surface-container-low/50">
+                    <div className="flex items-center gap-3 mb-2">
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={e => updateManageCategory(idx, { name: e.target.value })}
+                        maxLength={MAX_CATEGORY_NAME_LENGTH}
+                        className="flex-1 px-3 py-2 bg-surface-container rounded-lg border border-outline-variant/30 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                      />
+                      <button
+                        onClick={() => removeManageCategory(idx)}
+                        className="px-3 py-2 rounded-lg text-xs font-label text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
+                      >
+                        删除
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-6 gap-2">
+                      {Object.entries(CUSTOM_ICON_POOL).map(([key, Icon]) => (
+                        <button
+                          key={key}
+                          onClick={() => updateManageCategory(idx, { iconKey: key })}
+                          className={`h-8 rounded-lg border flex items-center justify-center transition-colors ${item.iconKey === key ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high'}`}
+                          title={key}
+                        >
+                          <Icon size={15} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <p className="mt-3 text-[12px] font-label text-on-surface-variant">分类名称最多 {MAX_CATEGORY_NAME_LENGTH} 个字。删除分类会把该分类下自定义词条移动到“意象”。</p>
+
+            <div className="flex justify-end space-x-3 mt-7">
+              <button
+                onClick={() => setShowCategoryManageModal(false)}
+                className="px-5 py-2 rounded-lg text-sm font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleSaveCategoryManage}
+                className="px-5 py-2 rounded-lg text-sm font-label font-medium bg-primary text-white hover:bg-primary-dim transition-colors"
+              >
+                保存分类设置
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
