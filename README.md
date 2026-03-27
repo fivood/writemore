@@ -133,6 +133,24 @@ npm run build
 npm run tauri:build
 ```
 
+## 代码规范
+
+### 发版规则
+
+1. 版本号必须保持一致：
+    - `package.json`
+    - `src-tauri/Cargo.toml`
+    - `src-tauri/tauri.conf.json`
+2. 每次发布必须更新 `CHANGELOG.md`，记录新增、修改、修复。
+3. 仅推送 `main` 不会自动创建 GitHub Release。
+4. 仓库的 Release 工作流由 `v*` 标签触发，必须推送版本标签：
+    - `git tag -a vX.Y.Z -m "release vX.Y.Z"`
+    - `git push origin vX.Y.Z`
+5. 打包前必须本地验证：
+    - `npm run build`
+    - `npm run tauri:build`
+6. 版本发布后，确认 Actions 中 `Release` 工作流成功，并检查 Releases 页面已生成对应版本与安装包资产。
+
 ## 部署
 
 ### GitHub Pages（自动）
