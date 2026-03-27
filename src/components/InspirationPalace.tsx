@@ -8,19 +8,20 @@ import type { Draft, WordSet, WritingMode } from '../types';
 import { WRITING_MODES } from '../types';
 import { chatCompletion } from '../services/ai';
 import { buildInspirationRemixPrompt } from '../services/prompts';
+import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX, Trash2 } from 'lucide-react';
 
 interface PalaceItem {
   draft: Draft;
   wordSet?: WordSet;
 }
 
-const MODE_STYLE: Record<WritingMode, { icon: string; bg: string; border: string; text: string }> = {
-  words:     { icon: 'casino',       bg: 'bg-amber-50  dark:bg-primary/10',   border: 'border-amber-200  dark:border-primary/20',   text: 'text-amber-700  dark:text-primary'   },
-  free:      { icon: 'edit_note',    bg: 'bg-emerald-50 dark:bg-secondary/10', border: 'border-emerald-200 dark:border-secondary/20', text: 'text-emerald-700 dark:text-secondary' },
-  scene:     { icon: 'landscape',    bg: 'bg-blue-50   dark:bg-blue-900/20',  border: 'border-blue-200   dark:border-blue-400/20',  text: 'text-blue-700   dark:text-blue-300'  },
-  dream:     { icon: 'nights_stay',  bg: 'bg-violet-50 dark:bg-violet-900/20', border: 'border-violet-200 dark:border-violet-400/20', text: 'text-violet-700 dark:text-violet-300' },
-  challenge: { icon: 'quiz',         bg: 'bg-rose-50   dark:bg-rose-900/20',  border: 'border-rose-200   dark:border-rose-400/20',  text: 'text-rose-700   dark:text-rose-300'  },
-  character: { icon: 'person_search', bg: 'bg-fuchsia-50 dark:bg-fuchsia-900/20', border: 'border-fuchsia-200 dark:border-fuchsia-400/20', text: 'text-fuchsia-700 dark:text-fuchsia-300' },
+const MODE_STYLE: Record<WritingMode, { Icon: React.ComponentType<{ size?: number; className?: string }>; bg: string; border: string; text: string }> = {
+  words:     { Icon: Dices,      bg: 'bg-amber-50  dark:bg-primary/10',        border: 'border-amber-200  dark:border-primary/20',        text: 'text-amber-700  dark:text-primary'   },
+  free:      { Icon: PencilLine, bg: 'bg-emerald-50 dark:bg-secondary/10',     border: 'border-emerald-200 dark:border-secondary/20',     text: 'text-emerald-700 dark:text-secondary' },
+  scene:     { Icon: Mountain,   bg: 'bg-blue-50   dark:bg-blue-900/20',       border: 'border-blue-200   dark:border-blue-400/20',       text: 'text-blue-700   dark:text-blue-300'  },
+  dream:     { Icon: MoonStar,   bg: 'bg-violet-50 dark:bg-violet-900/20',     border: 'border-violet-200 dark:border-violet-400/20',     text: 'text-violet-700 dark:text-violet-300' },
+  challenge: { Icon: CircleHelp, bg: 'bg-rose-50   dark:bg-rose-900/20',       border: 'border-rose-200   dark:border-rose-400/20',       text: 'text-rose-700   dark:text-rose-300'  },
+  character: { Icon: Users,      bg: 'bg-fuchsia-50 dark:bg-fuchsia-900/20',   border: 'border-fuchsia-200 dark:border-fuchsia-400/20',   text: 'text-fuchsia-700 dark:text-fuchsia-300' },
 };
 
 export default function InspirationPalace() {
@@ -223,7 +224,7 @@ export default function InspirationPalace() {
                   disabled={aiRemixLoading}
                   className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-violet-50/60 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-lg text-xs font-label text-violet-700 dark:text-violet-400 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-[16px]">{aiRemixLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                  {aiRemixLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                   <span>{aiRemixLoading ? '生成中…' : 'AI 再创作'}</span>
                 </button>
               )}
@@ -232,7 +233,7 @@ export default function InspirationPalace() {
                 title="导出全部为 Markdown"
                 className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-surface-container border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
               >
-                <span className="material-symbols-outlined text-[16px]">download</span>
+                <Download size={16} />
                 <span>导出全部</span>
               </button>
             </div>
@@ -243,7 +244,7 @@ export default function InspirationPalace() {
         {aiRemixResult && (
           <div className="mb-6 bg-violet-50/60 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-xl p-4">
             <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-400 mb-2 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px]">auto_awesome</span>AI 灵感再创作
+              <Sparkles size={14} />AI 灵感再创作
             </p>
             <p className="text-sm text-violet-900 dark:text-violet-200 leading-relaxed mb-3">{aiRemixResult}</p>
             <div className="flex gap-2">
@@ -251,7 +252,7 @@ export default function InspirationPalace() {
                 onClick={handleStartFromRemix}
                 className="flex items-center gap-1 px-3 py-1.5 bg-violet-600 text-white rounded-lg text-xs font-label hover:bg-violet-700 transition-colors"
               >
-                <span className="material-symbols-outlined text-[16px]">edit</span>
+                <Pencil size={16} />
                 <span>以此开始写作</span>
               </button>
               <button
@@ -259,7 +260,7 @@ export default function InspirationPalace() {
                 disabled={aiRemixLoading}
                 className="flex items-center gap-1 px-3 py-1.5 border border-violet-300 dark:border-violet-400/20 rounded-lg text-xs font-label text-violet-700 dark:text-violet-400 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
               >
-                <span className="material-symbols-outlined text-[16px]">refresh</span>
+                <RefreshCw size={16} />
                 <span>再来一个</span>
               </button>
             </div>
@@ -293,7 +294,7 @@ export default function InspirationPalace() {
                       : 'bg-surface-container text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[16px]">{m.icon}</span>
+                  <style.Icon size={16} />
                   <span>{m.label}</span>
                   <span className="opacity-60">{count}</span>
                 </button>
@@ -302,7 +303,7 @@ export default function InspirationPalace() {
 
             {/* Search */}
             <div className="relative ml-auto">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
               <input
                 type="text"
                 placeholder="搜索灵感..."
@@ -336,7 +337,7 @@ export default function InspirationPalace() {
           </div>
         ) : displayed.length === 0 ? (
           <div className="text-center py-16">
-            <span className="material-symbols-outlined text-4xl text-outline mb-4">search_off</span>
+            <SearchX size={40} className="text-outline mb-4" />
             <p className="text-on-surface-variant font-label">没有找到匹配的灵感记录</p>
           </div>
         ) : (
@@ -359,13 +360,13 @@ export default function InspirationPalace() {
                     className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
                     title="删除"
                   >
-                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                    <Trash2 size={20} />
                   </button>
 
                   {/* Mode badge + date */}
                   <div className="flex items-center justify-between mb-3 pr-8">
                     <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[12px] font-label font-medium border ${mStyle.bg} ${mStyle.border} ${mStyle.text}`}>
-                      <span className="material-symbols-outlined text-[14px]">{mStyle.icon}</span>
+                      <mStyle.Icon size={14} />
                       <span>{mLabel?.label}</span>
                     </span>
                     <span className="text-xs font-label text-outline">
@@ -381,7 +382,7 @@ export default function InspirationPalace() {
                   {/* Scene subtitle */}
                   {sceneTitle && (
                     <p className="text-xs text-blue-500 font-label mb-2 flex items-center space-x-1">
-                      <span className="material-symbols-outlined text-[14px]">landscape</span>
+                      <Mountain size={14} />
                       <span>{sceneTitle}</span>
                     </p>
                   )}

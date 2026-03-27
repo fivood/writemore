@@ -2,6 +2,19 @@
 import { getAllWords, addUserWord, updateUserWord, deleteUserWord, toggleWordEnabled } from '../data/wordEngine';
 import type { Word, Genre, WordCategory } from '../types';
 import { WORD_CATEGORIES, CATEGORY_META } from '../types';
+import { PlusCircle, Copy, AlertTriangle, Download, Tag, Check, Info, Upload, ChevronDown, Plus, BookOpen, Package, User, EyeOff, Eye, Search, X, ChevronLeft, ChevronRight, SearchX, Pencil, Trash2, Sparkles, Zap, Layers, Map as MapIcon, ScrollText, Brain } from 'lucide-react';
+
+const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  '意象': Sparkles,
+  '实物': Package,
+  '动作': Zap,
+  '状态': Layers,
+  '感官': Eye,
+  '抽象': Brain,
+  '人物': User,
+  '地名': MapIcon,
+  '典故': ScrollText,
+};
 
 type ViewFilter = 'all' | 'builtin' | 'user';
 
@@ -132,9 +145,9 @@ function ImportPreviewModal({
 
   const statusIcon = (s: ImportItemStatus) => {
     switch (s) {
-      case 'new': return <span className="material-symbols-outlined text-[16px] text-green-500">add_circle</span>;
-      case 'duplicate': return <span className="material-symbols-outlined text-[16px] text-amber-500">content_copy</span>;
-      case 'conflict': return <span className="material-symbols-outlined text-[16px] text-red-500">warning</span>;
+      case 'new': return <PlusCircle size={16} className="text-green-500" />;
+      case 'duplicate': return <Copy size={16} className="text-amber-500" />;
+      case 'conflict': return <AlertTriangle size={16} className="text-red-500" />;
     }
   };
 
@@ -152,7 +165,7 @@ function ImportPreviewModal({
         {/* Header */}
         <div className="p-6 pb-4 border-b border-outline-variant/15">
           <h3 className="font-headline text-xl font-bold text-on-surface flex items-center space-x-2 mb-4">
-            <span className="material-symbols-outlined text-primary text-[26px]">file_download</span>
+            <Download size={26} className="text-primary" />
             <span>导入预览</span>
           </h3>
 
@@ -162,7 +175,7 @@ function ImportPreviewModal({
               onClick={() => toggleByStatus('new', true)}
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 transition-colors"
             >
-              <span className="material-symbols-outlined text-[16px]">add_circle</span>
+              <PlusCircle size={16} />
               <span>新词条: {newWords.length}</span>
             </button>
             {duplicates.length > 0 && (
@@ -170,7 +183,7 @@ function ImportPreviewModal({
                 onClick={() => toggleByStatus('duplicate', false)}
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition-colors"
               >
-                <span className="material-symbols-outlined text-[16px]">content_copy</span>
+                <Copy size={16} />
                 <span>重复: {duplicates.length}</span>
               </button>
             )}
@@ -179,13 +192,13 @@ function ImportPreviewModal({
                 onClick={() => toggleByStatus('conflict', true)}
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors"
               >
-                <span className="material-symbols-outlined text-[16px]">warning</span>
+                <AlertTriangle size={16} />
                 <span>分类冲突: {conflicts.length}</span>
               </button>
             )}
             {unknownCategories.length > 0 && (
               <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-purple-50 text-purple-700 border border-purple-200">
-                <span className="material-symbols-outlined text-[16px]">new_label</span>
+                <Tag size={16} />
                 <span>新分类: {unknownCategories.join('、')}</span>
               </div>
             )}
@@ -218,7 +231,7 @@ function ImportPreviewModal({
                   <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
                     item.selected ? 'bg-primary border-primary text-white' : 'border-outline bg-surface-container'
                   }`}>
-                    {item.selected && <span className="material-symbols-outlined text-[14px]">check</span>}
+                    {item.selected && <Check size={14} />}
                   </div>
                 </button>
 
@@ -234,7 +247,7 @@ function ImportPreviewModal({
                 <span className={`shrink-0 px-1.5 py-0.5 text-[14px] font-label font-bold rounded border tracking-wider ${
                   CATEGORY_COLORS[item.resolvedCategory] || 'bg-purple-100 text-purple-700 border-purple-200'
                 }`}>
-                  <span className="material-symbols-outlined text-[14px] leading-none align-middle mr-0.5">{CATEGORY_META[item.resolvedCategory]?.icon ?? 'label'}</span>{item.resolvedCategory}
+                  {(() => { const CatIcon = CATEGORY_ICON_MAP[item.resolvedCategory]; return CatIcon ? <CatIcon size={14} className="inline-block align-middle mr-0.5" /> : <Tag size={14} className="inline-block align-middle mr-0.5" />; })()}{item.resolvedCategory}
                 </span>
 
                 {/* Word text */}
@@ -277,7 +290,7 @@ function ImportPreviewModal({
           <p className="text-xs font-label text-stone-400 dark:text-on-surface-variant">
             {unknownCategories.length > 0 && (
               <span className="text-purple-600">
-                <span className="material-symbols-outlined text-[14px] align-middle">info</span>
+                <Info size={14} className="align-middle" />
                 {' '}新分类「{unknownCategories.join('、')}」将被自动创建
               </span>
             )}
@@ -291,7 +304,7 @@ function ImportPreviewModal({
               disabled={selectedCount === 0}
               className="px-5 py-2 rounded-lg text-sm font-label font-medium bg-primary text-white hover:bg-primary-dim disabled:opacity-40 transition-colors flex items-center space-x-1"
             >
-              <span className="material-symbols-outlined text-[18px]">download</span>
+              <Download size={18} />
               <span>导入选中的 {selectedCount} 条</span>
             </button>
           </div>
@@ -528,7 +541,7 @@ export default function LibraryPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
-            <span className="material-symbols-outlined text-[34px] text-primary">auto_stories</span>
+            <BookOpen size={34} className="text-primary" />
             <span>词库管理</span>
           </h2>
           <div className="flex flex-wrap items-center gap-2">
@@ -536,7 +549,7 @@ export default function LibraryPage() {
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
             >
-              <span className="material-symbols-outlined text-[18px]">download</span>
+              <Download size={18} />
               <span>导入</span>
             </button>
             <input ref={fileInputRef} type="file" accept=".json,.md,.txt" className="hidden" onChange={handleImport} />
@@ -545,9 +558,9 @@ export default function LibraryPage() {
               <button
                 className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
               >
-                <span className="material-symbols-outlined text-[18px]">upload</span>
+                <Upload size={18} />
                 <span>导出</span>
-                <span className="material-symbols-outlined text-[14px] ml-0.5">expand_more</span>
+                <ChevronDown size={14} className="ml-0.5" />
               </button>
               <div className="absolute right-0 top-full mt-1 bg-surface-container-high rounded-lg border border-outline-variant/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 w-40">
                 <button
@@ -570,7 +583,7 @@ export default function LibraryPage() {
               onClick={openAddModal}
               className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-primary text-white hover:bg-primary-dim transition-all"
             >
-              <span className="material-symbols-outlined text-[18px]">add</span>
+              <Plus size={18} />
               <span>添加词条</span>
             </button>
           </div>
@@ -582,7 +595,7 @@ export default function LibraryPage() {
             onClick={() => setSourceFilter('all')}
             className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'all' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
           >
-            <span className="material-symbols-outlined text-[20px] text-primary">dictionary</span>
+            <BookOpen size={20} className="text-primary" />
             <span className="font-bold">{stats.total}</span>
             <span>总计</span>
           </button>
@@ -591,7 +604,7 @@ export default function LibraryPage() {
             onClick={() => setSourceFilter('builtin')}
             className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'builtin' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
           >
-            <span className="material-symbols-outlined text-[20px] text-amber-500">inventory_2</span>
+            <Package size={20} className="text-amber-500" />
             <span className="font-bold">{stats.builtin}</span>
             <span>内置</span>
           </button>
@@ -600,7 +613,7 @@ export default function LibraryPage() {
             onClick={() => setSourceFilter('user')}
             className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'user' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
           >
-            <span className="material-symbols-outlined text-[20px] text-green-500">person</span>
+            <User size={20} className="text-green-500" />
             <span className="font-bold">{stats.user}</span>
             <span>自定义</span>
           </button>
@@ -608,7 +621,7 @@ export default function LibraryPage() {
             <>
               <div className="h-4 w-px bg-outline-variant/30" />
               <div className="flex items-center space-x-2 text-sm font-label text-stone-400 dark:text-on-surface-variant">
-                <span className="material-symbols-outlined text-[20px]">visibility_off</span>
+                <EyeOff size={20} />
                 <span className="font-bold">{stats.disabled}</span>
                 <span>已禁用</span>
               </div>
@@ -630,7 +643,7 @@ export default function LibraryPage() {
                     : 'bg-surface-container text-on-surface-variant border-outline-variant/30 hover:border-outline-variant'
                 }`}
               >
-                {meta && <span className="material-symbols-outlined text-[16px] leading-none">{meta.icon}</span>}
+                {meta && (() => { const CatIcon = CATEGORY_ICON_MAP[c]; return CatIcon ? <CatIcon size={16} /> : null; })()}
                 <span>{c === 'all' ? '全部类型' : c}</span>
                 {c !== 'all' && (
                   <span className="opacity-70">({stats.categoryCounts.get(c) || 0})</span>
@@ -642,7 +655,7 @@ export default function LibraryPage() {
 
         {/* Search bar */}
         <div className="relative mb-6">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 dark:text-outline text-[20px]">search</span>
+          <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 dark:text-outline pointer-events-none" />
           <input
             type="text"
             placeholder="搜索词条或释义..."
@@ -652,7 +665,7 @@ export default function LibraryPage() {
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant">
-              <span className="material-symbols-outlined text-[18px]">close</span>
+              <X size={18} />
             </button>
           )}
         </div>
@@ -670,7 +683,7 @@ export default function LibraryPage() {
                 disabled={page === 0}
                 className="p-1 rounded hover:bg-surface-container-high disabled:opacity-30 transition-colors"
               >
-                <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+                <ChevronLeft size={20} />
               </button>
               <span className="text-xs font-label text-on-surface-variant">{page + 1} / {totalPages}</span>
               <button
@@ -678,7 +691,7 @@ export default function LibraryPage() {
                 disabled={page >= totalPages - 1}
                 className="p-1 rounded hover:bg-surface-container-high disabled:opacity-30 transition-colors"
               >
-                <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+                <ChevronRight size={20} />
               </button>
             </div>
           )}
@@ -687,7 +700,7 @@ export default function LibraryPage() {
         {/* Word grid */}
         {paginated.length === 0 ? (
           <div className="text-center py-16">
-            <span className="material-symbols-outlined text-4xl text-stone-200 dark:text-outline mb-4">search_off</span>
+            <SearchX size={40} className="text-stone-200 dark:text-outline mb-4" />
             <p className="text-stone-500 dark:text-on-surface-variant font-label">没有找到匹配的词条</p>
           </div>
         ) : (
@@ -706,7 +719,7 @@ export default function LibraryPage() {
                     className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-on-surface-variant transition-colors"
                     title={w.enabled !== false ? '禁用' : '启用'}
                   >
-                    <span className="material-symbols-outlined text-[16px]">{w.enabled !== false ? 'visibility' : 'visibility_off'}</span>
+                    {w.enabled !== false ? <Eye size={16} /> : <EyeOff size={16} />}
                   </button>
                   {w.source === 'user' && (
                     <>
@@ -715,14 +728,14 @@ export default function LibraryPage() {
                         className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-primary transition-colors"
                         title="编辑"
                       >
-                        <span className="material-symbols-outlined text-[16px]">edit</span>
+                        <Pencil size={16} />
                       </button>
                       <button
                         onClick={() => handleDeleteWord(w)}
                         className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-red-500 transition-colors"
                         title="删除"
                       >
-                        <span className="material-symbols-outlined text-[16px]">delete</span>
+                        <Trash2 size={16} />
                       </button>
                     </>
                   )}
@@ -730,7 +743,7 @@ export default function LibraryPage() {
 
                 {/* Category badge */}
                 <span className={`inline-block px-1.5 py-0.5 text-[14px] font-label font-bold rounded border tracking-wider mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['意象'] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>
-                  <span className="material-symbols-outlined text-[14px] leading-none align-middle mr-0.5">{CATEGORY_META[w.category]?.icon ?? 'label'}</span>{w.category}
+                  {(() => { const CatIcon = CATEGORY_ICON_MAP[w.category]; return CatIcon ? <CatIcon size={14} className="inline-block align-middle mr-0.5" /> : <Tag size={14} className="inline-block align-middle mr-0.5" />; })()}{w.category}
                 </span>
 
                 {/* Word text */}
@@ -793,7 +806,7 @@ export default function LibraryPage() {
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setShowModal(false)}>
           <div className="bg-surface-container rounded-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
             <h3 className="font-headline text-xl font-bold text-on-surface mb-6 flex items-center space-x-2">
-              <span className="material-symbols-outlined text-primary text-[26px]">{editing.id ? 'edit' : 'add_circle'}</span>
+              {editing.id ? <Pencil size={26} className="text-primary" /> : <PlusCircle size={26} className="text-primary" />}
               <span>{editing.id ? '编辑词条' : '添加词条'}</span>
             </h3>
 
@@ -834,7 +847,7 @@ export default function LibraryPage() {
                           : 'bg-surface-container-high text-on-surface-variant border-outline-variant/30 hover:border-outline-variant'
                       }`}
                     >
-                      <span className="material-symbols-outlined text-[16px] leading-none">{CATEGORY_META[c]?.icon}</span>
+                      {(() => { const CatIcon = CATEGORY_ICON_MAP[c]; return CatIcon ? <CatIcon size={16} className="inline-block" /> : null; })()}
                       <span>{c}</span>
                     </button>
                   ))}

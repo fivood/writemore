@@ -5,7 +5,7 @@ const GITHUB_REPO = 'fivood/writemore';
 declare const __APP_VERSION__: string;
 const APP_VERSION: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
 import { useStore } from './store';
-import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost } from 'lucide-react';
+import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost, Brain, Users, Mic, Accessibility, History, Eye, Wifi, CheckCircle2, AlertCircle, LogOut, CloudOff, Package, Zap, Layers, Map as MapIcon, Tag } from 'lucide-react';
 import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngine';
 import { saveDraftToDb, toggleFavoriteWordSet } from './data/draftEngine';
 import { pickRandomScene } from './data/scenes';
@@ -13,7 +13,7 @@ import { pickRandomChallenge } from './data/challenges';
 import { pickRandomCharacterPrompt, CHARACTER_LAYERS } from './data/characterPrompts';
 import { db } from './db';
 import type { Word, WritingMode } from './types';
-import { WORD_CATEGORIES, CATEGORY_META, WRITING_MODES } from './types';
+import { WORD_CATEGORIES, WRITING_MODES } from './types';
 import MDEditor from '@uiw/react-md-editor';
 import HistoryPage from './components/HistoryPage';
 import FavoritesPage from './components/FavoritesPage';
@@ -591,6 +591,27 @@ export default function App() {
     character: User,
   };
 
+  const characterLayerIconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+    inner: Brain,
+    relationship: Users,
+    voice: Mic,
+    body: Accessibility,
+    history: History,
+    edge: Eye,
+  };
+
+  const categoryIconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+    '意象': Sparkles,
+    '实物': Package,
+    '动作': Zap,
+    '状态': Layers,
+    '感官': Eye,
+    '抽象': Brain,
+    '人物': User,
+    '地名': MapIcon,
+    '典故': ScrollText,
+  };
+
   const isWriting = store.writingMode !== null && store.activeTab === 'inspire';
 
   return (
@@ -816,13 +837,12 @@ export default function App() {
                   </div>
                   <nav className="space-y-1 flex-1 overflow-y-auto pr-2">
                     {WORD_CATEGORIES.map(cat => {
-                      const meta = CATEGORY_META[cat];
                       const active = store.selectedCategories.includes(cat);
                       return (
                         <button key={cat}
                           onClick={() => store.toggleCategory(cat)}
                           className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-200 ${active ? 'bg-surface-container-high text-primary shadow-sm dark:shadow-[0_0_15px_rgba(186,158,255,0.12)] active:scale-95' : 'text-on-surface-variant hover:bg-surface-container dark:hover:bg-white/5 hover:translate-x-1'}`}>
-                          <span className="material-symbols-outlined text-[20px] leading-none">{meta?.icon ?? 'label'}</span>
+                          {(() => { const CatIcon = categoryIconMap[cat]; return CatIcon ? <CatIcon size={20} /> : <Tag size={20} />; })()}
                           <span className="font-label text-xs uppercase tracking-widest flex-1 text-left">{cat}</span>
                           {active && <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>}
                         </button>
@@ -1003,7 +1023,10 @@ export default function App() {
                             : 'text-on-surface-variant hover:bg-surface-container dark:hover:bg-white/5'
                         }`}
                       >
-                        <span className="material-symbols-outlined text-[16px]">{layer.icon}</span>
+                        {(() => {
+                          const LayerIcon = characterLayerIconMap[layer.id] || User;
+                          return <LayerIcon size={16} />;
+                        })()}
                         <div className="flex-1 min-w-0">
                           <div>{layer.name}</div>
                         </div>
@@ -1288,7 +1311,10 @@ export default function App() {
 
                   {layer && (
                     <div className={`flex items-start space-x-2 px-3 py-2 rounded-lg border text-xs font-label ${layer.color}`}>
-                      <span className="material-symbols-outlined text-[16px] shrink-0 mt-0.5">{layer.icon}</span>
+                      {(() => {
+                        const LayerIcon = characterLayerIconMap[layer.id] || User;
+                        return <LayerIcon size={16} className="shrink-0 mt-0.5" />;
+                      })()}
                       <div className="flex flex-col min-w-0">
                         <span className="font-medium">{layer.name}</span>
                         <span className="opacity-70 leading-relaxed mt-0.5">{layer.description}</span>
@@ -1498,11 +1524,11 @@ export default function App() {
           <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">
-                <span className="material-symbols-outlined text-primary text-[26px]">smart_toy</span>
+                <Bot size={26} className="text-primary" />
                 <h2 className="font-headline text-xl font-bold text-on-surface">AI 设置</h2>
               </div>
               <button onClick={() => setShowAiSettings(false)} className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
-                <span className="material-symbols-outlined">close</span>
+                <X size={20} />
               </button>
             </div>
 
@@ -1662,18 +1688,18 @@ export default function App() {
                   disabled={aiTestStatus === 'testing'}
                   className="flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-[18px]">{aiTestStatus === 'testing' ? 'hourglass_top' : 'wifi_tethering'}</span>
+                  {aiTestStatus === 'testing' ? <LoaderCircle size={18} className="animate-spin" /> : <Wifi size={18} />}
                   <span>{aiTestStatus === 'testing' ? '测试中…' : '测试连接'}</span>
                 </button>
                 {aiTestStatus === 'success' && (
                   <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-sm font-label">
-                    <span className="material-symbols-outlined text-[18px]">check_circle</span>连接成功
+                    <CheckCircle2 size={18} />连接成功
                   </span>
                 )}
                 {aiTestStatus === 'fail' && (
                   <div className="flex flex-col gap-1">
                     <span className="flex items-center gap-1 text-red-600 dark:text-red-400 text-sm font-label">
-                      <span className="material-symbols-outlined text-[18px]">error</span>连接失败
+                      <AlertCircle size={18} />连接失败
                     </span>
                     {aiTestError && (
                       <span className="text-[13px] text-red-500/80 dark:text-red-400/70 font-mono break-all max-w-xs">{aiTestError}</span>
@@ -1692,18 +1718,18 @@ export default function App() {
           <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">
-                <span className="material-symbols-outlined text-primary text-[26px]">cloud</span>
+                <Cloud size={26} className="text-primary" />
                 <h2 className="font-headline text-xl font-bold text-on-surface">云端同步</h2>
               </div>
               <button onClick={() => setShowCloudLogin(false)} className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
-                <span className="material-symbols-outlined">close</span>
+                <X size={20} />
               </button>
             </div>
 
             {store.cloudUser ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-3 p-3 bg-emerald-50/60 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-xl">
-                  <span className="material-symbols-outlined text-emerald-500 text-[22px]">check_circle</span>
+                  <CheckCircle2 size={22} className="text-emerald-500" />
                   <div>
                     <p className="text-sm font-label font-medium text-on-surface">已登录</p>
                     <p className="text-xs text-on-surface-variant">{store.cloudUser.email}</p>
@@ -1714,19 +1740,19 @@ export default function App() {
                   disabled={cloudSyncing}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-label font-medium hover:bg-primary/15 transition-colors disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-[20px]">{cloudSyncing ? 'hourglass_top' : 'sync'}</span>
+                  {cloudSyncing ? <LoaderCircle size={20} className="animate-spin" /> : <RefreshCw size={20} />}
                   {cloudSyncing ? '同步中…' : '立即从云端同步'}
                 </button>
                 <button
                   onClick={async () => { await signOut(); showToast('已退出登录'); setShowCloudLogin(false); }}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-outline-variant/30 rounded-xl text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
                 >
-                  <span className="material-symbols-outlined text-[20px]">logout</span>退出登录
+                  <LogOut size={20} />退出登录
                 </button>
               </div>
             ) : !SUPABASE_ENABLED ? (
               <div className="space-y-6 text-center">
-                <span className="material-symbols-outlined text-[48px] text-on-surface-variant/40">cloud_off</span>
+                <CloudOff size={48} className="text-on-surface-variant/40" />
                 <div>
                   <p className="font-label font-medium text-on-surface mb-1">云同步未启用</p>
                   <p className="text-sm text-on-surface-variant leading-relaxed">
@@ -1755,7 +1781,7 @@ export default function App() {
                 {/* 注册说明 */}
                 {cloudAuthMode === 'register' && (
                   <div className="flex gap-2.5 p-3 bg-primary/5 border border-primary/15 rounded-xl">
-                    <span className="material-symbols-outlined text-primary text-[18px] mt-0.5 shrink-0">info</span>
+                    <Info size={18} className="text-primary mt-0.5 shrink-0" />
                     <p className="text-xs text-on-surface-variant font-label leading-relaxed">
                       直接填写<strong className="text-on-surface">任意邮箱 + 自定义密码</strong>即可注册，无需邮箱验证。注册后即登录，文章数据加密存储于云端，跨设备同步。
                     </p>
@@ -1790,7 +1816,7 @@ export default function App() {
 
                 {/* 底部提示 */}
                 <div className="flex items-center justify-center gap-1.5 text-xs text-on-surface-variant font-label">
-                  <span className="material-symbols-outlined text-[14px]">lock</span>
+                  <Lock size={14} />
                   <span>数据仅你本人可见，任何人无法访问</span>
                 </div>
 

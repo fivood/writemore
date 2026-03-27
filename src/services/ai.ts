@@ -144,7 +144,7 @@ export async function testConnection(config: AIConfig): Promise<string | null> {
 /** 预设的 API 供应商 */
 export const API_PRESETS: { label: string; base: string; models: string[] }[] = [
   { label: 'OpenAI',        base: 'https://api.openai.com/v1',  models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1-nano'] },
-  { label: 'Gemini',        base: 'https://generativelanguage.googleapis.com/v1beta/openai', models: ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-lite'] },
+  { label: 'Gemini',        base: 'https://generativelanguage.googleapis.com/v1beta/openai', models: ['models/gemini-3.1-flash-lite-preview', 'gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-lite'] },
   { label: 'Kimi (月之暗面)', base: 'https://api.moonshot.cn/v1', models: ['moonshot-v1-8k', 'moonshot-v1-32k', 'moonshot-v1-128k'] },
   { label: 'DeepSeek',      base: 'https://api.deepseek.com/v1', models: ['deepseek-chat'] },
   { label: '智谱 GLM',       base: 'https://open.bigmodel.cn/api/paas/v4', models: ['glm-4-flash', 'glm-4-air', 'glm-4'] },

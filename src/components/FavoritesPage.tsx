@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState, useMemo } from 'react';
+import { Star, X, ListChecks, Library, Search, Clock, LayoutGrid, Sparkles, SearchX, Check, Pencil } from 'lucide-react';
 import { db } from '../db';
 import { useStore } from '../store';
 import type { WordSet } from '../types';
@@ -117,7 +118,7 @@ export default function FavoritesPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
-            <span className="material-symbols-outlined text-[34px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+            <Star size={34} className="text-amber-500" fill="currentColor" />
             <span>收藏夹</span>
           </h2>
           {favorites.length > 0 && (
@@ -125,7 +126,7 @@ export default function FavoritesPage() {
               onClick={() => { setSelectMode(!selectMode); setSelectedIds(new Set()); }}
               className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium transition-all ${selectMode ? 'bg-amber-500 text-white' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'}`}
             >
-              <span className="material-symbols-outlined text-[18px]">{selectMode ? 'close' : 'checklist'}</span>
+              {selectMode ? <X size={18} /> : <ListChecks size={18} />}
               <span>{selectMode ? '退出选择' : '批量管理'}</span>
             </button>
           )}
@@ -135,7 +136,7 @@ export default function FavoritesPage() {
         {favorites.length > 0 && (
           <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
             <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px] text-amber-500" style={{ fontVariationSettings: "'FILL' 1" }}>collections_bookmark</span>
+              <Library size={20} className="text-amber-500" />
               <span className="font-bold text-on-surface">{favorites.length}</span>
               <span>组收藏</span>
             </div>
@@ -154,7 +155,7 @@ export default function FavoritesPage() {
         {favorites.length > 0 && (
           <div className="flex items-center gap-3 mb-6">
             <div className="relative flex-1">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+              <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
               <input
                 type="text"
                 placeholder="搜索词条关键词..."
@@ -164,7 +165,7 @@ export default function FavoritesPage() {
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant">
-                  <span className="material-symbols-outlined text-[18px]">close</span>
+                  <X size={18} />
                 </button>
               )}
             </div>
@@ -173,14 +174,14 @@ export default function FavoritesPage() {
                 onClick={() => setSortMode('date')}
                 className={`px-3 py-2 text-[13px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'date' ? 'bg-amber-500 text-white' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
               >
-                <span className="material-symbols-outlined text-[16px]">schedule</span>
+                <Clock size={16} />
                 <span>按时间</span>
               </button>
               <button
                 onClick={() => setSortMode('genre')}
                 className={`px-3 py-2 text-[13px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'genre' ? 'bg-amber-500 text-white' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
               >
-                <span className="material-symbols-outlined text-[16px]">category</span>
+                <LayoutGrid size={16} />
                 <span>按类型</span>
               </button>
             </div>
@@ -197,7 +198,7 @@ export default function FavoritesPage() {
               onClick={handleBatchUnfavorite}
               className="flex items-center space-x-1 px-4 py-1.5 bg-red-500 text-white text-xs font-label font-medium rounded-md hover:bg-red-600 transition-colors"
             >
-              <span className="material-symbols-outlined text-[16px]">star_border</span>
+              <Star size={16} />
               <span>批量取消收藏</span>
             </button>
           </div>
@@ -211,10 +212,10 @@ export default function FavoritesPage() {
           </div>
         ) : favorites.length === 0 ? (
           <div className="text-center py-24 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
-            <span className="material-symbols-outlined text-5xl text-outline mb-4">stars</span>
+            <Sparkles size={48} className="text-outline mb-4" />
             <p className="text-on-surface-variant font-label text-lg mb-1">空空如也</p>
             <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
-              在「✦ 词条」页面看到喜欢的灵感组合时，点击 <span className="inline-block text-amber-500 align-text-bottom"><span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span></span> 收藏吧！
+              在「✦ 词条」页面看到喜欢的灵感组合时，点击 <span className="inline-block text-amber-500 align-text-bottom"><Star size={18} fill="currentColor" /></span> 收藏吧！
             </p>
             <button
               className="mt-8 px-8 py-3 bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-lg font-label text-sm font-medium custom-shadow"
@@ -225,7 +226,7 @@ export default function FavoritesPage() {
           </div>
         ) : displayed.length === 0 ? (
           <div className="text-center py-16">
-            <span className="material-symbols-outlined text-4xl text-outline mb-4">search_off</span>
+            <SearchX size={40} className="text-outline mb-4" />
             <p className="text-on-surface-variant font-label">
               没有找到包含「<span className="font-medium text-amber-600">{searchQuery}</span>」的收藏
             </p>
@@ -246,7 +247,7 @@ export default function FavoritesPage() {
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                       selectedIds.has(ws.id) ? 'bg-amber-500 border-amber-500 text-white' : 'border-outline bg-surface-container'
                     }`}>
-                      {selectedIds.has(ws.id) && <span className="material-symbols-outlined text-[16px]">check</span>}
+                      {selectedIds.has(ws.id) && <Check size={16} />}
                     </div>
                   </div>
                 )}
@@ -264,7 +265,7 @@ export default function FavoritesPage() {
                         className="text-amber-500 hover:text-outline transition-colors"
                         title="取消收藏"
                       >
-                        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                        <Star size={20} fill="currentColor" />
                       </button>
                     )}
                   </div>
@@ -294,7 +295,7 @@ export default function FavoritesPage() {
                     onClick={() => handleUsePrompt(ws)}
                     className="w-full mt-3 py-2 border border-amber-500/20 dark:border-primary/20 text-amber-700 dark:text-primary font-label text-xs font-semibold rounded-md hover:bg-amber-50 dark:hover:bg-primary/10 transition-colors flex items-center justify-center space-x-1"
                   >
-                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                    <Pencil size={16} />
                     <span>使用此灵感创作</span>
                   </button>
                 )}

@@ -79,11 +79,6 @@ html {
 }
 
 @layer utilities {
-  .material-symbols-outlined {
-      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-      display: inline-block;
-      line-height: 1
-  }
   .paper-texture {
       background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCJimgmJNfC_2oKt5YeyXkcGOVmYuZAFHJpIz6PG68gt_4e0bgML2fhpiF7rIxYmd_BTcf17Xmpve05L62Ckt-v6KzdigZR6-sjFr5VBoFQL_M1BhbdJBnrQ0RY-g_zoZGB-YLLAaT9P0hMssm2XIscJjT5OTCqmzvBsd4e3A1bDImyivn5ipBOV9kposA_pS6IdOqfw_c4KdSW-IdLlYz91CdH3BFNezbr8xyrVPRYpjzSSrE2VLkewQ2nH4oYapbH-0eyE3Lfa6Q)
   }

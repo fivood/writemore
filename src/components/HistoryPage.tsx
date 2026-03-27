@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState, useMemo } from 'react';
+import { Calendar, History, LayoutGrid, Download, X, ListChecks, FileText, PencilLine, Timer, CalendarCheck, Search, Clock, ArrowUpDown, Trash2, BookOpen, SearchX, Check, Tag } from 'lucide-react';
 import { db } from '../db';
 import { useStore } from '../store';
 import type { Draft, WordSet } from '../types';
@@ -63,7 +64,7 @@ function CalendarHeatmap({ items }: { items: HistoryItem[] }) {
   return (
     <div className="bg-surface-container p-5 rounded-xl border border-outline-variant/15 mb-6">
       <div className="flex items-center space-x-2 mb-4">
-        <span className="material-symbols-outlined text-[20px] text-primary">calendar_month</span>
+        <Calendar size={20} className="text-primary" />
         <span className="font-label text-sm font-semibold text-on-surface">写作日历</span>
         <span className="text-outline text-xs font-label ml-2">近 6 个月</span>
       </div>
@@ -278,7 +279,7 @@ export default function HistoryPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
-            <span className="material-symbols-outlined text-[34px] text-primary">history</span>
+            <History size={34} className="text-primary" />
             <span>写作历史</span>
           </h2>
           <div className="flex flex-wrap items-center gap-2">
@@ -291,14 +292,14 @@ export default function HistoryPage() {
                     className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-white' : 'text-outline hover:bg-surface-container-high'}`}
                     title="卡片视图"
                   >
-                    <span className="material-symbols-outlined text-[18px]">grid_view</span>
+                    <LayoutGrid size={18} />
                   </button>
                   <button
                     onClick={() => setViewMode('calendar')}
                     className={`p-2 transition-colors ${viewMode === 'calendar' ? 'bg-primary text-white' : 'text-outline hover:bg-surface-container-high'}`}
                     title="日历视图"
                   >
-                    <span className="material-symbols-outlined text-[18px]">calendar_month</span>
+                    <Calendar size={18} />
                   </button>
                 </div>
                 <button
@@ -306,14 +307,14 @@ export default function HistoryPage() {
                   title="导出全部为 Markdown"
                   className="flex items-center gap-1.5 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
                 >
-                  <span className="material-symbols-outlined text-[18px]">download</span>
+                  <Download size={18} />
                   <span className="hidden sm:inline">导出全部</span>
                 </button>
                 <button
                   onClick={() => { setSelectMode(!selectMode); setSelectedIds(new Set()); }}
                   className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium transition-all ${selectMode ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'}`}
                 >
-                  <span className="material-symbols-outlined text-[18px]">{selectMode ? 'close' : 'checklist'}</span>
+                  {selectMode ? <X size={18} /> : <ListChecks size={18} />}
                   <span>{selectMode ? '退出选择' : '批量管理'}</span>
                 </button>
               </>
@@ -325,25 +326,25 @@ export default function HistoryPage() {
         {history.length > 0 && (
           <div className="flex items-center flex-wrap gap-4 mb-6 p-3 md:p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
             <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px] text-primary">description</span>
+              <FileText size={20} className="text-primary" />
               <span className="font-bold text-on-surface">{stats.totalDrafts}</span>
               <span>篇草稿</span>
             </div>
             <div className="h-4 w-px bg-outline-variant/30" />
             <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px] text-amber-500">edit_note</span>
+              <PencilLine size={20} className="text-amber-500" />
               <span className="font-bold text-on-surface">{stats.totalWords.toLocaleString()}</span>
               <span>总字数</span>
             </div>
             <div className="h-4 w-px bg-outline-variant/30" />
             <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px] text-green-500">avg_pace</span>
+              <Timer size={20} className="text-green-500" />
               <span className="font-bold text-on-surface">{stats.avgWords}</span>
               <span>字/篇</span>
             </div>
             <div className="h-4 w-px bg-outline-variant/30" />
             <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px] text-purple-500">event_available</span>
+              <CalendarCheck size={20} className="text-purple-500" />
               <span className="font-bold text-on-surface">{stats.writingDays}</span>
               <span>个写作日</span>
             </div>
@@ -359,7 +360,7 @@ export default function HistoryPage() {
         {history.length > 0 && (
           <div className="flex items-center gap-3 mb-6">
             <div className="relative flex-1">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+              <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
               <input
                 type="text"
                 placeholder="搜索标题、内容或词条..."
@@ -369,7 +370,7 @@ export default function HistoryPage() {
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant">
-                  <span className="material-symbols-outlined text-[18px]">close</span>
+                  <X size={18} />
                 </button>
               )}
             </div>
@@ -378,14 +379,14 @@ export default function HistoryPage() {
                 onClick={() => setSortMode('date')}
                 className={`px-3 py-2 text-[13px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'date' ? 'bg-primary text-white' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
               >
-                <span className="material-symbols-outlined text-[16px]">schedule</span>
+                <Clock size={16} />
                 <span>最新</span>
               </button>
               <button
                 onClick={() => setSortMode('words')}
                 className={`px-3 py-2 text-[13px] font-label font-medium transition-colors flex items-center space-x-1 ${sortMode === 'words' ? 'bg-primary text-white' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
               >
-                <span className="material-symbols-outlined text-[16px]">sort</span>
+                <ArrowUpDown size={16} />
                 <span>字数</span>
               </button>
             </div>
@@ -403,14 +404,14 @@ export default function HistoryPage() {
                 onClick={handleBatchExport}
                 className="flex items-center space-x-1 px-4 py-1.5 bg-primary text-white text-xs font-label font-medium rounded-md hover:bg-primary-dim transition-colors"
               >
-                <span className="material-symbols-outlined text-[16px]">download</span>
+                <Download size={16} />
                 <span>批量导出 .md</span>
               </button>
               <button
                 onClick={handleBatchDelete}
                 className="flex items-center space-x-1 px-4 py-1.5 bg-red-500 text-white text-xs font-label font-medium rounded-md hover:bg-red-600 transition-colors"
               >
-                <span className="material-symbols-outlined text-[16px]">delete</span>
+                <Trash2 size={16} />
                 <span>批量删除</span>
               </button>
             </div>
@@ -425,7 +426,7 @@ export default function HistoryPage() {
           </div>
         ) : history.length === 0 ? (
           <div className="text-center py-24 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
-            <span className="material-symbols-outlined text-5xl text-outline mb-4">menu_book</span>
+            <BookOpen size={48} className="text-outline mb-4" />
             <p className="text-on-surface-variant font-label text-lg mb-1">还没有写作记录</p>
             <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
               去「✦ 词条」页面抽取灵感，写下你的第一个故事吧！
@@ -439,7 +440,7 @@ export default function HistoryPage() {
           </div>
         ) : displayed.length === 0 ? (
           <div className="text-center py-16">
-            <span className="material-symbols-outlined text-4xl text-outline mb-4">search_off</span>
+            <SearchX size={40} className="text-outline mb-4" />
             <p className="text-on-surface-variant font-label">
               没有找到包含「<span className="font-medium text-primary">{searchQuery}</span>」的记录
             </p>
@@ -460,7 +461,7 @@ export default function HistoryPage() {
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                       selectedIds.has(item.draft.id) ? 'bg-primary border-primary text-white' : 'border-outline bg-surface-container'
                     }`}>
-                      {selectedIds.has(item.draft.id) && <span className="material-symbols-outlined text-[16px]">check</span>}
+                      {selectedIds.has(item.draft.id) && <Check size={16} />}
                     </div>
                   </div>
                 )}
@@ -472,7 +473,7 @@ export default function HistoryPage() {
                     className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
                     title="删除草稿"
                   >
-                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                    <Trash2 size={20} />
                   </button>
                 )}
 
@@ -499,7 +500,7 @@ export default function HistoryPage() {
                   <div className="flex flex-wrap gap-1.5 pt-3 border-t border-outline-variant/10">
                     {item.wordSet.words.map((w, idx) => (
                       <span key={idx} className="px-2 py-0.5 bg-surface-container-high text-on-surface-variant text-[12px] rounded border border-outline-variant/20 font-label font-medium flex items-center space-x-1">
-                        <span className="material-symbols-outlined text-[12px] opacity-60">tag</span>
+                        <Tag size={12} className="opacity-60" />
                         <span>{w.text}</span>
                       </span>
                     ))}
