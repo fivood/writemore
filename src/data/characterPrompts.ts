@@ -16,12 +16,12 @@ export interface CharacterPrompt {
 }
 
 export const CHARACTER_LAYERS: CharacterLayer[] = [
-  { id: 'inner',        name: '内心层',   icon: 'psychiatry',          description: '挖掘角色内部的矛盾与信仰',   color: 'bg-purple-50 border-purple-200 text-purple-800 dark:bg-purple-500/12 dark:border-purple-400/30 dark:text-purple-300' },
-  { id: 'relationship', name: '关系层',   icon: 'group',               description: '两人之间的权力、距离与裂痕',  color: 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-500/12 dark:border-rose-400/30 dark:text-rose-300' },
-  { id: 'voice',        name: '声音层',   icon: 'record_voice_over',   description: '说什么、不说什么、沉默的形状', color: 'bg-sky-50 border-sky-200 text-sky-800 dark:bg-sky-500/12 dark:border-sky-400/30 dark:text-sky-300' },
-  { id: 'body',         name: '身体层',   icon: 'self_improvement',    description: '身体是最诚实的叙述者',        color: 'bg-teal-50 border-teal-200 text-teal-800 dark:bg-teal-500/12 dark:border-teal-400/30 dark:text-teal-300' },
-  { id: 'history',      name: '历史层',   icon: 'history',             description: '过去如何以细节的形式住在当下', color: 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-500/12 dark:border-amber-400/30 dark:text-amber-300' },
-  { id: 'edge',         name: '边缘视角', icon: 'visibility',          description: '从旁观者的眼睛看见主角',      color: 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-500/12 dark:border-emerald-400/30 dark:text-emerald-300' },
+  { id: 'inner',        name: '内心层',   icon: 'psychiatry',          description: '挖掘角色内部的矛盾与信仰',   color: 'bg-purple-50 border-purple-200 text-purple-800 dark:bg-purple-500/12 dark:border-purple-400/30 dark:text-purple-500' },
+  { id: 'relationship', name: '关系层',   icon: 'group',               description: '两人之间的权力、距离与裂痕',  color: 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-500/12 dark:border-rose-400/30 dark:text-rose-500' },
+  { id: 'voice',        name: '声音层',   icon: 'record_voice_over',   description: '说什么、不说什么、沉默的形状', color: 'bg-sky-50 border-sky-200 text-sky-800 dark:bg-sky-500/12 dark:border-sky-400/30 dark:text-sky-500' },
+  { id: 'body',         name: '身体层',   icon: 'self_improvement',    description: '身体是最诚实的叙述者',        color: 'bg-teal-50 border-teal-200 text-teal-800 dark:bg-teal-500/12 dark:border-teal-400/30 dark:text-teal-500' },
+  { id: 'history',      name: '历史层',   icon: 'history',             description: '过去如何以细节的形式住在当下', color: 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-500/12 dark:border-amber-400/30 dark:text-amber-500' },
+  { id: 'edge',         name: '边缘视角', icon: 'visibility',          description: '从旁观者的眼睛看见主角',      color: 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-500/12 dark:border-emerald-400/30 dark:text-emerald-500' },
 ];
 
 export const BUILTIN_CHARACTER_PROMPTS: CharacterPrompt[] = [
