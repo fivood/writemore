@@ -996,23 +996,40 @@ export default function App() {
                                         <h2 className="font-headline text-lg font-semibold text-on-surface">场景描写</h2>
                                         <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">用文字描绘画面</p>
                                     </div>
-                                    <div className="flex-1 flex flex-col">
-                                        {store.currentScene && (
-                                            <div className="bg-blue-50/80 dark:bg-blue-500/10 border border-blue-200/60 dark:border-blue-400/15 rounded-xl p-4 mb-4">
-                                                <p className="text-[12px] font-label uppercase tracking-widest text-blue-500 dark:text-blue-500 mb-2">当前场景</p>
-                                                <h4 className="font-headline text-base font-bold text-blue-900 dark:text-blue-500 mb-2">{store.currentScene.title}</h4>
-                                                <p className="text-sm text-blue-800/80 dark:text-blue-700/70 leading-relaxed">{store.currentScene.description}</p>
-                                                <div className="flex flex-wrap gap-1.5 mt-3">
-                                                    {store.currentScene.tags.map(tag => (
-                                                        <span key={tag} className="px-2 py-0.5 bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-700 text-[12px] font-label rounded-full">{tag}</span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                        <button onClick={() => store.setCurrentScene(pickRandomScene(store.currentScene?.id))} className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-sm font-label text-on-surface-variant hover:text-primary hover:border-primary/30 transition-all">
+                                    <div className="flex-1 flex flex-col space-y-3">
+                                        <button onClick={() => { store.setCurrentScene(pickRandomScene(store.currentScene?.id)); setAiSceneExtra(''); }} className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-sm font-label text-on-surface-variant hover:text-primary hover:border-primary/30 transition-all">
                                             <RefreshCw size={18} />
                                             <span>换一个场景</span>
                                         </button>
+
+                                        {store.aiEnabled && (
+                                            <>
+                                                <button
+                                                    onClick={handleAiSceneDeepDive}
+                                                    disabled={aiSceneLoading || !store.currentScene}
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+                                                >
+                                                    {aiSceneLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                                                    <span>{aiSceneLoading ? '生成中…' : 'AI 补充感官细节'}</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleAiScene}
+                                                    disabled={aiSceneLoading}
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+                                                >
+                                                    <Bot size={16} />
+                                                    <span>AI 生成新场景</span>
+                                                </button>
+                                                {aiSceneExtra && (
+                                                    <div className="bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl p-3">
+                                                        <p className="text-[12px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-1.5 flex items-center gap-1">
+                                                            <Sparkles size={14} />感官引导
+                                                        </p>
+                                                        <p className="text-sm text-blue-900 dark:text-blue-200 leading-relaxed whitespace-pre-line">{aiSceneExtra}</p>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
                                     </div>
                                 </>
                             )}
@@ -1313,9 +1330,6 @@ export default function App() {
                                     <div className="mb-2">
                                         <div className="flex justify-between items-center mb-1">
                                             <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">场景描写</span>
-                                            <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一个场景" onClick={() => store.setCurrentScene(pickRandomScene(store.currentScene?.id))}>
-                                                <RefreshCw size={20} className="text-outline group-hover:text-primary transition-colors" />
-                                            </button>
                                         </div>
                                         <h3 className="font-headline text-2xl text-on-surface">描写挑战</h3>
                                     </div>
@@ -1332,35 +1346,6 @@ export default function App() {
                                         <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                                     </div>
 
-                                    {/* AI 场景增强 */}
-                                    {store.aiEnabled && (
-                                        <div className="space-y-2">
-                                            <button
-                                                onClick={handleAiSceneDeepDive}
-                                                disabled={aiSceneLoading}
-                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-600 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
-                                            >
-                                                {aiSceneLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                                                <span>{aiSceneLoading ? '生成中…' : 'AI 补充感官细节'}</span>
-                                            </button>
-                                            <button
-                                                onClick={handleAiScene}
-                                                disabled={aiSceneLoading}
-                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-600 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
-                                            >
-                                                <Bot size={16} />
-                                                <span>AI 生成新场景</span>
-                                            </button>
-                                            {aiSceneExtra && (
-                                                <div className="bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl p-3">
-                                                    <p className="text-[12px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-500 mb-1.5 flex items-center gap-1">
-                                                        <Sparkles size={14} />感官引导
-                                                    </p>
-                                                    <p className="text-sm text-blue-900 dark:text-blue-700/70 leading-relaxed whitespace-pre-line">{aiSceneExtra}</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
                                 </div>
                             </section>
                         )}
