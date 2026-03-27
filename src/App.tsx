@@ -518,12 +518,13 @@ export default function App() {
     if (!store.aiEnabled || !store.editorContent.trim()) return;
     setAiContinueLoading(true);
     const baseContent = store.editorContent;
+    const aiSectionPrefix = '\n\n---\n\n### AI 续写\n\n';
     const accumulated = { text: '' };
     try {
       const msgs = buildContinueWritingPrompt(store.editorTitle, baseContent, store.writingMode);
       await chatCompletionStream(store.aiConfig, msgs, (chunk) => {
         accumulated.text += chunk;
-        store.setEditorContent(baseContent + '\n\n' + accumulated.text);
+        store.setEditorContent(baseContent + aiSectionPrefix + accumulated.text);
       }, { maxTokens: 400 });
     } catch (e) {
       showToast('AI 续写失败');
