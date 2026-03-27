@@ -972,9 +972,9 @@ export default function App() {
                     <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">记录你的梦</p>
                   </div>
                   <div className="flex-1 space-y-4">
-                    <div className="bg-violet-50/80 dark:bg-violet-500/10 border border-violet-200/60 dark:border-violet-400/15 rounded-xl p-4">
-                      <p className="font-headline text-sm font-medium text-violet-900 dark:text-violet-200 mb-2">💡 写作小贴士</p>
-                      <ul className="text-xs text-violet-800/70 dark:text-violet-300/70 space-y-1.5 leading-relaxed">
+                    <div className="bg-stone-50/80 dark:bg-stone-500/10 border border-violet-200/60 dark:border-violet-400/15 rounded-xl p-4">
+                      <p className="font-headline text-sm font-medium text-violet-600 dark:text-violet-500 mb-2">💡 写作小贴士</p>
+                      <ul className="text-xs text-violet-600/70 dark:text-violet-600/80 space-y-1.5 leading-relaxed">
                         <li>• 先写下印象最深的画面</li>
                         <li>• 描述梦中的情绪和感受</li>
                         <li>• 记录出现的人物和场所</li>
@@ -1166,7 +1166,7 @@ export default function App() {
                       <button onClick={handleToggleFavorite} className="p-1 hover:bg-surface-container rounded group transition-all" title="收藏">
                         <Star size={20} className={`transition-colors ${store.isCurrentWordSetFavorite ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
                       </button>
-                      <button className="p-1 hover:bg-surface-container rounded group transition-all" title="抄取 (Space)" onClick={handleDraw}>
+                      <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一组 (Space)" onClick={handleDraw}>
                         <Dices size={20} className="text-outline group-hover:text-primary transition-colors" />
                       </button>
                     </div>
@@ -1174,18 +1174,21 @@ export default function App() {
                   <h3 className="font-headline text-2xl text-on-surface">写作灵感</h3>
                 </div>
 
-                {store.drawnGenre && (
-                  <div className={`flex items-center space-x-2 px-4 py-3 rounded-xl border ${genreStyleMap[store.drawnGenre]?.bg ?? 'bg-stone-100 border-stone-200'}`}>
+                {store.currentWords.length > 0 && (
+                  <div className={`flex items-center space-x-2 px-4 py-3 rounded-xl border ${store.drawnGenre ? (genreStyleMap[store.drawnGenre]?.bg ?? 'bg-stone-100 border-stone-200') : 'bg-surface-container-high border-outline-variant/30'}`}>
                     {(() => {
-                      const GenreIcon = genreIconMap[store.drawnGenre] || Sparkles;
+                      const GenreIcon = (store.drawnGenre && genreIconMap[store.drawnGenre]) || Sparkles;
                       return <GenreIcon size={20} />;
                     })()}
                     <div className="flex-1">
                       <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant">写作风格</p>
-                      <p className="font-headline font-bold text-base leading-tight">{store.drawnGenre}</p>
+                      <p className="font-headline font-bold text-base leading-tight">{store.drawnGenre || '不限风格'}</p>
                     </div>
                     <button onClick={() => store.setDrawnGenre(pickRandomGenre(store.selectedGenres))} className="p-1 rounded hover:bg-surface-container transition-colors" title="换一个风格">
                       <RefreshCw size={18} className="text-outline" />
+                    </button>
+                    <button onClick={() => store.setDrawnGenre(null)} className="p-1 rounded hover:bg-surface-container transition-colors" title="清除风格约束">
+                      <X size={18} className="text-outline" />
                     </button>
                   </div>
                 )}
