@@ -1171,7 +1171,7 @@ export default function App() {
                     const cat = w.category || w.genres?.[0] || '意象';
                     const catStyle = CATEGORY_STYLE[cat] ?? CATEGORY_STYLE['意象'];
                     return (
-                      <div key={`${w.id}_${i}`} className={`${catStyle.glow} bg-surface-container p-6 rounded-3xl border border-outline-variant/10 custom-shadow dark:shadow-none relative overflow-hidden group transition-all hover:bg-surface-container-high`}>
+                      <div key={`${w.id}_${i}`} className={`${catStyle.glow} bg-surface-container p-6 rounded-2xl border border-outline-variant/10 custom-shadow dark:shadow-none relative overflow-hidden group transition-all hover:bg-surface-container-high`}>
                         <div className="flex justify-between items-start mb-4 relative z-10">
                           <span className={`px-2 py-1 text-[12px] font-bold font-label rounded-lg tracking-wider uppercase ${catStyle.badge}`}>
                             {w.category || w.genres?.[0] || '意象'}
@@ -1208,7 +1208,7 @@ export default function App() {
                   <h3 className="font-headline text-2xl text-on-surface">描写挑战</h3>
                 </div>
 
-                <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
+                <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                   <Mountain size={34} className="text-blue-400 dark:text-[#69a8f6] mb-4 block" />
                   <h4 className="font-headline text-xl font-bold mb-3 text-stone-900 dark:text-on-surface">{store.currentScene.title}</h4>
                   <p className="text-sm text-stone-700 dark:text-on-surface-variant leading-relaxed mb-4">{store.currentScene.description}</p>
@@ -1268,7 +1268,7 @@ export default function App() {
                   <h3 className="font-headline text-2xl text-on-surface">习作题目</h3>
                 </div>
 
-                <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
+                <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                   <CircleHelp size={34} className="text-rose-400 dark:text-rose-300 mb-4 block" />
                   <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
                   {store.currentChallenge.id.startsWith('ai_') && (
@@ -1324,7 +1324,7 @@ export default function App() {
                     </div>
                   )}
 
-                  <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
+                  <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                     <User size={30} className="text-fuchsia-400 dark:text-fuchsia-300 mb-4 block" />
                     <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
