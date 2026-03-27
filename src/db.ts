@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { Word, WordSet, Draft } from './types';
+import type { Word, WordSet, Draft, PromptFavorite } from './types';
 import type { WritingChallenge } from './data/challenges';
 import type { CharacterPrompt } from './data/characterPrompts';
 
@@ -7,6 +7,7 @@ export class WriteMoreDB extends Dexie {
   words!: Table<Word>;
   wordSets!: Table<WordSet>;
   drafts!: Table<Draft>;
+  promptFavorites!: Table<PromptFavorite>;
   challenges!: Table<WritingChallenge>;
   characterPrompts!: Table<CharacterPrompt>;
 
@@ -34,6 +35,14 @@ export class WriteMoreDB extends Dexie {
       drafts: 'id, wordSetId, updatedAt, writingMode',
       challenges: 'id, source',
       characterPrompts: 'id, layer, source',
+    });
+    this.version(5).stores({
+      words: 'id, text, genre, source, enabled',
+      wordSets: 'id, createdAt, isFavorite, hasWritten, genre',
+      drafts: 'id, wordSetId, updatedAt, writingMode',
+      challenges: 'id, source',
+      characterPrompts: 'id, layer, source',
+      promptFavorites: 'id, module, itemId, createdAt, isAi',
     });
   }
 }

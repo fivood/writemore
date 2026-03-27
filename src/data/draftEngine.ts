@@ -1,5 +1,5 @@
 import { db } from '../db';
-import type { Word, WordSet, Draft, WritingMode } from '../types';
+import type { Word, WordSet, Draft, WritingMode, PromptFavorite, PromptFavoriteModule } from '../types';
 
 export async function saveDraftToDb(
   title: string,
@@ -122,4 +122,27 @@ export async function toggleFavoriteWordSet(
   }
   
   return { wordSetId, isFavorite: newFavoriteStatus };
+}
+
+export async function isPromptFavorited(module: PromptFavoriteModule, itemId: string): Promise<boolean> {
+  const id = `pf_${module}_${itemId}`;
+  const hit = await db.promptFavorites.get(id);
+  return !!hit;
+}
+
+export async function togglePromptFavorite(
+  entry: Omit<PromptFavorite, 'id' | 'createdAt'>
+): Promise<boolean> {
+  const id = `pf_${entry.module}_${entry.itemId}`;
+  const existing = await db.promptFavorites.get(id);
+  if (existing) {
+    await db.promptFavorites.delete(id);
+    return false;
+  }
+  await db.promptFavorites.put({
+    ...entry,
+    id,
+    createdAt: new Date(),
+  });
+  return true;
 }

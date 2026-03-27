@@ -8,7 +8,7 @@ const CUSTOM_CATEGORY_STORAGE_KEY = 'writemore_custom_categories_v1';
 import { useStore } from './store';
 import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost, Brain, Users, Mic, Accessibility, History, Eye, Wifi, CheckCircle2, AlertCircle, LogOut, CloudOff, Package, Zap, Layers, Map as MapIcon, Tag } from 'lucide-react';
 import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngine';
-import { saveDraftToDb, toggleFavoriteWordSet } from './data/draftEngine';
+import { saveDraftToDb, toggleFavoriteWordSet, isPromptFavorited, togglePromptFavorite } from './data/draftEngine';
 import { pickRandomScene } from './data/scenes';
 import { pickRandomChallenge } from './data/challenges';
 import { pickRandomCharacterPrompt, CHARACTER_LAYERS } from './data/characterPrompts';
@@ -58,6 +58,9 @@ export default function App() {
     // Incremented whenever a new draw/mode-switch session begins, so that an
     // in-flight handleSave won't overwrite currentWordSetId after the session resets.
     const wordSessionRef = useRef(0);
+    const [isSceneFavorited, setIsSceneFavorited] = useState(false);
+    const [isChallengeFavorited, setIsChallengeFavorited] = useState(false);
+    const [isCharacterFavorited, setIsCharacterFavorited] = useState(false);
 
     const [mobilePanel, setMobilePanel] = useState(false);
     const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -450,6 +453,61 @@ export default function App() {
         }
     }
 
+    async function handleToggleSceneFavorite() {
+        const scene = store.currentScene;
+        if (!scene) return;
+        try {
+            const isFavorite = await togglePromptFavorite({
+                module: 'scene',
+                itemId: scene.id,
+                title: scene.title,
+                description: scene.description,
+                tags: scene.tags,
+                isAi: scene.id.startsWith('ai_'),
+            });
+            setIsSceneFavorited(isFavorite);
+            showToast(isFavorite ? '⭐ 已收藏场景题目' : '取消收藏');
+        } catch (e) {
+            console.error('Failed to toggle scene favorite', e);
+        }
+    }
+
+    async function handleToggleChallengeFavorite() {
+        const challenge = store.currentChallenge;
+        if (!challenge) return;
+        try {
+            const isFavorite = await togglePromptFavorite({
+                module: 'challenge',
+                itemId: challenge.id,
+                title: challenge.text,
+                isAi: challenge.id.startsWith('ai_'),
+            });
+            setIsChallengeFavorited(isFavorite);
+            showToast(isFavorite ? '⭐ 已收藏挑战题目' : '取消收藏');
+        } catch (e) {
+            console.error('Failed to toggle challenge favorite', e);
+        }
+    }
+
+    async function handleToggleCharacterFavorite() {
+        const prompt = store.currentCharacterPrompt;
+        if (!prompt) return;
+        const layer = CHARACTER_LAYERS.find(l => l.id === prompt.layer);
+        try {
+            const isFavorite = await togglePromptFavorite({
+                module: 'character',
+                itemId: prompt.id,
+                title: prompt.text,
+                description: layer ? `维度：${layer.name}` : undefined,
+                isAi: prompt.id.startsWith('ai_'),
+            });
+            setIsCharacterFavorited(isFavorite);
+            showToast(isFavorite ? '⭐ 已收藏人物题目' : '取消收藏');
+        } catch (e) {
+            console.error('Failed to toggle character favorite', e);
+        }
+    }
+
     async function handleSave() {
         if (isSavingRef.current) return;
         // 每次都从 store 读最新状态，避免 setTimeout 捕获的 stale closure 导致重复创建草稿
@@ -570,7 +628,10 @@ export default function App() {
             const existing = store.currentChallenge ? [store.currentChallenge.text] : [];
             const msgs = buildChallengeGeneratePrompt(existing);
             const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
-            const lines = result.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            // Strip leading numbering/bullets that the model sometimes adds despite instructions
+            // e.g. "1. ", "①", "- ", "• ", "（1）" etc.
+            const stripPrefix = (s: string) => s.replace(/^[\s\uff08（(]*[\d①②③一二三][\s.、.）).\uff09]*/, '').replace(/^[-•*]\s*/, '').trim();
+            const lines = result.split('\n').map(l => stripPrefix(l.trim())).filter(l => l.length > 0);
             if (lines.length > 0) {
                 const picked = lines[Math.floor(Math.random() * lines.length)];
                 const newChallenge = {
@@ -673,6 +734,42 @@ export default function App() {
     }
 
     useEffect(() => { refreshTodayWords(); }, [store.currentDraftId]);
+
+    useEffect(() => {
+        let cancelled = false;
+        if (!store.currentScene) {
+            setIsSceneFavorited(false);
+            return;
+        }
+        isPromptFavorited('scene', store.currentScene.id)
+            .then(v => { if (!cancelled) setIsSceneFavorited(v); })
+            .catch(() => { if (!cancelled) setIsSceneFavorited(false); });
+        return () => { cancelled = true; };
+    }, [store.currentScene?.id]);
+
+    useEffect(() => {
+        let cancelled = false;
+        if (!store.currentChallenge) {
+            setIsChallengeFavorited(false);
+            return;
+        }
+        isPromptFavorited('challenge', store.currentChallenge.id)
+            .then(v => { if (!cancelled) setIsChallengeFavorited(v); })
+            .catch(() => { if (!cancelled) setIsChallengeFavorited(false); });
+        return () => { cancelled = true; };
+    }, [store.currentChallenge?.id]);
+
+    useEffect(() => {
+        let cancelled = false;
+        if (!store.currentCharacterPrompt) {
+            setIsCharacterFavorited(false);
+            return;
+        }
+        isPromptFavorited('character', store.currentCharacterPrompt.id)
+            .then(v => { if (!cancelled) setIsCharacterFavorited(v); })
+            .catch(() => { if (!cancelled) setIsCharacterFavorited(false); });
+        return () => { cancelled = true; };
+    }, [store.currentCharacterPrompt?.id]);
 
     const currentEditorWords = store.editorContent.replace(/\s/g, '').length;
     const wordCount = todayOtherDraftsWords + currentEditorWords;
@@ -1348,7 +1445,12 @@ export default function App() {
 
                                     <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                                         <Mountain size={34} className="text-blue-400 dark:text-[#69a8f6] mb-4 block" />
-                                        <h4 className="font-headline text-xl font-bold mb-3 text-stone-900 dark:text-on-surface">{store.currentScene.title}</h4>
+                                        <div className="flex items-start justify-between gap-3 mb-3">
+                                            <h4 className="font-headline text-xl font-bold text-stone-900 dark:text-on-surface">{store.currentScene.title}</h4>
+                                            <button onClick={handleToggleSceneFavorite} className="p-1 hover:bg-surface-container rounded group transition-all" title={isSceneFavorited ? '取消收藏' : '收藏题目'}>
+                                                <Star size={20} className={`transition-colors ${isSceneFavorited ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
+                                            </button>
+                                        </div>
                                         <p className="text-sm text-stone-700 dark:text-on-surface-variant leading-relaxed mb-4">{store.currentScene.description}</p>
                                         <div className="flex flex-wrap gap-1.5">
                                             {store.currentScene.tags.map(tag => (
@@ -1379,7 +1481,12 @@ export default function App() {
 
                                     <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                                         <CircleHelp size={34} className="text-rose-400 dark:text-rose-300 mb-4 block" />
-                                        <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
+                                        <div className="flex items-start justify-between gap-3">
+                                            <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
+                                            <button onClick={handleToggleChallengeFavorite} className="p-1 hover:bg-surface-container rounded group transition-all" title={isChallengeFavorited ? '取消收藏' : '收藏题目'}>
+                                                <Star size={20} className={`transition-colors ${isChallengeFavorited ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
+                                            </button>
+                                        </div>
                                         {store.currentChallenge.id.startsWith('ai_') && (
                                             <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100/80 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-400/20 text-[12px] font-label text-rose-600 dark:text-rose-400">
                                                 <Sparkles size={13} />AI 出题
@@ -1435,7 +1542,12 @@ export default function App() {
 
                                         <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                                             <User size={30} className="text-fuchsia-400 dark:text-fuchsia-300 mb-4 block" />
-                                            <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
+                                            <div className="flex items-start justify-between gap-3">
+                                                <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
+                                                <button onClick={handleToggleCharacterFavorite} className="p-1 hover:bg-surface-container rounded group transition-all" title={isCharacterFavorited ? '取消收藏' : '收藏题目'}>
+                                                    <Star size={20} className={`transition-colors ${isCharacterFavorited ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
+                                                </button>
+                                            </div>
                                             <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                                         </div>
 

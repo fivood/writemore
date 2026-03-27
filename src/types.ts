@@ -57,12 +57,12 @@ export type TimerDuration = 10 | 15 | 20 | 30 | 60;
 export type WritingMode = 'words' | 'free' | 'scene' | 'dream' | 'challenge' | 'character';
 
 export const WRITING_MODES: { mode: WritingMode; label: string; icon: string; desc: string; color: string }[] = [
-  { mode: 'words',     label: '词汇灵感', icon: 'casino',          desc: '随机抽取词条，围绕它们展开想象',         color: 'bg-amber-50 border-amber-200 text-amber-800'   },
-  { mode: 'free',      label: '自由发挥', icon: 'edit_note',        desc: '今天不用提示，我有想法',                 color: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
-  { mode: 'scene',     label: '场景描写', icon: 'landscape',        desc: '给出一个场景，来一段精彩描写',           color: 'bg-blue-50 border-blue-200 text-blue-800'     },
-  { mode: 'dream',     label: '梦境记录', icon: 'nights_stay',      desc: '趁记忆还热乎，记录昨晚的梦',             color: 'bg-violet-50 border-violet-200 text-violet-800' },
-  { mode: 'challenge', label: '写作挑战', icon: 'quiz',             desc: '你问我不一定答——挑战式写作练习',        color: 'bg-rose-50 border-rose-200 text-rose-800'     },
-  { mode: 'character', label: '人物描写', icon: 'person_search',   desc: '六个维度，深挖你笔下的角色',             color: 'bg-fuchsia-50 border-fuchsia-200 text-fuchsia-800' },
+  { mode: 'words',     label: '词汇灵感', icon: 'casino',          desc: '随机抽取词条，围绕它们展开想象',         color: 'bg-amber-50   dark:bg-amber-500/10  border-amber-200   dark:border-amber-400/20  text-amber-800   dark:text-amber-300'   },
+  { mode: 'free',      label: '自由发挥', icon: 'edit_note',        desc: '今天不用提示，我有想法',                 color: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-400/20 text-emerald-800 dark:text-emerald-300' },
+  { mode: 'scene',     label: '场景描写', icon: 'landscape',        desc: '给出一个场景，来一段精彩描写',           color: 'bg-blue-50    dark:bg-blue-500/10    border-blue-200    dark:border-blue-400/20    text-blue-800    dark:text-blue-300'    },
+  { mode: 'dream',     label: '梦境记录', icon: 'nights_stay',      desc: '趁记忆还热乎，记录昨晚的梦',             color: 'bg-violet-50  dark:bg-violet-500/10  border-violet-200  dark:border-violet-400/20  text-violet-800  dark:text-violet-300'  },
+  { mode: 'challenge', label: '写作挑战', icon: 'quiz',             desc: '你问我不一定答——挑战式写作练习',        color: 'bg-rose-50    dark:bg-rose-500/10    border-rose-200    dark:border-rose-400/20    text-rose-800    dark:text-rose-300'    },
+  { mode: 'character', label: '人物描写', icon: 'person_search',   desc: '六个维度，深挖你笔下的角色',             color: 'bg-fuchsia-50 dark:bg-fuchsia-500/10 border-fuchsia-200 dark:border-fuchsia-400/20 text-fuchsia-800 dark:text-fuchsia-300' },
 ];
 
 export interface ScenePrompt {
@@ -70,6 +70,19 @@ export interface ScenePrompt {
   title: string;
   description: string;
   tags: string[];
+}
+
+export type PromptFavoriteModule = 'scene' | 'challenge' | 'character';
+
+export interface PromptFavorite {
+  id: string;
+  module: PromptFavoriteModule;
+  itemId: string;
+  title: string;
+  description?: string;
+  tags?: string[];
+  isAi: boolean;
+  createdAt: Date;
 }
 
 // Extend Draft to support writing mode metadata
