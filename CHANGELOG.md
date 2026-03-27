@@ -1,6 +1,13 @@
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [0.1.7] - 2026-03-27
+
+### 0.1.7 Changed
+
+- 更新打包图标，无功能变更。
 
 ## [0.1.6] - 2026-03-27
 
