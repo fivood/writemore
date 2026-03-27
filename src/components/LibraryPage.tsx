@@ -702,7 +702,7 @@ export default function LibraryPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
-            <BookOpen size={34} className="text-primary" />
+            <BookOpen size={30} className="text-primary" />
             <span>词库管理</span>
           </h2>
           <div className="flex flex-wrap items-center gap-2">
@@ -759,7 +759,7 @@ export default function LibraryPage() {
               className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
             >
               <Pencil size={18} />
-              <span>管理分类</span>
+              <span>管理自定义分类</span>
             </button>
           </div>
 
@@ -1129,7 +1129,7 @@ export default function LibraryPage() {
           <div className="bg-surface-container rounded-2xl w-full max-w-3xl mx-4 p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h3 className="font-headline text-xl font-bold text-on-surface mb-5 flex items-center space-x-2">
               <Pencil size={24} className="text-primary" />
-              <span>管理分类</span>
+              <span>管理自定义分类</span>
             </h3>
 
             {manageDraftCategories.length === 0 ? (
