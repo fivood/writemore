@@ -587,6 +587,14 @@ export default function LibraryPage() {
               <span>添加词条</span>
             </button>
           </div>
+
+          <div className="md:ml-auto md:max-w-[440px] px-3 py-2 rounded-lg border border-outline-variant/20 bg-surface-container-low/60 text-[12px] font-label text-on-surface-variant leading-relaxed flex items-start gap-2">
+            <Info size={15} className="mt-0.5 shrink-0 text-primary" />
+            <div>
+              <p>导入格式支持 `.json` / `.md` / `.txt`，每行一条。</p>
+              <p className="mt-0.5">示例：`[意象]（余晖）：（傍晚天空残留的光）` 或 `[动作] 奔跑：快速移动`</p>
+            </div>
+          </div>
         </div>
 
         {/* Stats bar */}
