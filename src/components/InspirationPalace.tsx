@@ -41,6 +41,7 @@ export default function InspirationPalace() {
     const [previewContent, setPreviewContent] = useState('');
     const [previewSaving, setPreviewSaving] = useState(false);
     const [previewSavedHint, setPreviewSavedHint] = useState(false);
+    // 无多选
     const hasPreviewChanges = !!previewItem && (
         previewTitle !== (previewItem.draft.title || '') ||
         previewContent !== (previewItem.draft.content || '')
@@ -221,11 +222,13 @@ export default function InspirationPalace() {
     };
 
     async function handleAiRemix() {
-        if (!store.aiEnabled || items.length < 2) return;
+        // 只用当前分类下的卡片
+        const remixSource = filterMode === 'all' ? items : items.filter(it => (it.draft.writingMode || 'words') === filterMode);
+        if (!store.aiEnabled || remixSource.length < 2) return;
         setAiRemixLoading(true);
         setAiRemixResult('');
         try {
-            const shuffled = [...items].sort(() => Math.random() - 0.5);
+            const shuffled = [...remixSource].sort(() => Math.random() - 0.5);
             const picked = shuffled.slice(0, Math.min(5, shuffled.length)).map(it => it.draft);
             const msgs = buildInspirationRemixPrompt(picked);
             const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
@@ -314,15 +317,15 @@ export default function InspirationPalace() {
 
                 {/* AI Remix Result */}
                 {aiRemixResult && (
-                    <div className="mb-6 bg-violet-50/60 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-xl p-4">
-                        <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-400 mb-2 flex items-center gap-1">
+                    <div className="mb-6 bg-violet-50/60 dark:bg-violet-200/20 border border-violet-200/40 dark:border-violet-400/10 rounded-xl p-4">
+                        <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-600 mb-2 flex items-center gap-1">
                             <Sparkles size={14} />AI 灵感再创作
                         </p>
-                        <p className="text-sm text-violet-900 dark:text-violet-200 leading-relaxed mb-3">{aiRemixResult}</p>
+                        <p className="text-sm text-violet-900 dark:text-violet-700/70 leading-relaxed mb-3">{aiRemixResult}</p>
                         <div className="flex gap-2">
                             <button
                                 onClick={handleStartFromRemix}
-                                className="flex items-center gap-1 px-3 py-1.5 bg-violet-600 text-white rounded-lg text-xs font-label hover:bg-violet-700 transition-colors"
+                                className="flex items-center gap-1 px-3 py-1.5 bg-violet-400 text-white rounded-lg text-xs font-label hover:bg-violet-600 transition-colors"
                             >
                                 <Pencil size={16} />
                                 <span>以此开始写作</span>
@@ -330,7 +333,7 @@ export default function InspirationPalace() {
                             <button
                                 onClick={handleAiRemix}
                                 disabled={aiRemixLoading}
-                                className="flex items-center gap-1 px-3 py-1.5 border border-violet-300 dark:border-violet-400/20 rounded-lg text-xs font-label text-violet-700 dark:text-violet-400 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
+                                className="flex items-center gap-1 px-3 py-1.5 border border-violet-300 dark:border-violet-700/20 rounded-lg text-xs font-label text-violet-700 dark:text-violet-600 hover:bg-violet-100/20 dark:hover:bg-violet-300/10 transition-colors disabled:opacity-50"
                             >
                                 <RefreshCw size={16} />
                                 <span>再来一个</span>
@@ -417,7 +420,6 @@ export default function InspirationPalace() {
                             const mLabel = getModeLabel(mode);
                             const mStyle = MODE_STYLE[mode];
                             const sceneTitle = getSceneTitle(item.draft.sceneId);
-
                             return (
                                 <div
                                     key={item.draft.id}

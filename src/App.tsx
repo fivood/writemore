@@ -837,6 +837,8 @@ export default function App() {
     }, [customCategoryIconKeyMap]);
 
     const isWriting = store.writingMode !== null && store.activeTab === 'inspire';
+    const aiBaseNormalized = store.aiConfig.apiBase.replace(/\/+$/, '').toLowerCase();
+    const canFetchModels = !!store.aiConfig.apiKey || aiBaseNormalized.includes('localhost:11434') || aiBaseNormalized.includes('127.0.0.1:11434');
 
     return (
         <div className="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
@@ -1828,7 +1830,7 @@ export default function App() {
                                         placeholder="gemini-1.5-flash"
                                         className="flex-1 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                                     />
-                                    {store.aiConfig.apiKey && (
+                                    {canFetchModels && (
                                         <button
                                             onClick={async () => {
                                                 setAiModelsLoading(true);
@@ -1836,7 +1838,7 @@ export default function App() {
                                                 try {
                                                     const base = store.aiConfig.apiBase.replace(/\/+$/, '');
                                                     const res = await fetch(`${base}/models`, {
-                                                        headers: { Authorization: `Bearer ${store.aiConfig.apiKey}` },
+                                                        headers: store.aiConfig.apiKey ? { Authorization: `Bearer ${store.aiConfig.apiKey}` } : undefined,
                                                     });
                                                     const data = await res.json();
                                                     const ids: string[] = (data.data ?? data.models ?? []).map((m: Record<string, string>) => m.id ?? m.name?.replace('models/', '') ?? '').filter(Boolean);
@@ -1845,7 +1847,7 @@ export default function App() {
                                                 finally { setAiModelsLoading(false); }
                                             }}
                                             disabled={aiModelsLoading}
-                                            title="获取该 Key 可用的模型列表"
+                                            title={store.aiConfig.apiKey ? '获取该 Key 可用的模型列表' : '获取本地可用模型列表'}
                                             className="px-3 py-2 border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors disabled:opacity-50 whitespace-nowrap"
                                         >
                                             {aiModelsLoading ? '获取中…' : '可用模型'}
