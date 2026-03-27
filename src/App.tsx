@@ -1050,8 +1050,8 @@ export default function App() {
                   </div>
                   <div className="flex-1 space-y-4">
                     <div className="bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-400/15 rounded-xl p-4">
-                      <p className="font-headline text-sm font-medium text-emerald-900 dark:text-emerald-200 mb-2">✍ 自由模式</p>
-                      <p className="text-xs text-emerald-800/70 dark:text-emerald-300/70 leading-relaxed">没有提示、没有限制。把脑子里的想法直接咀尾到纸上。想写什么就写什么。</p>
+                      <p className="font-headline text-sm font-medium text-emerald-900 dark:text-emerald-600 mb-2">✍ 自由模式</p>
+                      <p className="text-xs text-emerald-800/70 dark:text-emerald-600/70 leading-relaxed">没有提示、没有限制。把脑子里的想法直接咀尾到纸上。想写什么就写什么。</p>
                     </div>
                   </div>
                 </>
@@ -1134,7 +1134,7 @@ export default function App() {
                         }}
                         className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-left text-xs font-label transition-all ${
                           store.selectedCharacterLayer === layer.id
-                            ? `${layer.color} font-medium dark:bg-[rgb(136_41_211/40%)] dark:text-[#c7b8ed] dark:border-transparent`
+                            ? `${layer.color} font-medium`
                             : 'text-on-surface-variant hover:bg-surface-container dark:hover:bg-white/5'
                         }`}
                       >
