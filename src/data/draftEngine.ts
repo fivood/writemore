@@ -48,9 +48,14 @@ export async function saveDraftToDb(
   if (draftId) {
     // Update existing draft; if it was hard-deleted (update returns 0), fall back to creating a new one
     const updated = await db.drafts.update(draftId, {
+      wordSetId,
       title,
       content,
       wordCount,
+      writingMode: writingMode || undefined,
+      sceneId: sceneId || undefined,
+      challengeId: challengeId || undefined,
+      characterPromptId: characterPromptId || undefined,
       updatedAt: now,
     });
     if (updated === 0) {

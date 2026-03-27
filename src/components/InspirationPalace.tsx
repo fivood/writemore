@@ -15,6 +15,10 @@ interface PalaceItem {
   wordSet?: WordSet;
 }
 
+function hasMeaningfulContent(content: string) {
+  return content.replace(/[\s\u200B-\u200D\uFEFF]/g, '').length > 0;
+}
+
 const MODE_STYLE: Record<WritingMode, { Icon: React.ComponentType<{ size?: number; className?: string }>; bg: string; border: string; text: string }> = {
   words:     { Icon: Dices,      bg: 'bg-amber-50  dark:bg-primary/10',        border: 'border-amber-200  dark:border-primary/20',        text: 'text-amber-700  dark:text-primary'   },
   free:      { Icon: PencilLine, bg: 'bg-emerald-50 dark:bg-secondary/10',     border: 'border-emerald-200 dark:border-secondary/20',     text: 'text-emerald-700 dark:text-secondary' },
@@ -50,6 +54,7 @@ export default function InspirationPalace() {
       const result: PalaceItem[] = [];
       for (const draft of drafts) {
         if (draft.deletedFromPalace) continue;
+        if (draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0) continue;
         const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
         result.push({ draft, wordSet });
       }

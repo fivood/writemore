@@ -9,6 +9,10 @@ interface HistoryItem {
   wordSet?: WordSet;
 }
 
+function hasMeaningfulContent(content: string) {
+  return content.replace(/[\s\u200B-\u200D\uFEFF]/g, '').length > 0;
+}
+
 type SortMode = 'date' | 'words';
 type ViewMode = 'grid' | 'calendar';
 
@@ -156,6 +160,7 @@ export default function HistoryPage() {
       const drafts = await db.drafts.orderBy('updatedAt').reverse().toArray();
       const items: HistoryItem[] = [];
       for (const draft of drafts) {
+        if (draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0) continue;
         const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
         items.push({ draft, wordSet });
       }

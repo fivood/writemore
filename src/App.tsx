@@ -13,7 +13,7 @@ import { pickRandomChallenge } from './data/challenges';
 import { pickRandomCharacterPrompt, CHARACTER_LAYERS } from './data/characterPrompts';
 import type { CharacterLayerId } from './data/characterPrompts';
 import { db } from './db';
-import type { Word, WritingMode } from './types';
+import type { Draft, Word, WritingMode } from './types';
 import { WORD_CATEGORIES, WRITING_MODES } from './types';
 import MDEditor from '@uiw/react-md-editor';
 import HistoryPage from './components/HistoryPage';
@@ -113,8 +113,18 @@ export default function App() {
       setCloudSyncing(true);
 
       // ── Draft 双向同步 ──
-      const cloudDrafts = await pullDrafts(userId);
-      const localDrafts = await db.drafts.toArray();
+      const cloudDraftsRaw = await pullDrafts(userId);
+      const localDraftsRaw = await db.drafts.toArray();
+
+      const cloudDrafts = cloudDraftsRaw.filter(d => !isGhostDreamDraft(d));
+      const localDrafts = localDraftsRaw.filter(d => !isGhostDreamDraft(d));
+
+      // 清理本地历史遗留的空梦境草稿，避免刷新后重复出现。
+      for (const d of localDraftsRaw) {
+        if (isGhostDreamDraft(d)) {
+          await db.drafts.delete(d.id);
+        }
+      }
 
       // 云端 → 本地：云端更新的覆盖本地
       for (const cd of cloudDrafts) {
@@ -247,6 +257,10 @@ export default function App() {
     return content.replace(/[\s\u200B-\u200D\uFEFF]/g, '').length > 0;
   }
 
+  function isGhostDreamDraft(draft: Pick<Draft, 'writingMode' | 'content' | 'wordCount'>) {
+    return draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0;
+  }
+
   // ── Mode Selection ──
   function selectMode(mode: WritingMode) {
     if (hasMeaningfulContent(store.editorContent)) {
@@ -339,6 +353,10 @@ export default function App() {
       if (store.currentWords[i]) locked.set(i, store.currentWords[i]);
     });
     const words = drawRandomWords(store.wordCount, store.selectedCategories, locked);
+    // New draw means a new inspiration set; break linkage to previously opened draft/word set.
+    store.setCurrentWordSetId(null);
+    store.setCurrentDraftId(null);
+    store.setIsCurrentWordSetFavorite(false);
     store.setCurrentWords(words);
     store.setDrawnGenre(pickRandomGenre(store.selectedGenres));
     store.updateStreak();
