@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.4] - 2026-03-27
+
+### 0.1.4 Added
+
+- Added full-text preview modals in Inspiration Palace and History so clicking cards opens an in-place reader/editor.
+- Added modal editing conveniences: `Esc` to close, `Ctrl/Cmd+S` to save, unsaved-change confirmation on close, and a lightweight saved status hint.
+- Added an explicit `AI 续写` markdown section separator so AI-generated continuation is clearly distinguishable from original text.
+
+### 0.1.4 Fixed
+
+- Fixed word-tag carryover in word inspiration mode by resetting stale draft/word-set linkage when drawing a new word set.
+- Fixed draft updates to correctly persist latest `wordSetId` and writing metadata (mode/scene/challenge/character IDs) on existing entries.
+- Fixed empty dream ghost records repeatedly appearing after refresh by filtering/cleaning invalid drafts during sync and list loading.
+- Fixed tab behavior so returning to `灵感` from other tabs lands on the mode selection page instead of reopening previous editor context.
+
 ## [0.1.3] - 2026-03-27
 
 ### 0.1.3 Changed
