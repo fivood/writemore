@@ -261,11 +261,26 @@ export default function App() {
     return draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0;
   }
 
+  function clearAiTransientOutputs() {
+    setAiWordHint('');
+    setAiSceneExtra('');
+    setAiCharacterExtra('');
+    setAiFeedback('');
+  }
+
+  function mergeAiFeedbackIntoContent(content: string, feedback: string) {
+    const trimmedFeedback = feedback.trim();
+    if (!trimmedFeedback) return content;
+    if (content.includes('（AI点评：')) return content;
+    return `${content}\n\n（AI点评：\n${trimmedFeedback}\n）`;
+  }
+
   // ── Mode Selection ──
   function selectMode(mode: WritingMode) {
     if (hasMeaningfulContent(store.editorContent)) {
       handleSave();
     }
+    clearAiTransientOutputs();
     setWordsSubView('write');
     store.setWritingMode(mode);
     store.setEditorTitle('');
@@ -305,6 +320,7 @@ export default function App() {
     if (hasMeaningfulContent(store.editorContent)) {
       handleSave();
     }
+    clearAiTransientOutputs();
     setWordsSubView('write');
     store.setWritingMode(null);
     store.setCurrentWords([]);
@@ -321,6 +337,7 @@ export default function App() {
   function handleTopTabChange(tab: string) {
     if (tab === 'inspire' && store.activeTab !== 'inspire') {
       // Re-entering Inspire from other tabs should always land on mode selection.
+      clearAiTransientOutputs();
       setWordsSubView('write');
       setMobilePanel(false);
       store.setWritingMode(null);
@@ -383,13 +400,14 @@ export default function App() {
     if (isSavingRef.current) return;
     // 每次都从 store 读最新状态，避免 setTimeout 捕获的 stale closure 导致重复创建草稿
     const s = useStore.getState();
+    const contentToSave = mergeAiFeedbackIntoContent(s.editorContent, aiFeedback);
     // 内容为空时不保存（标题可能是自动生成的，不算有效内容）
-    if (!hasMeaningfulContent(s.editorContent)) return;
+    if (!hasMeaningfulContent(contentToSave)) return;
     isSavingRef.current = true;
     try {
       const { wordSetId, draftId } = await saveDraftToDb(
         s.editorTitle || '未命名灵感',
-        s.editorContent,
+        contentToSave,
         s.currentWords,
         s.currentWordSetId,
         s.currentDraftId,
@@ -401,7 +419,7 @@ export default function App() {
       );
       store.setCurrentWordSetId(wordSetId);
       store.setCurrentDraftId(draftId);
-      showToast(`💾 已保存 (${s.editorContent.replace(/\s/g, '').length}字)`);
+      showToast(`💾 已保存 (${contentToSave.replace(/\s/g, '').length}字)`);
       refreshTodayWords();
       // 后台推送到云端
       if (SUPABASE_ENABLED && s.cloudUser) {
