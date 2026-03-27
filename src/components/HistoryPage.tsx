@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState, useMemo } from 'react';
-import { Calendar, History, LayoutGrid, Download, X, ListChecks, FileText, PencilLine, Timer, CalendarCheck, Search, Clock, ArrowUpDown, Trash2, BookOpen, SearchX, Check, Tag } from 'lucide-react';
+import { Calendar, History, LayoutGrid, Download, X, ListChecks, FileText, PencilLine, Timer, CalendarCheck, Search, Clock, ArrowUpDown, Trash2, BookOpen, SearchX, Check, Tag, Save, ArrowUpRight } from 'lucide-react';
 import { db } from '../db';
 import { useStore } from '../store';
 import type { Draft, WordSet } from '../types';
@@ -137,6 +137,15 @@ export default function HistoryPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [previewItem, setPreviewItem] = useState<HistoryItem | null>(null);
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [previewContent, setPreviewContent] = useState('');
+  const [previewSaving, setPreviewSaving] = useState(false);
+  const [previewSavedHint, setPreviewSavedHint] = useState(false);
+  const hasPreviewChanges = !!previewItem && (
+    previewTitle !== (previewItem.draft.title || '') ||
+    previewContent !== (previewItem.draft.content || '')
+  );
 
   useEffect(() => {
     fetchHistory();
@@ -188,8 +197,7 @@ export default function HistoryPage() {
     return result;
   }, [history, searchQuery, sortMode]);
 
-  const handleOpenDraft = (item: HistoryItem) => {
-    if (selectMode) return;
+  const loadDraftToEditor = (item: HistoryItem, overrideTitle?: string, overrideContent?: string) => {
     store.setEditorTitle(item.draft.title);
     store.setEditorContent(item.draft.content);
     store.setCurrentDraftId(item.draft.id);
@@ -197,8 +205,69 @@ export default function HistoryPage() {
     if (item.wordSet) {
       store.setCurrentWords(item.wordSet.words);
     }
+    if (overrideTitle !== undefined) store.setEditorTitle(overrideTitle);
+    if (overrideContent !== undefined) store.setEditorContent(overrideContent);
     store.setActiveTab('inspire');
   };
+
+  const handleOpenDraft = (item: HistoryItem) => {
+    if (selectMode) return;
+    setPreviewItem(item);
+    setPreviewTitle(item.draft.title || '');
+    setPreviewContent(item.draft.content || '');
+  };
+
+  async function handleSavePreview() {
+    if (!previewItem || previewSaving) return;
+    setPreviewSaving(true);
+    try {
+      const title = previewTitle.trim() || '未命名灵感';
+      const content = previewContent;
+      const updatedAt = new Date();
+      const wordCount = content.replace(/\s+/g, '').length;
+
+      await db.drafts.update(previewItem.draft.id, {
+        title,
+        content,
+        wordCount,
+        updatedAt,
+      });
+
+      setHistory(prev => prev.map(it => it.draft.id === previewItem.draft.id
+        ? { ...it, draft: { ...it.draft, title, content, wordCount, updatedAt } }
+        : it));
+
+      setPreviewItem(prev => prev ? { ...prev, draft: { ...prev.draft, title, content, wordCount, updatedAt } } : prev);
+      setPreviewSavedHint(true);
+      setTimeout(() => setPreviewSavedHint(false), 1500);
+    } catch (e) {
+      console.error('Failed to save preview draft', e);
+    } finally {
+      setPreviewSaving(false);
+    }
+  }
+
+  function closePreview() {
+    if (hasPreviewChanges && !confirm('当前有未保存修改，确定关闭吗？')) return;
+    setPreviewItem(null);
+  }
+
+  useEffect(() => {
+    if (!previewItem) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        void handleSavePreview();
+        return;
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closePreview();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [previewItem, previewTitle, previewContent, previewSaving]);
 
   const handleDelete = async (e: React.MouseEvent, draftId: string) => {
     e.stopPropagation();
@@ -511,6 +580,64 @@ export default function HistoryPage() {
           </div>
         )}
       </div>
+
+      {previewItem && (
+        <div className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={closePreview}>
+          <div className="w-full max-w-4xl max-h-[90vh] bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15 bg-surface-container-low/60">
+              <div className="min-w-0">
+                <p className="text-[12px] font-label uppercase tracking-widest text-outline">全文查看与编辑</p>
+                <p className="text-xs font-label text-on-surface-variant mt-1">{new Date(previewItem.draft.updatedAt).toLocaleString('zh-CN')}</p>
+              </div>
+              <button className="p-2 rounded-full text-on-surface-variant hover:bg-surface-container" onClick={closePreview}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-5 md:p-6 overflow-y-auto flex-1 space-y-4">
+              <input
+                value={previewTitle}
+                onChange={e => setPreviewTitle(e.target.value)}
+                placeholder="标题"
+                className="w-full bg-transparent border-none focus:ring-0 font-headline text-2xl md:text-3xl font-black text-on-surface placeholder:text-surface-dim outline-none"
+              />
+              <textarea
+                value={previewContent}
+                onChange={e => setPreviewContent(e.target.value)}
+                placeholder="正文内容..."
+                className="w-full min-h-[48vh] bg-surface-container-low/40 border border-outline-variant/20 rounded-xl p-4 text-sm md:text-base leading-relaxed text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
+              />
+            </div>
+
+            <div className="px-5 py-4 border-t border-outline-variant/15 bg-surface-container-low/40 flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs font-label text-on-surface-variant">
+                字数：{previewContent.replace(/\s+/g, '').length}
+                {previewSavedHint && <span className="ml-2 text-emerald-600 dark:text-emerald-400">已保存</span>}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleSavePreview}
+                  disabled={previewSaving || !hasPreviewChanges}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-xs font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
+                >
+                  <Save size={16} />
+                  <span>{previewSaving ? '保存中…' : '保存'}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    loadDraftToEditor(previewItem, previewTitle.trim() || '未命名灵感', previewContent);
+                    setPreviewItem(null);
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-outline-variant/30 text-xs font-label text-on-surface-variant hover:bg-surface-container transition-colors"
+                >
+                  <ArrowUpRight size={16} />
+                  <span>在编辑器中继续</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
