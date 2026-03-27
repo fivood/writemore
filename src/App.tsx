@@ -5,6 +5,7 @@ const GITHUB_REPO = 'fivood/writemore';
 declare const __APP_VERSION__: string;
 const APP_VERSION: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
 import { useStore } from './store';
+import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost } from 'lucide-react';
 import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngine';
 import { saveDraftToDb, toggleFavoriteWordSet } from './data/draftEngine';
 import { pickRandomScene } from './data/scenes';
@@ -570,6 +571,26 @@ export default function App() {
     '恐怖': { bg: 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-500/10 dark:border-rose-400/15 dark:text-rose-300',        icon: 'sentiment_very_dissatisfied' },
   };
 
+  const genreIconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+    '科幻': Rocket,
+    '悬疑': Search,
+    '奇幻': BookText,
+    '言情': Heart,
+    '武侠': Sword,
+    '都市': Building2,
+    '历史': ScrollText,
+    '恐怖': Ghost,
+  };
+
+  const writingModeIconMap: Record<WritingMode, React.ComponentType<{ size?: number; className?: string }>> = {
+    words: Dices,
+    free: PencilLine,
+    scene: Mountain,
+    dream: MoonStar,
+    challenge: CircleHelp,
+    character: User,
+  };
+
   const isWriting = store.writingMode !== null && store.activeTab === 'inspire';
 
   return (
@@ -579,19 +600,19 @@ export default function App() {
         <div className="text-lg md:text-xl font-bold text-primary italic font-headline tracking-tight">每日写作灵感</div>
         <nav className="hidden md:flex space-x-8 items-center font-headline text-base tracking-tight">
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('inspire')}>
-            <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
+            <Sparkles size={20} />
             <span>灵感</span>
           </button>
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'palace' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('palace')}>
-            <span className="material-symbols-outlined text-[20px]">museum</span>
+            <Landmark size={20} />
             <span>灵感宫殿</span>
           </button>
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'favorites' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('favorites')}>
-            <span className="material-symbols-outlined text-[20px]">star</span>
+            <Star size={20} />
             <span>收藏</span>
           </button>
           <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'history' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => store.setActiveTab('history')}>
-            <span className="material-symbols-outlined text-[20px]">menu_book</span>
+            <BookOpen size={20} />
             <span>历史</span>
           </button>
         </nav>
@@ -601,7 +622,7 @@ export default function App() {
             title="AI 设置"
             className={`p-2 rounded-full hover:bg-surface-container transition-colors ${store.aiEnabled ? 'text-primary' : 'text-on-surface-variant'}`}
           >
-            <span className="material-symbols-outlined text-[22px]" style={store.aiEnabled ? { fontVariationSettings: "'FILL' 1" } : {}}>smart_toy</span>
+            <Bot size={22} />
           </button>
           {/* 云同步按钮 */}
           <button
@@ -611,9 +632,7 @@ export default function App() {
               store.cloudUser ? 'text-primary' : 'text-on-surface-variant'
             }`}
           >
-            <span className="material-symbols-outlined text-[22px]" style={store.cloudUser ? { fontVariationSettings: "'FILL' 1" } : {}}>
-              {cloudSyncing ? 'sync' : 'cloud'}
-            </span>
+            {cloudSyncing ? <RefreshCw size={22} className="animate-spin" /> : <Cloud size={22} />}
             {cloudSyncing && <span className="absolute inset-0 rounded-full animate-spin border-2 border-primary/30 border-t-primary" />}
           </button>
           <button
@@ -621,9 +640,7 @@ export default function App() {
             title={store.theme === 'dark' ? '切换到浅色' : '切换到深色'}
             className="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
           >
-            <span className="material-symbols-outlined text-[22px]">
-              {store.theme === 'dark' ? 'dark_mode' : 'light_mode'}
-            </span>
+            {store.theme === 'dark' ? <Moon size={22} /> : <Sun size={22} />}
           </button>
         </div>
       </header>
@@ -632,7 +649,7 @@ export default function App() {
       {updateBanner && (
         <div className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-2 bg-primary text-on-primary text-xs font-label" style={{ top: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
           <span className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[16px]">new_releases</span>
+            <Info size={16} />
             新版本 <strong>{updateBanner.version}</strong> 已发布！
           </span>
           <div className="flex items-center gap-3">
@@ -643,7 +660,7 @@ export default function App() {
               className="underline underline-offset-2 hover:opacity-80"
             >查看更新内容</a>
             <button onClick={() => setUpdateBanner(null)} className="opacity-70 hover:opacity-100 transition-opacity">
-              <span className="material-symbols-outlined text-[18px]">close</span>
+              <X size={18} />
             </button>
           </div>
         </div>
@@ -652,13 +669,13 @@ export default function App() {
       {/* Mobile bottom tab bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 glass-panel bg-surface/90 dark:bg-[#100e0d]/90 border-t border-outline-variant/10 flex justify-around items-center h-14 safe-area-bottom">
         {[
-          { tab: 'inspire', icon: 'auto_awesome', label: '灵感' },
-          { tab: 'palace', icon: 'museum', label: '宫殿' },
-          { tab: 'favorites', icon: 'star', label: '收藏' },
-          { tab: 'history', icon: 'menu_book', label: '历史' },
+          { tab: 'inspire', Icon: Sparkles, label: '灵感' },
+          { tab: 'palace', Icon: Landmark, label: '宫殿' },
+          { tab: 'favorites', Icon: Star, label: '收藏' },
+          { tab: 'history', Icon: BookOpen, label: '历史' },
         ].map(t => (
           <button key={t.tab} onClick={() => store.setActiveTab(t.tab)} className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors ${store.activeTab === t.tab ? 'text-primary' : 'text-on-surface-variant'}`}>
-            <span className="material-symbols-outlined text-[22px]" style={store.activeTab === t.tab ? { fontVariationSettings: "'FILL' 1" } : {}}>{t.icon}</span>
+            <t.Icon size={22} />
             <span className="text-[10px] font-label mt-0.5">{t.label}</span>
           </button>
         ))}
@@ -688,7 +705,7 @@ export default function App() {
                   <div>
                     <div className="flex items-center gap-3 mb-4">
                       <span className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-[#ffb148]">
-                        <span className="material-symbols-outlined text-[30px]" style={{fontVariationSettings:"'FILL' 1"}}>casino</span>
+                        <Dices size={30} />
                       </span>
                       <h2 className="font-headline text-lg md:text-2xl text-on-surface">词汇灵感</h2>
                     </div>
@@ -707,7 +724,7 @@ export default function App() {
                   <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-violet-400/5 dark:bg-[#ba9eff]/5 blur-[60px] rounded-full group-hover:bg-violet-400/10 dark:group-hover:bg-[#ba9eff]/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="p-2 rounded-xl bg-violet-500/10 text-violet-600 dark:text-[#ba9eff]">
-                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>nights_stay</span>
+                      <MoonStar size={22} />
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">梦境记录</h2>
                   </div>
@@ -721,7 +738,7 @@ export default function App() {
                   <div className="absolute -left-8 -top-8 w-36 h-36 bg-fuchsia-400/5 dark:bg-fuchsia-300/5 blur-[60px] rounded-full group-hover:bg-fuchsia-400/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="p-2 rounded-xl bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300">
-                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>person_search</span>
+                      <User size={22} />
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">人物描写</h2>
                   </div>
@@ -735,7 +752,7 @@ export default function App() {
                   <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-emerald-400/5 dark:bg-[#69f6b8]/5 blur-[80px] rounded-full group-hover:bg-emerald-400/10 dark:group-hover:bg-[#69f6b8]/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#69f6b8]">
-                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>edit_note</span>
+                      <PencilLine size={22} />
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">自由发挥</h2>
                   </div>
@@ -751,7 +768,7 @@ export default function App() {
                   </div>
                   <div className="flex items-center gap-2 mb-2 relative">
                     <span className="p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-300">
-                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>landscape</span>
+                      <Mountain size={22} />
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">场景描写</h2>
                   </div>
@@ -765,7 +782,7 @@ export default function App() {
                   <div className="absolute -right-8 -top-8 w-36 h-36 bg-rose-400/5 dark:bg-rose-300/5 blur-[60px] rounded-full group-hover:bg-rose-400/10 transition-colors pointer-events-none"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-300">
-                      <span className="material-symbols-outlined text-[22px]" style={{fontVariationSettings:"'FILL' 1"}}>quiz</span>
+                      <CircleHelp size={22} />
                     </span>
                     <h2 className="font-headline text-lg text-on-surface">写作挑战</h2>
                   </div>
@@ -786,7 +803,7 @@ export default function App() {
             {/* Sidebar */}
             <aside className={`transition-all duration-300 hidden md:flex ${store.sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'w-64 glass-panel bg-surface-container-low/80 flex-col p-6 border-r border-outline-variant/10 shrink-0'}`}>
               <button onClick={handleBackToModeSelect} className="flex items-center space-x-2 text-on-surface-variant hover:text-primary transition-colors mb-6 group">
-                <span className="material-symbols-outlined text-sm group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+                <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
                 <span className="font-label text-xs">返回选择</span>
               </button>
 
@@ -831,7 +848,7 @@ export default function App() {
                             : 'bg-surface-container-high text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-highest hover:text-[#ffb148]'
                         }`}
                       >
-                        <span className="material-symbols-outlined text-[16px]">menu_book</span>
+                        <BookOpen size={16} />
                         <span>词库管理</span>
                       </button>
                     </div>
@@ -860,7 +877,7 @@ export default function App() {
                       </div>
                     )}
                     <button onClick={() => store.setCurrentScene(pickRandomScene(store.currentScene?.id))} className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-sm font-label text-on-surface-variant hover:text-primary hover:border-primary/30 transition-all">
-                      <span className="material-symbols-outlined text-[18px]">refresh</span>
+                      <RefreshCw size={18} />
                       <span>换一个场景</span>
                     </button>
                   </div>
@@ -922,7 +939,7 @@ export default function App() {
                       </ul>
                     </div>
                     <label className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:text-error hover:border-error/30 transition-all cursor-pointer">
-                      <span className="material-symbols-outlined text-[18px]">download</span>
+                      <Download size={18} />
                       <span>导入提示 (.md)</span>
                       <input type="file" accept=".md,.txt" className="hidden" onChange={async (e) => {
                         const file = e.target.files?.[0];
@@ -970,7 +987,7 @@ export default function App() {
                           : 'text-on-surface-variant hover:bg-surface-container dark:hover:bg-white/5'
                       }`}
                     >
-                      <span className="material-symbols-outlined text-[16px]">shuffle</span>
+                      <Shuffle size={16} />
                       <span>全部维度</span>
                     </button>
                     {CHARACTER_LAYERS.map(layer => (
@@ -995,7 +1012,7 @@ export default function App() {
 
                     <div className="pt-3 space-y-2">
                       <label className="flex items-center justify-center space-x-2 px-3 py-2 bg-surface-container-high border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:text-fuchsia-300 hover:border-fuchsia-400/30 transition-all cursor-pointer">
-                        <span className="material-symbols-outlined text-[16px]">download</span>
+                        <Download size={16} />
                         <span>导入提示 (.md)</span>
                         <input type="file" accept=".md,.txt" className="hidden" onChange={async (e) => {
                           const file = e.target.files?.[0];
@@ -1042,7 +1059,7 @@ export default function App() {
 
               <div className="pt-4">
                 <button onClick={() => store.toggleSidebar()} className="w-full py-2 flex items-center justify-center space-x-2 text-on-surface-variant hover:text-on-surface transition-colors text-xs font-label border border-transparent hover:border-outline-variant/30 rounded">
-                  <span className="material-symbols-outlined text-sm">keyboard_double_arrow_left</span>
+                  <ChevronsLeft size={16} />
                   <span>收起侧边栏</span>
                 </button>
               </div>
@@ -1050,7 +1067,7 @@ export default function App() {
 
             {store.sidebarCollapsed && (
               <button className="fixed left-0 top-1/2 -translate-y-1/2 z-40 p-2 bg-surface/80 dark:bg-surface-container/80 border border-outline-variant/15 rounded-r-md shadow-sm opacity-50 hover:opacity-100 transition-all text-on-surface-variant hover:text-primary" onClick={() => store.toggleSidebar()}>
-                <span className="material-symbols-outlined">keyboard_double_arrow_right</span>
+                <ChevronsRight size={20} />
               </button>
             )}
 
@@ -1058,16 +1075,16 @@ export default function App() {
             {store.writingMode === 'words' && wordsSubView !== 'library' && (
               <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
                 <div className="p-5 md:p-8 flex flex-col space-y-6">
-                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">close</span>收起</button>
+                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">词汇灵感</span>
                     <div className="flex space-x-1">
                       <button onClick={handleToggleFavorite} className="p-1 hover:bg-surface-container rounded group transition-all" title="收藏">
-                        <span className={`material-symbols-outlined text-[20px] transition-colors ${store.isCurrentWordSetFavorite ? 'text-amber-500' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} style={store.isCurrentWordSetFavorite ? { fontVariationSettings: "'FILL' 1" } : {}}>star</span>
+                        <Star size={20} className={`transition-colors ${store.isCurrentWordSetFavorite ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
                       </button>
                       <button className="p-1 hover:bg-surface-container rounded group transition-all" title="抄取 (Space)" onClick={handleDraw}>
-                        <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">casino</span>
+                        <Dices size={20} className="text-outline group-hover:text-primary transition-colors" />
                       </button>
                     </div>
                   </div>
@@ -1076,13 +1093,16 @@ export default function App() {
 
                 {store.drawnGenre && (
                   <div className={`flex items-center space-x-2 px-4 py-3 rounded-xl border ${genreStyleMap[store.drawnGenre]?.bg ?? 'bg-stone-100 border-stone-200'}`}>
-                    <span className="material-symbols-outlined text-[20px]">{genreStyleMap[store.drawnGenre]?.icon ?? 'edit'}</span>
+                    {(() => {
+                      const GenreIcon = genreIconMap[store.drawnGenre] || Sparkles;
+                      return <GenreIcon size={20} />;
+                    })()}
                     <div className="flex-1">
                       <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant">写作风格</p>
                       <p className="font-headline font-bold text-base leading-tight">{store.drawnGenre}</p>
                     </div>
                     <button onClick={() => store.setDrawnGenre(pickRandomGenre(store.selectedGenres))} className="p-1 rounded hover:bg-surface-container transition-colors" title="换一个风格">
-                      <span className="material-symbols-outlined text-[18px] text-outline">refresh</span>
+                      <RefreshCw size={18} className="text-outline" />
                     </button>
                   </div>
                 )}
@@ -1093,7 +1113,7 @@ export default function App() {
                     {aiWordHint ? (
                       <div>
                         <p className="text-[12px] font-label uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1.5 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[14px]">auto_awesome</span>AI 灵感引导
+                          <Sparkles size={14} />AI 灵感引导
                         </p>
                         <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">{aiWordHint}</p>
                       </div>
@@ -1103,7 +1123,7 @@ export default function App() {
                         disabled={aiWordHintLoading}
                         className="w-full flex items-center justify-center gap-1.5 py-1 text-xs font-label text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 transition-colors disabled:opacity-50"
                       >
-                        <span className="material-symbols-outlined text-[16px]">{aiWordHintLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                        {aiWordHintLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                         <span>{aiWordHintLoading ? 'AI 思考中…' : 'AI 帮我找灵感'}</span>
                       </button>
                     )}
@@ -1131,8 +1151,8 @@ export default function App() {
                           <span className={`px-2 py-1 text-[12px] font-bold font-label rounded-lg tracking-wider uppercase ${catStyle.badge}`}>
                             {w.category || w.genres?.[0] || '意象'}
                           </span>
-                          <button onClick={() => store.toggleLock(i)} className={`material-symbols-outlined text-sm transition-colors ${store.lockedIndices.has(i) ? 'text-primary' : 'text-stone-300 dark:text-outline hover:text-stone-500 dark:hover:text-on-surface-variant'}`}>
-                            {store.lockedIndices.has(i) ? 'lock' : 'lock_open'}
+                          <button onClick={() => store.toggleLock(i)} className={`text-sm transition-colors ${store.lockedIndices.has(i) ? 'text-primary' : 'text-stone-300 dark:text-outline hover:text-stone-500 dark:hover:text-on-surface-variant'}`}>
+                            {store.lockedIndices.has(i) ? <Lock size={16} /> : <LockOpen size={16} />}
                           </button>
                         </div>
                         <h4 className="font-headline text-2xl font-bold mb-3 text-stone-900 dark:text-on-surface leading-tight relative z-10">{w.text}</h4>
@@ -1152,19 +1172,19 @@ export default function App() {
             {store.writingMode === 'scene' && store.currentScene && (
               <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
                 <div className="p-5 md:p-8 flex flex-col space-y-6">
-                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">close</span>收起</button>
+                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">场景描写</span>
                     <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一个场景" onClick={() => store.setCurrentScene(pickRandomScene(store.currentScene?.id))}>
-                      <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">refresh</span>
+                      <RefreshCw size={20} className="text-outline group-hover:text-primary transition-colors" />
                     </button>
                   </div>
                   <h3 className="font-headline text-2xl text-on-surface">描写挑战</h3>
                 </div>
 
                 <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined text-[34px] text-blue-400 dark:text-[#69a8f6] mb-4 block">landscape</span>
+                  <Mountain size={34} className="text-blue-400 dark:text-[#69a8f6] mb-4 block" />
                   <h4 className="font-headline text-xl font-bold mb-3 text-stone-900 dark:text-on-surface">{store.currentScene.title}</h4>
                   <p className="text-sm text-stone-700 dark:text-on-surface-variant leading-relaxed mb-4">{store.currentScene.description}</p>
                   <div className="flex flex-wrap gap-1.5">
@@ -1183,7 +1203,7 @@ export default function App() {
                       disabled={aiSceneLoading}
                       className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
                     >
-                      <span className="material-symbols-outlined text-[16px]">{aiSceneLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                      {aiSceneLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                       <span>{aiSceneLoading ? '生成中…' : 'AI 补充感官细节'}</span>
                     </button>
                     <button
@@ -1191,13 +1211,13 @@ export default function App() {
                       disabled={aiSceneLoading}
                       className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
                     >
-                      <span className="material-symbols-outlined text-[16px]">smart_toy</span>
+                      <Bot size={16} />
                       <span>AI 生成新场景</span>
                     </button>
                     {aiSceneExtra && (
                       <div className="bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl p-3">
                         <p className="text-[12px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-1.5 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[14px]">auto_awesome</span>感官引导
+                          <Sparkles size={14} />感官引导
                         </p>
                         <p className="text-sm text-blue-900 dark:text-blue-200 leading-relaxed whitespace-pre-line">{aiSceneExtra}</p>
                       </div>
@@ -1212,23 +1232,23 @@ export default function App() {
             {store.writingMode === 'challenge' && store.currentChallenge && (
               <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
                 <div className="p-5 md:p-8 flex flex-col space-y-6">
-                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">close</span>收起</button>
+                <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">写作挑战</span>
                     <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一题" onClick={() => pickAndSetChallenge(store.currentChallenge?.id)}>
-                      <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">refresh</span>
+                      <RefreshCw size={20} className="text-outline group-hover:text-primary transition-colors" />
                     </button>
                   </div>
                   <h3 className="font-headline text-2xl text-on-surface">习作题目</h3>
                 </div>
 
                 <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined text-[34px] text-rose-400 dark:text-rose-300 mb-4 block">quiz</span>
+                  <CircleHelp size={34} className="text-rose-400 dark:text-rose-300 mb-4 block" />
                   <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
                   {store.currentChallenge.id.startsWith('ai_') && (
                     <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100/80 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-400/20 text-[12px] font-label text-rose-600 dark:text-rose-400">
-                      <span className="material-symbols-outlined text-[13px]">auto_awesome</span>AI 出题
+                      <Sparkles size={13} />AI 出题
                     </span>
                   )}
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
@@ -1241,7 +1261,7 @@ export default function App() {
                     disabled={aiChallengeLoading}
                     className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50/60 dark:bg-rose-500/5 border border-rose-200/40 dark:border-rose-400/10 rounded-xl text-xs font-label text-rose-700 dark:text-rose-400 hover:bg-rose-100/60 dark:hover:bg-rose-500/10 transition-colors disabled:opacity-50"
                   >
-                    <span className="material-symbols-outlined text-[16px]">{aiChallengeLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                    {aiChallengeLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                     <span>{aiChallengeLoading ? '出题中…' : 'AI 出一道题'}</span>
                   </button>
                 )}
@@ -1255,12 +1275,12 @@ export default function App() {
               return (
                 <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
                   <div className="p-5 md:p-8 flex flex-col space-y-6">
-                  <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">close</span>收起</button>
+                  <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                   <div className="mb-2">
                     <div className="flex justify-between items-center mb-1">
                       <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">人物描写</span>
                     <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一题" onClick={() => pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id)}>
-                      <span className="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">refresh</span>
+                      <RefreshCw size={20} className="text-outline group-hover:text-primary transition-colors" />
                       </button>
                     </div>
                     <h3 className="font-headline text-2xl text-on-surface">角色练习</h3>
@@ -1277,7 +1297,7 @@ export default function App() {
                   )}
 
                   <div className="bg-surface-container p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                    <span className="material-symbols-outlined text-[30px] text-fuchsia-400 dark:text-fuchsia-300 mb-4 block">person_search</span>
+                    <User size={30} className="text-fuchsia-400 dark:text-fuchsia-300 mb-4 block" />
                     <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                   </div>
@@ -1290,13 +1310,13 @@ export default function App() {
                         disabled={aiCharacterLoading}
                         className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
                       >
-                        <span className="material-symbols-outlined text-[16px]">{aiCharacterLoading ? 'hourglass_top' : 'auto_awesome'}</span>
+                        {aiCharacterLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                         <span>{aiCharacterLoading ? '思考中…' : 'AI 深挖角色'}</span>
                       </button>
                       {aiCharacterExtra && (
                         <div className="bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl p-3">
                           <p className="text-[12px] font-label uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-400 mb-1.5 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[14px]">auto_awesome</span>AI 追问
+                            <Sparkles size={14} />AI 追问
                           </p>
                           <p className="text-sm text-fuchsia-900 dark:text-fuchsia-200 leading-relaxed">{aiCharacterExtra}</p>
                         </div>
@@ -1320,12 +1340,16 @@ export default function App() {
                   <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
                     <div className="flex items-center space-x-3">
                       <button onClick={handleBackToModeSelect} className="md:hidden flex items-center text-on-surface-variant hover:text-primary transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+                        <ArrowLeft size={20} />
                       </button>
                       <div className="text-outline text-xs font-label">{dateStr}</div>
                       {store.writingMode && (
                         <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[12px] font-label font-medium border ${WRITING_MODES.find(m => m.mode === store.writingMode)?.color || ''}`}>
-                          <span className="material-symbols-outlined text-[14px]">{WRITING_MODES.find(m => m.mode === store.writingMode)?.icon}</span>
+                          {(() => {
+                            const mode = store.writingMode!;
+                            const ModeIcon = writingModeIconMap[mode] || Sparkles;
+                            return <ModeIcon size={14} />;
+                          })()}
                           <span>{WRITING_MODES.find(m => m.mode === store.writingMode)?.label}</span>
                         </span>
                       )}
@@ -1334,17 +1358,17 @@ export default function App() {
                       {/* Mobile: show prompt panel toggle */}
                       {store.writingMode !== 'free' && (
                         <button onClick={() => setMobilePanel(true)} className="md:hidden flex items-center space-x-1 px-3 py-1.5 bg-surface-container text-on-surface-variant rounded-md text-xs font-label font-medium">
-                          <span className="material-symbols-outlined text-[18px]">view_sidebar</span>
+                          <PanelLeft size={18} />
                           <span>灵感</span>
                         </button>
                       )}
                       <button onClick={handleSave} className="flex items-center space-x-1 px-3 py-1.5 bg-surface-container dark:bg-surface-container-high text-primary hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-md transition-colors text-xs font-label font-medium">
-                        <span className="material-symbols-outlined text-[18px]">save</span>
+                        <Save size={18} />
                         <span className="hidden sm:inline">存入灵感宫殿</span>
                         <span className="sm:hidden">保存</span>
                       </button>
                       <button onClick={handleExport} className="hidden sm:flex items-center space-x-1 px-3 py-1.5 bg-primary text-on-primary hover:bg-primary-dim rounded-md transition-colors text-xs font-label font-medium shadow-sm">
-                        <span className="material-symbols-outlined text-[18px]">upload</span>
+                        <Upload size={18} />
                         <span>导出 .md</span>
                       </button>
                     </div>
@@ -1387,10 +1411,10 @@ export default function App() {
                   <div className="mt-6 bg-emerald-50/70 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-2xl p-5">
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-[12px] font-label uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[15px]">rate_review</span>AI 写作反馈
+                        <MessageSquareText size={15} />AI 写作反馈
                       </p>
                       <button onClick={() => setAiFeedback('')} className="text-emerald-500/60 hover:text-emerald-500 transition-colors">
-                        <span className="material-symbols-outlined text-[18px]">close</span>
+                        <X size={18} />
                       </button>
                     </div>
                     <p className="text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
@@ -1401,10 +1425,10 @@ export default function App() {
               {/* Zen Toolbar */}
               <div className="fixed right-3 bottom-16 md:right-12 md:bottom-auto md:top-1/2 md:-translate-y-1/2 flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-4 p-2 glass-panel bg-surface-container-low/80 rounded-full custom-shadow z-30">
                 <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all" title="限时挑战" onClick={() => { store.setTimerActive(!store.timerActive); if (store.timerActive) store.setTimerSeconds(0); }}>
-                  <span className={`material-symbols-outlined ${store.timerActive ? 'text-primary' : ''}`}>timelapse</span>
+                  <Timer size={20} className={store.timerActive ? 'text-primary' : ''} />
                 </button>
                 <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all" title="保存 (Ctrl+S)" onClick={handleSave}>
-                  <span className="material-symbols-outlined">save</span>
+                  <Save size={20} />
                 </button>
                 {store.aiEnabled && store.editorContent.trim().length > 20 && (
                   <>
@@ -1414,7 +1438,7 @@ export default function App() {
                       title="AI 续写"
                       className="w-10 h-10 rounded-full flex items-center justify-center text-violet-500 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all disabled:opacity-40"
                     >
-                      <span className="material-symbols-outlined text-[22px]">{aiContinueLoading ? 'hourglass_top' : 'auto_fix_high'}</span>
+                      {aiContinueLoading ? <LoaderCircle size={22} className="animate-spin" /> : <Sparkles size={22} />}
                     </button>
                     <button
                       onClick={handleAiFeedback}
@@ -1422,7 +1446,7 @@ export default function App() {
                       title="AI 写后反馈"
                       className="w-10 h-10 rounded-full flex items-center justify-center text-emerald-500 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all disabled:opacity-40"
                     >
-                      <span className="material-symbols-outlined text-[22px]">{aiFeedbackLoading ? 'hourglass_top' : 'rate_review'}</span>
+                      {aiFeedbackLoading ? <LoaderCircle size={22} className="animate-spin" /> : <MessageSquareText size={22} />}
                     </button>
                   </>
                 )}
@@ -1430,7 +1454,7 @@ export default function App() {
                 <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-all" title="全屏专注" onClick={() => {
                   if (document.fullscreenElement) { document.exitFullscreen(); } else { document.documentElement.requestFullscreen(); }
                 }}>
-                  <span className="material-symbols-outlined">fullscreen</span>
+                  <Maximize size={20} />
                 </button>
               </div>
             </main>
@@ -1448,11 +1472,11 @@ export default function App() {
       <footer className="hidden md:flex fixed bottom-0 left-0 right-0 z-50 bg-surface/90 glass-panel border-t border-outline-variant/10 justify-between items-center px-10 py-2 w-full h-[45px]">
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-2">
-            <span className="material-symbols-outlined text-primary text-sm" style={{fontVariationSettings: "'FILL' 1"}}>local_fire_department</span>
+            <Flame size={14} className="text-primary" />
             <span className="font-label text-[13px] font-medium text-primary">连续打卡: {store.streak} 天</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="material-symbols-outlined text-outline text-sm">edit_note</span>
+            <PencilLine size={14} className="text-outline" />
             <span className="font-label text-[13px] font-medium text-on-surface-variant">今日字数: {wordCount}</span>
           </div>
         </div>
