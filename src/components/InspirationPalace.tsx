@@ -294,7 +294,7 @@ export default function InspirationPalace() {
                 <button
                   onClick={handleAiRemix}
                   disabled={aiRemixLoading}
-                  className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-violet-50/60 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-lg text-xs font-label text-violet-700 dark:text-violet-400 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
+                  className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-violet-50/60 dark:bg-violet-100/60 border border-violet-400/40 dark:border-violet-400/10 rounded-lg text-xs font-label text-violet-700 dark:text-violet-800 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
                 >
                   {aiRemixLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                   <span>{aiRemixLoading ? '生成中…' : 'AI 再创作'}</span>
@@ -346,7 +346,7 @@ export default function InspirationPalace() {
               onClick={() => setFilterMode('all')}
               className={`px-4 py-2 rounded-full text-xs font-label font-medium transition-all ${
                 filterMode === 'all'
-                  ? 'bg-surface-container-high text-on-surface'
+                  ? 'bg-surface-container-high border border-outline-variant/30 text-on-surface'
                   : 'bg-surface-container text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high'
               }`}
             >

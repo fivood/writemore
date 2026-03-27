@@ -55,6 +55,9 @@ export default function App() {
     const [aiFeedbackLoading, setAiFeedbackLoading] = useState(false);
     const editorRef = useRef<HTMLTextAreaElement>(null);
     const isSavingRef = useRef(false);
+    // Incremented whenever a new draw/mode-switch session begins, so that an
+    // in-flight handleSave won't overwrite currentWordSetId after the session resets.
+    const wordSessionRef = useRef(0);
 
     const [mobilePanel, setMobilePanel] = useState(false);
     const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -333,6 +336,7 @@ export default function App() {
         store.setWritingMode(mode);
         store.setEditorTitle('');
         store.setEditorContent('');
+        wordSessionRef.current++;
         store.setCurrentWordSetId(null);
         store.setCurrentDraftId(null);
         store.setIsCurrentWordSetFavorite(false);
@@ -378,6 +382,7 @@ export default function App() {
         store.setSelectedCharacterLayer(null);
         store.setEditorTitle('');
         store.setEditorContent('');
+        wordSessionRef.current++;
         store.setCurrentWordSetId(null);
         store.setCurrentDraftId(null);
     }
@@ -413,6 +418,7 @@ export default function App() {
     }
 
     async function handleDraw() {
+        wordSessionRef.current++;
         const locked = new Map<number, Word>();
         store.lockedIndices.forEach(i => {
             if (store.currentWords[i]) locked.set(i, store.currentWords[i]);
@@ -452,6 +458,8 @@ export default function App() {
         // 内容为空时不保存（标题可能是自动生成的，不算有效内容）
         if (!hasMeaningfulContent(contentToSave)) return;
         isSavingRef.current = true;
+        // Snapshot session counter so we can detect if a new draw started while we awaited.
+        const sessionAtSaveStart = wordSessionRef.current;
         try {
             const { wordSetId, draftId } = await saveDraftToDb(
                 s.editorTitle || '未命名灵感',
@@ -465,8 +473,12 @@ export default function App() {
                 s.currentChallenge?.id,
                 s.currentCharacterPrompt?.id,
             );
-            store.setCurrentWordSetId(wordSetId);
-            store.setCurrentDraftId(draftId);
+            // Only update session IDs if no new draw/mode-switch happened while we were saving.
+            // Otherwise currentWordSetId would point to the old session, corrupting favourites.
+            if (wordSessionRef.current === sessionAtSaveStart) {
+                store.setCurrentWordSetId(wordSetId);
+                store.setCurrentDraftId(draftId);
+            }
             showToast(`💾 已保存 (${contentToSave.replace(/\s/g, '').length}字)`);
             refreshTodayWords();
             // 后台推送到云端
@@ -1080,8 +1092,8 @@ export default function App() {
                                     </div>
                                     <div className="flex-1 flex flex-col space-y-4">
                                         <div className="bg-rose-50/80 dark:bg-rose-500/10 border border-rose-200/60 dark:border-rose-400/15 rounded-xl p-4">
-                                            <p className="font-headline text-sm font-medium text-rose-900 dark:text-rose-200 mb-2">💭 练习提示</p>
-                                            <ul className="text-xs text-rose-800/70 dark:text-rose-300/70 space-y-1.5 leading-relaxed">
+                                            <p className="font-headline text-sm font-medium text-rose-900 dark:text-rose-500 mb-2">💭 练习提示</p>
+                                            <ul className="text-xs text-rose-800/70 dark:text-rose-600/70 space-y-1.5 leading-relaxed">
                                                 <li>• 不必写出「标准答案」</li>
                                                 <li>• 尽可能尝试多种表达方式</li>
                                                 <li>• 允许自己「错」和「奇思妙想」</li>
@@ -1542,7 +1554,7 @@ export default function App() {
                                                     <X size={18} />
                                                 </button>
                                             </div>
-                                            <p className="text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
+                                            <p className="text-sm text-emerald-900 dark:text-emerald-700/70 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
                                         </div>
                                     )}
                                 </div>
