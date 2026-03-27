@@ -937,7 +937,7 @@ export default function App() {
                             <div className="mb-8 md:mb-12">
                                 <p className="text-outline text-xs font-label uppercase tracking-[0.2em] mb-3">{dateStr}</p>
                                 <h1 className="font-headline italic text-3xl md:text-5xl lg:text-6xl text-on-surface mb-3 tracking-tight leading-none">今天想写什么？</h1>
-                                <p className="text-on-surface-variant font-label text-sm max-w-md leading-relaxed">选择一种写作方式，开始今天的创作练习</p>
+                                <p className="text-on-surface-variant font-label text-sm max-w-md leading-relaxed">当然，什么都不写也没问题。一切在我。</p>
                             </div>
 
                             {/* Bento Grid */}
@@ -955,7 +955,8 @@ export default function App() {
                                             </span>
                                             <h2 className="font-headline text-lg md:text-2xl text-on-surface">词汇灵感</h2>
                                         </div>
-                                        <p className="text-on-surface-variant text-sm leading-relaxed max-w-sm">随机抽取词条，围绕它们展开想象——侘寂、余晖、熵……每一个词都是一扇门</p>
+                                        <p className="text-orange-700 text-sm leading-relaxed max-w-sm">让我悦耳之声你华丽英勇的冲淡。</p>
+                                        <p className="text-on-surface-variant text-sm leading-relaxed max-w-sm">这句话是什么意思？什么意思都没有！那它的意义何在？它解开了束缚着我的语法规则。</p>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="font-label text-[11px] md:text-[12px] uppercase tracking-widest text-on-surface-variant hidden md:inline">含词库管理 · Space 键抽取</span>
@@ -974,10 +975,10 @@ export default function App() {
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">梦境记录</h2>
                                     </div>
-                                    <p className="text-on-surface-variant text-xs leading-relaxed">趁记忆还热乎，捕捉潜意识的幻象</p>
+                                    <p className="text-on-surface-variant text-xs leading-relaxed">我有过一个梦。一个出生的梦。一个死亡的梦。一个鸟巢。</p>
                                 </button>
 
-                                {/* 人物描写 — small (4 cols, 1 row) */}
+                                {/* 角色描写 — small (4 cols, 1 row) */}
                                 <button onClick={() => selectMode('character')}
                                     className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-fuchsia transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
                                 >
@@ -986,9 +987,9 @@ export default function App() {
                                         <span className="p-2 rounded-xl bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300">
                                             <User size={22} />
                                         </span>
-                                        <h2 className="font-headline text-lg text-on-surface">人物描写</h2>
+                                        <h2 className="font-headline text-lg text-on-surface">角色描写</h2>
                                     </div>
-                                    <p className="text-on-surface-variant text-xs leading-relaxed">六个维度，深挖你笔下的角色</p>
+                                    <p className="text-on-surface-variant text-xs leading-relaxed">“到底什么是‘真相’？”有一天，兔子这样问道。</p>
                                 </button>
 
                                 {/* 自由发挥 — medium (5 cols, 1 row) */}
@@ -1002,7 +1003,7 @@ export default function App() {
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">自由发挥</h2>
                                     </div>
-                                    <p className="text-on-surface-variant text-xs leading-relaxed">今天不用提示，让思想在纸面上自由奔跑</p>
+                                    <p className="text-on-surface-variant text-xs leading-relaxed">潦草、不假思索、一往无前、冲动而且诚实。我想不出来任何东西去写。</p>
                                 </button>
 
                                 {/* 场景描写 — medium (4 cols, 1 row) */}
@@ -1018,7 +1019,7 @@ export default function App() {
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">场景描写</h2>
                                     </div>
-                                    <p className="text-on-surface-variant text-xs leading-relaxed relative">雨中古城，或寂静深林——练习感官的敏锐度</p>
+                                    <p className="text-on-surface-variant text-xs leading-relaxed relative">空气里有静止的灰尘、疯狂的灰尘和正要爆发的灰尘。</p>
                                 </button>
 
                                 {/* 写作挑战 — medium (3 cols, 1 row) */}
@@ -1032,7 +1033,7 @@ export default function App() {
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">写作挑战</h2>
                                     </div>
-                                    <p className="text-on-surface-variant text-xs leading-relaxed">你问我不一定答</p>
+                                    <p className="text-on-surface-variant text-xs leading-relaxed">为什么那个人行道上的男人推着一个空的婴儿车？</p>
                                 </button>
 
                             </div>
@@ -1154,8 +1155,9 @@ export default function App() {
                                     </div>
                                     <div className="flex-1 space-y-4">
                                         <div className="bg-stone-50/80 dark:bg-stone-500/10 border border-violet-200/60 dark:border-violet-400/15 rounded-xl p-4">
-                                            <p className="font-headline text-sm font-medium text-violet-600 dark:text-violet-500 mb-2">💡 写作小贴士</p>
+                                            <p className="font-headline text-sm font-medium text-violet-600 dark:text-violet-500 mb-2">让梦指引你</p>
                                             <ul className="text-xs text-violet-600/70 dark:text-violet-600/80 space-y-1.5 leading-relaxed">
+                                            <li>梦能够到达我们的理性到达不了的地方。</li>
                                                 <li>• 先写下印象最深的画面</li>
                                                 <li>• 描述梦中的情绪和感受</li>
                                                 <li>• 记录出现的人物和场所</li>
@@ -1234,7 +1236,7 @@ export default function App() {
                             {store.writingMode === 'character' && (
                                 <>
                                     <div className="mb-5">
-                                        <h2 className="font-headline text-lg font-semibold text-on-surface">人物描写</h2>
+                                        <h2 className="font-headline text-lg font-semibold text-on-surface">角色描写</h2>
                                         <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">六个维度深挖角色</p>
                                     </div>
                                     <div className="flex-1 flex flex-col space-y-2 overflow-y-auto">
@@ -1521,7 +1523,7 @@ export default function App() {
                                         <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                                         <div className="mb-2">
                                             <div className="flex justify-between items-center mb-1">
-                                                <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">人物描写</span>
+                                                <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">角色描写</span>
                                                 <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一题" onClick={() => pickAndSetCharacterPrompt(store.currentCharacterPrompt?.id)}>
                                                     <RefreshCw size={20} className="text-outline group-hover:text-primary transition-colors" />
                                                 </button>

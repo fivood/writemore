@@ -82,7 +82,7 @@ export function buildChallengeGeneratePrompt(existingChallenges: string[]): Chat
 }
 
 /**
- * 人物描写 — AI 生成深化提示
+ * 角色描写 — AI 生成深化提示
  */
 export function buildCharacterDeepPrompt(currentPrompt: string, layerName: string): ChatMessage[] {
   return [
@@ -125,7 +125,7 @@ export function buildContinueWritingPrompt(title: string, content: string, mode:
     scene: '（这是一篇场景描写练习）',
     dream: '（这是一篇梦境记录）',
     challenge: '（这是一篇习作练习）',
-    character: '（这是一篇人物描写练习）',
+    character: '（这是一篇角色描写练习）',
   };
   return [
     { role: 'system', content: SYSTEM_BASE },

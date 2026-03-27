@@ -21,7 +21,7 @@ export default function FavoritesPage() {
     words: { label: '词汇灵感', color: 'bg-amber-50 dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-400/20', Icon: Sparkles },
     scene: { label: '场景描写', color: 'bg-blue-50 dark:bg-blue-500/10 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-400/20', Icon: Mountain },
     challenge: { label: '写作挑战', color: 'bg-rose-50 dark:bg-rose-500/10 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-400/20', Icon: CircleHelp },
-    character: { label: '人物描写', color: 'bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-800 dark:text-fuchsia-300 border-fuchsia-200 dark:border-fuchsia-400/20', Icon: User },
+    character: { label: '角色描写', color: 'bg-fuchsia-50 dark:bg-fuchsia-500/10 text-fuchsia-800 dark:text-fuchsia-300 border-fuchsia-200 dark:border-fuchsia-400/20', Icon: User },
   };
 
   useEffect(() => {
@@ -258,7 +258,7 @@ export default function FavoritesPage() {
             <Sparkles size={48} className="text-outline mb-4" />
             <p className="text-on-surface-variant font-label text-lg mb-1">空空如也</p>
             <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
-              在场景描写、写作挑战、人物描写或词汇灵感页面看到喜欢的题目时，点击 <span className="inline-block text-amber-500 align-text-bottom"><Star size={18} fill="currentColor" /></span> 收藏吧！
+              在场景描写、写作挑战、角色描写或词汇灵感页面看到喜欢的题目时，点击 <span className="inline-block text-amber-500 align-text-bottom"><Star size={18} fill="currentColor" /></span> 收藏吧！
             </p>
             <button
               className="mt-8 px-8 py-3 bg-amber-500 text-white hover:bg-amber-600 transition-colors rounded-lg font-label text-sm font-medium custom-shadow"

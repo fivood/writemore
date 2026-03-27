@@ -13,9 +13,9 @@ All notable changes to this project will be documented in this file.
 
 ### 0.1.6 Added
 
-- Added prompt-level favorites for `场景描写`、`写作挑战`、`人物描写` with a star button directly beside the current prompt.
+- Added prompt-level favorites for `场景描写`、`写作挑战`、`角色描写` with a star button directly beside the current prompt.
 - Added support for favoriting AI-generated prompts in the same flow.
-- Added a dedicated `题目收藏` section in Favorites with source module badges (`场景描写` / `写作挑战` / `人物描写`) and AI marker.
+- Added a dedicated `题目收藏` section in Favorites with source module badges (`场景描写` / `写作挑战` / `角色描写`) and AI marker.
 
 ### 0.1.6 Changed
 
