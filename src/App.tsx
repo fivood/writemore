@@ -844,7 +844,7 @@ export default function App() {
         <div className="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
             {/* TopNavBar */}
             <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-surface/70 dark:bg-[#100e0d]/75 border-b border-outline-variant/10 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full safe-area-top">
-                <div className="text-lg md:text-xl font-bold text-primary italic font-headline tracking-tight">每日写作灵感</div>
+                <div className="text-lg md:text-xl font-bold text-primary font-headline tracking-tight">灵感是橡果</div>
                 <nav className="hidden md:flex space-x-8 items-center font-headline text-base tracking-tight">
                     <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => handleTopTabChange('inspire')}>
                         <Sparkles size={20} />
