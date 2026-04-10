@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- UI: 灵感宫殿多选模式——选中卡片改为旋转彩色渐变光晕边框（amber→rose→violet→blue→emerald 循环，2.4s/圈，亮/暗双主题各自调校饱和度）
+
 ## [0.1.11] - 2026-04-10
 
 ### Fixed

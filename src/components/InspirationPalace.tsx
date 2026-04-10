@@ -476,8 +476,12 @@ export default function InspirationPalace() {
                             const sceneTitle = getSceneTitle(item.draft.sceneId);
                             const isSelected = selectedIds.has(item.draft.id);
                             return (
+                                // 选中时外层包裹旋转彩色渐变边框
                                 <div
                                     key={item.draft.id}
+                                    className={isSelected ? 'p-[2px] rounded-[13px] palace-selected-ring shadow-lg -translate-y-0.5 transition-transform duration-200' : 'rounded-xl transition-transform duration-200'}
+                                >
+                                <div
                                     onClick={() => {
                                         if (selectMode) {
                                             setSelectedIds(prev => {
@@ -492,7 +496,7 @@ export default function InspirationPalace() {
                                     className={`bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-xl border-l-4 ${mStyle.leftAccent} cursor-pointer group transition-all duration-200 relative flex flex-col ${
                                         selectMode
                                             ? isSelected
-                                                ? 'border-2 border-violet-400 dark:border-violet-400/70 shadow-md -translate-y-0.5'
+                                                ? 'border-none'
                                                 : 'border border-outline-variant/20 hover:border-violet-300/50'
                                             : `border border-outline-variant/20 ${mStyle.hoverBorder} hover:-translate-y-1 hover:shadow-lg`
                                     }`}
@@ -573,6 +577,7 @@ export default function InspirationPalace() {
                                             </div>
                                         )}
                                     </div>
+                                </div>
                                 </div>
                             );
                         })}

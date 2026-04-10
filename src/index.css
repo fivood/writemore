@@ -351,6 +351,29 @@ html {
   to   { opacity: 1; transform: translate(-50%, 0); }
 }
 
+/* ── 灵感宫殿卡片多选环绕彩色边框动画 ── */
+@property --palace-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes palace-border-spin {
+  to { --palace-angle: 360deg; }
+}
+.palace-selected-ring {
+  background: conic-gradient(
+    from var(--palace-angle),
+    #f59e0b, #ec4899, #8b5cf6, #3b82f6, #10b981, #facc15, #f59e0b
+  );
+  animation: palace-border-spin 2.4s linear infinite;
+}
+.dark .palace-selected-ring {
+  background: conic-gradient(
+    from var(--palace-angle),
+    #fbbf24, #f472b6, #a78bfa, #60a5fa, #34d399, #fde047, #fbbf24
+  );
+}
+
 /* ── MDEditor light mode ── */
 .w-md-editor {
   background-color: transparent !important;
