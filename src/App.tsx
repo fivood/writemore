@@ -773,6 +773,11 @@ export default function App() {
             void handleTauriUpdate();
             return;
         }
+        // Web 版已有更新横幅，直接打开 Release 页面
+        if (updateBanner && updateBanner.url) {
+            window.open(updateBanner.url, '_blank', 'noopener,noreferrer');
+            return;
+        }
         setManualCheckLoading(true);
         try {
             let found = false;
@@ -1049,7 +1054,10 @@ export default function App() {
         <div className="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
             {/* TopNavBar */}
             <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-surface/70 dark:bg-[#100e0d]/75 border-b border-outline-variant/10 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full safe-area-top">
-                <div className="text-lg md:text-xl font-bold text-primary font-headline tracking-tight">灵感是橡果</div>
+                <div className="flex items-baseline gap-2">
+                    <div className="text-lg md:text-xl font-bold text-primary font-headline tracking-tight">灵感是橡果</div>
+                    <span className="text-[11px] font-label text-on-surface-variant/50 hidden md:inline">v{APP_VERSION}</span>
+                </div>
                 <nav className="hidden md:flex space-x-8 items-center font-headline text-base tracking-tight">
                     {isWriting && (
                         <button
@@ -1078,21 +1086,19 @@ export default function App() {
                     </button>
                 </nav>
                 <div className="flex items-center space-x-1 md:space-x-2">
-                    {/* 检查更新按钮 — 仅桌面端 */}
-                    {IS_TAURI && (
-                        <button
-                            onClick={handleManualCheckUpdate}
-                            title={updateBanner ? `发现新版本 ${updateBanner.version}，点击下载安装` : `检查更新（当前 v${APP_VERSION}）`}
-                            disabled={manualCheckLoading || updateDownloading}
-                            className={`p-2 rounded-full hover:bg-surface-container transition-colors disabled:opacity-50 ${
-                                updateBanner ? 'text-primary animate-pulse' : 'text-on-surface-variant'
-                            }`}
-                        >
-                            {manualCheckLoading
-                                ? <LoaderCircle size={22} className="animate-spin" />
-                                : <Download size={22} />}
-                        </button>
-                    )}
+                    {/* 检查更新按钮 */}
+                    <button
+                        onClick={handleManualCheckUpdate}
+                        title={updateBanner ? `发现新版本 ${updateBanner.version}，点击下载安装` : `检查更新（当前 v${APP_VERSION}）`}
+                        disabled={manualCheckLoading || updateDownloading}
+                        className={`p-2 rounded-full hover:bg-surface-container transition-colors disabled:opacity-50 ${
+                            updateBanner ? 'text-primary animate-pulse' : 'text-on-surface-variant'
+                        }`}
+                    >
+                        {manualCheckLoading
+                            ? <LoaderCircle size={22} className="animate-spin" />
+                            : <Download size={22} />}
+                    </button>
                     <button
                         onClick={() => setShowAiSettings(true)}
                         title="AI 设置"
