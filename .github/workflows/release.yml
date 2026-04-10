@@ -61,3 +61,52 @@ jobs:
             直接访问 https://fivood.github.io/writemore/（无需安装，数据存本地）
           releaseDraft: false
           prerelease: false
+
+      - name: Generate updater manifest (latest.json)
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if (-not $tag) { $tag = "${{ inputs.tag }}" }
+          $version = $tag.TrimStart('v')
+
+          $nsisDir = "src-tauri/target/release/bundle/nsis"
+          $exeFile = Get-ChildItem $nsisDir -Filter "*.exe" |
+            Where-Object { $_.Name -notmatch '\.sig$' } |
+            Select-Object -First 1
+
+          if (-not $exeFile) {
+            Write-Host "No NSIS installer found, skipping latest.json"
+            exit 0
+          }
+          Write-Host "Found installer: $($exeFile.Name)"
+
+          $sigFile = "$($exeFile.FullName).sig"
+          if (-not (Test-Path $sigFile)) {
+            Write-Host "No .sig file at $sigFile — signing may not have run. Skipping latest.json."
+            exit 0
+          }
+
+          $sig = (Get-Content $sigFile -Raw).Trim()
+          $downloadUrl = "https://github.com/${{ github.repository }}/releases/download/$tag/$($exeFile.Name)"
+          $pubDate = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+          $manifest = [ordered]@{
+            version  = $version
+            notes    = ""
+            pub_date = $pubDate
+            platforms = [ordered]@{
+              "windows-x86_64" = [ordered]@{
+                signature = $sig
+                url       = $downloadUrl
+              }
+            }
+          }
+
+          $manifest | ConvertTo-Json -Depth 5 | Set-Content "latest.json" -Encoding UTF8
+          Write-Host "Generated latest.json:"
+          Get-Content "latest.json"
+
+          gh release upload $tag "latest.json" --clobber
+          Write-Host "Uploaded latest.json to release $tag"

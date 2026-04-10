@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-04-10
+
+### Fixed
+- 桌面端自动更新检测修复：`tauri-plugin-updater` 无法获取 `latest.json` 时（CI 未生成签名清单）自动回落至 GitHub Releases API。运行 v0.1.10 的用户将正常看到更新提示横幅。
+- CI：`release.yml` 新增步骤，在构建后自动查找 NSIS 安装包的 `.sig` 签名文件并生成上传 `latest.json`，修复应用内更新平台为空的问题。
+
 ## [0.1.10] - 2026-04-10
 
 ### Changed

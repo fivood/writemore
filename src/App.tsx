@@ -276,17 +276,35 @@ export default function App() {
         const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 
         if (isTauri) {
-            // Tauri 桌面端：使用插件直接下载安装，3s 后静默检查
+            // Tauri 桌面端：优先使用插件（可在应用内下载安装），失败则用 GitHub API 兜底
             const timer = setTimeout(async () => {
+                let pluginHandled = false;
                 try {
                     const { check } = await import('@tauri-apps/plugin-updater');
                     const update = await check();
                     if (update?.available) {
                         updateObjRef.current = update;
                         setUpdateBanner({ version: update.version, url: '' });
+                        pluginHandled = true;
                     }
                 } catch {
-                    // 离线或网络错误，静默忽略
+                    // latest.json 不存在或网络错误，尝试 GitHub API fallback
+                }
+                // Fallback：GitHub Releases API（不依赖 latest.json）
+                if (!pluginHandled && GITHUB_REPO && !GITHUB_REPO.startsWith('your-')) {
+                    try {
+                        const r = await fetch(
+                            `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`,
+                            { headers: { Accept: 'application/vnd.github+json' } }
+                        );
+                        if (r.ok) {
+                            const data = await r.json();
+                            const latestVer = (data.tag_name as string).replace(/^v/, '');
+                            if (latestVer !== APP_VERSION) {
+                                setUpdateBanner({ version: data.tag_name, url: data.html_url });
+                            }
+                        }
+                    } catch { /* 网络错误，静默忽略 */ }
                 }
             }, 3000);
             return () => clearTimeout(timer);
