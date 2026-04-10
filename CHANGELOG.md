@@ -3,6 +3,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- **写作挑战 AI 出题**：`buildChallengeGeneratePrompt` 新增 `genre` 参数，出题时传入当前抽取的写作风格（`store.drawnGenre`），让挑战题目具备明确的风格语感；prompt 内置了好题范例（感官锚点+悬念钩子），避免生成纯技巧说明式的空洞题目。
+- **角色描写 AI 出题**：新增 `buildCharacterGeneratePrompt` prompt 函数，按当前维度（内心/关系/声音/身体/历史/边缘）和风格生成新角色引导题，附有各维度 few-shot 范例；新增 `handleAiCharacterGenerate` 函数，生成后直接存入本地 `characterPrompts` 题库并切换到首条新题。
+- **角色面板新增"AI 出一道角色题"按钮**：与现有"AI 深挖角色"并排，支持加载态。
+
 ## [0.1.7] - 2026-03-27
 
 ### 0.1.7 Changed

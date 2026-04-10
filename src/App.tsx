@@ -11,7 +11,7 @@ import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngin
 import { saveDraftToDb, toggleFavoriteWordSet, isPromptFavorited, togglePromptFavorite } from './data/draftEngine';
 import { pickRandomScene } from './data/scenes';
 import { pickRandomChallenge } from './data/challenges';
-import { pickRandomCharacterPrompt, CHARACTER_LAYERS } from './data/characterPrompts';
+import { pickRandomCharacterPrompt, CHARACTER_LAYERS, BUILTIN_CHARACTER_PROMPTS } from './data/characterPrompts';
 import type { CharacterLayerId } from './data/characterPrompts';
 import { db } from './db';
 import type { Draft, Word, WritingMode } from './types';
@@ -22,7 +22,7 @@ import FavoritesPage from './components/FavoritesPage';
 import LibraryPage from './components/LibraryPage';
 import InspirationPalace from './components/InspirationPalace';
 import { API_PRESETS, testConnection, chatCompletion, chatCompletionStream } from './services/ai';
-import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt, buildDreamInterpretationPrompt } from './services/prompts';
+import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildCharacterGeneratePrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt, buildDreamInterpretationPrompt } from './services/prompts';
 import { supabase, signIn, signUp, signOut, pushDraft, pullDrafts, pushWordSet, pullWordSets, SUPABASE_ENABLED } from './services/supabase';
 
 export default function App() {
@@ -50,6 +50,7 @@ export default function App() {
     const [aiChallengeLoading, setAiChallengeLoading] = useState(false);
     const [aiCharacterExtra, setAiCharacterExtra] = useState('');
     const [aiCharacterLoading, setAiCharacterLoading] = useState(false);
+    const [aiCharacterGenLoading, setAiCharacterGenLoading] = useState(false);
     const [aiContinueLoading, setAiContinueLoading] = useState(false);
     const [aiFeedback, setAiFeedback] = useState('');
     const [aiFeedbackLoading, setAiFeedbackLoading] = useState(false);
@@ -630,7 +631,7 @@ export default function App() {
         setAiChallengeLoading(true);
         try {
             const existing = store.currentChallenge ? [store.currentChallenge.text] : [];
-            const msgs = buildChallengeGeneratePrompt(existing);
+            const msgs = buildChallengeGeneratePrompt(existing, store.drawnGenre);
             const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
             // Strip leading numbering/bullets that the model sometimes adds despite instructions
             // e.g. "1. ", "①", "- ", "• ", "（1）" etc.
@@ -672,6 +673,48 @@ export default function App() {
             console.error(e);
         } finally {
             setAiCharacterLoading(false);
+        }
+    }
+
+    async function handleAiCharacterGenerate() {
+        if (!store.aiEnabled) return;
+        setAiCharacterGenLoading(true);
+        try {
+            const currentLayer = store.currentCharacterPrompt
+                ? CHARACTER_LAYERS.find(l => l.id === store.currentCharacterPrompt!.layer)
+                : CHARACTER_LAYERS.find(l => l.id === (store.selectedCharacterLayer || 'inner'));
+            const layer = currentLayer || CHARACTER_LAYERS[0];
+            const userPrompts = await db.characterPrompts.toArray();
+            const allTexts = [...BUILTIN_CHARACTER_PROMPTS, ...userPrompts]
+                .filter(p => p.layer === layer.id)
+                .map(p => p.text);
+            const msgs = buildCharacterGeneratePrompt({
+                layerId: layer.id,
+                layerName: layer.name,
+                layerDescription: layer.description,
+                genre: store.drawnGenre,
+                existingTexts: allTexts,
+            });
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 400 });
+            const stripPrefix = (s: string) => s.replace(/^[\s\uff08（(]*[\d①②③一二三][\s.、.）).\uff09]*/, '').replace(/^[-•*]\s*/, '').trim();
+            const lines = result.split('\n').map(l => stripPrefix(l.trim())).filter(l => l.length > 0);
+            if (lines.length > 0) {
+                const newPrompts = lines.map((text, i) => ({
+                    id: `ai_cp_${Date.now()}_${i}`,
+                    text,
+                    layer: layer.id as CharacterLayerId,
+                    source: 'user' as const,
+                }));
+                await db.characterPrompts.bulkPut(newPrompts);
+                store.setCurrentCharacterPrompt(newPrompts[0]);
+                setAiCharacterExtra('');
+                showToast(`✨ AI 出了 ${lines.length} 道角色题并已保存到题库`);
+            }
+        } catch (e) {
+            showToast('AI 出题失败');
+            console.error(e);
+        } finally {
+            setAiCharacterGenLoading(false);
         }
     }
 
@@ -1594,6 +1637,14 @@ export default function App() {
                                                 >
                                                     {aiCharacterLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                                                     <span>{aiCharacterLoading ? '思考中…' : 'AI 深挖角色'}</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleAiCharacterGenerate}
+                                                    disabled={aiCharacterGenLoading}
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
+                                                >
+                                                    {aiCharacterGenLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                                                    <span>{aiCharacterGenLoading ? '出题中…' : 'AI 出一道角色题'}</span>
                                                 </button>
                                                 {aiCharacterExtra && (
                                                     <div className="bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl p-3">

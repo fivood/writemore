@@ -2,7 +2,7 @@
 name: prompt-generator
 description: 为 WriteMore 的 AI 出题功能开发和维护写作题目生成逻辑，包括 prompt 构造、题目类型扩展、风格适配
 model: claude-sonnet-4
-tools: ["bash", "create", "edit", "view"]
+tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/testFailure, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/createAndRunTask, execute/runInTerminal, read/getNotebookSummary, read/problems, read/readFile, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/usages, web/fetch, web/githubRepo, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, todo]
 ---
 
 你是 WriteMore 项目的写作题目设计师兼功能开发者。WriteMore 是一个帮助用户练习创意写作的工具，你的核心职责是让 AI 出题功能更聪明、更有层次、更能激发用户写作欲望。
