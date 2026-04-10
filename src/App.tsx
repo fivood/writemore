@@ -5,6 +5,7 @@ const GITHUB_REPO = 'fivood/writemore';
 declare const __APP_VERSION__: string;
 const APP_VERSION: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
 const CUSTOM_CATEGORY_STORAGE_KEY = 'writemore_custom_categories_v1';
+const IS_TAURI = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 import { useStore } from './store';
 import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost, Brain, Users, Mic, Accessibility, History, Eye, Wifi, CheckCircle2, AlertCircle, LogOut, CloudOff, Package, Zap, Layers, Map as MapIcon, Tag, Home } from 'lucide-react';
 import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngine';
@@ -46,6 +47,7 @@ export default function App() {
     const [updateDownloading, setUpdateDownloading] = useState(false);
     const [updateProgress, setUpdateProgress] = useState(0);
     const [updateInstalled, setUpdateInstalled] = useState(false);
+    const [manualCheckLoading, setManualCheckLoading] = useState(false);
     const updateObjRef = useRef<any>(null);
     const [aiWordHint, setAiWordHint] = useState('');
     const [aiWordHintLoading, setAiWordHintLoading] = useState(false);
@@ -273,9 +275,7 @@ export default function App() {
 
     // 版本更新检测
     useEffect(() => {
-        const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
-
-        if (isTauri) {
+        if (IS_TAURI) {
             // Tauri 桌面端：优先使用插件（可在应用内下载安装），失败则用 GitHub API 兜底
             const timer = setTimeout(async () => {
                 let pluginHandled = false;
@@ -766,6 +766,49 @@ export default function App() {
         }
     }
 
+    async function handleManualCheckUpdate() {
+        if (manualCheckLoading || updateDownloading) return;
+        // 如果已检测到更新且有插件对象，直接开始下载
+        if (updateBanner && updateObjRef.current) {
+            void handleTauriUpdate();
+            return;
+        }
+        setManualCheckLoading(true);
+        try {
+            let found = false;
+            // 优先使用 tauri 插件（可应用内安装）
+            try {
+                const { check } = await import('@tauri-apps/plugin-updater');
+                const update = await check();
+                if (update?.available) {
+                    updateObjRef.current = update;
+                    setUpdateBanner({ version: update.version, url: '' });
+                    found = true;
+                }
+            } catch { /* latest.json 不存在或网络错误，继续 fallback */ }
+            // Fallback: GitHub Releases API
+            if (!found) {
+                const r = await fetch(
+                    `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`,
+                    { headers: { Accept: 'application/vnd.github+json' } }
+                );
+                if (r.ok) {
+                    const data = await r.json();
+                    const latestVer = (data.tag_name as string).replace(/^v/, '');
+                    if (latestVer !== APP_VERSION) {
+                        setUpdateBanner({ version: data.tag_name, url: data.html_url });
+                        found = true;
+                    }
+                }
+            }
+            if (!found) showToast('✅ 已是最新版本');
+        } catch {
+            showToast('检查更新失败，请检查网络连接');
+        } finally {
+            setManualCheckLoading(false);
+        }
+    }
+
     async function handleAiCharacterGenerate() {
         if (!store.aiEnabled) return;
         setAiCharacterGenLoading(true);
@@ -1035,6 +1078,21 @@ export default function App() {
                     </button>
                 </nav>
                 <div className="flex items-center space-x-1 md:space-x-2">
+                    {/* 检查更新按钮 — 仅桌面端 */}
+                    {IS_TAURI && (
+                        <button
+                            onClick={handleManualCheckUpdate}
+                            title={updateBanner ? `发现新版本 ${updateBanner.version}，点击下载安装` : `检查更新（当前 v${APP_VERSION}）`}
+                            disabled={manualCheckLoading || updateDownloading}
+                            className={`p-2 rounded-full hover:bg-surface-container transition-colors disabled:opacity-50 ${
+                                updateBanner ? 'text-primary animate-pulse' : 'text-on-surface-variant'
+                            }`}
+                        >
+                            {manualCheckLoading
+                                ? <LoaderCircle size={22} className="animate-spin" />
+                                : <Download size={22} />}
+                        </button>
+                    )}
                     <button
                         onClick={() => setShowAiSettings(true)}
                         title="AI 设置"
