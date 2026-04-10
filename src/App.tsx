@@ -1224,7 +1224,7 @@ export default function App() {
 
                                 {/* 词汇灵感 — large (8 cols, 2 rows) */}
                                 <button onClick={() => selectMode('words')}
-                                    className="col-span-2 md:col-span-8 row-span-2 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-5 md:p-8 flex flex-col justify-between group bento-glow-amber transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                                    className="col-span-2 md:col-span-8 row-span-2 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-5 md:p-8 flex flex-col justify-between group bento-glow-amber transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99] bento-hover-ring"
                                 >
                                     <div className="absolute -right-16 -top-16 w-56 h-56 bg-amber-400/5 dark:bg-[#ffb148]/5 blur-[80px] rounded-full group-hover:bg-amber-400/10 dark:group-hover:bg-[#ffb148]/10 transition-colors pointer-events-none"></div>
                                     <div>
@@ -1245,7 +1245,7 @@ export default function App() {
 
                                 {/* 梦境记录 — small (4 cols, 1 row) */}
                                 <button onClick={() => selectMode('dream')}
-                                    className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-violet transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                                    className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-violet transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99] bento-hover-ring"
                                 >
                                     <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-violet-400/5 dark:bg-[#ba9eff]/5 blur-[60px] rounded-full group-hover:bg-violet-400/10 dark:group-hover:bg-[#ba9eff]/10 transition-colors pointer-events-none"></div>
                                     <div className="flex items-center gap-2 mb-2">
@@ -1259,7 +1259,7 @@ export default function App() {
 
                                 {/* 角色描写 — small (4 cols, 1 row) */}
                                 <button onClick={() => selectMode('character')}
-                                    className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-fuchsia transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                                    className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-fuchsia transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99] bento-hover-ring"
                                 >
                                     <div className="absolute -left-8 -top-8 w-36 h-36 bg-fuchsia-400/5 dark:bg-fuchsia-300/5 blur-[60px] rounded-full group-hover:bg-fuchsia-400/10 transition-colors pointer-events-none"></div>
                                     <div className="flex items-center gap-2 mb-2">
@@ -1273,7 +1273,7 @@ export default function App() {
 
                                 {/* 自由发挥 — medium (5 cols, 1 row) */}
                                 <button onClick={() => selectMode('free')}
-                                    className="col-span-1 md:col-span-5 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-green transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                                    className="col-span-1 md:col-span-5 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-green transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99] bento-hover-ring"
                                 >
                                     <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-emerald-400/5 dark:bg-[#69f6b8]/5 blur-[80px] rounded-full group-hover:bg-emerald-400/10 dark:group-hover:bg-[#69f6b8]/10 transition-colors pointer-events-none"></div>
                                     <div className="flex items-center gap-2 mb-2">
@@ -1287,7 +1287,7 @@ export default function App() {
 
                                 {/* 场景描写 — medium (4 cols, 1 row) */}
                                 <button onClick={() => selectMode('scene')}
-                                    className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-blue transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                                    className="col-span-1 md:col-span-4 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-blue transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99] bento-hover-ring"
                                 >
                                     <div className="absolute right-0 top-0 w-full h-full pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity">
                                         <div className="w-full h-full bg-gradient-to-br from-blue-400/20 to-transparent rounded-[1.5rem]"></div>
@@ -1303,7 +1303,7 @@ export default function App() {
 
                                 {/* 写作挑战 — medium (3 cols, 1 row) */}
                                 <button onClick={() => selectMode('challenge')}
-                                    className="col-span-2 md:col-span-3 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-rose transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99]"
+                                    className="col-span-2 md:col-span-3 row-span-1 glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-rose transition-all duration-500 overflow-hidden relative text-left active:scale-[0.99] bento-hover-ring"
                                 >
                                     <div className="absolute -right-8 -top-8 w-36 h-36 bg-rose-400/5 dark:bg-rose-300/5 blur-[60px] rounded-full group-hover:bg-rose-400/10 transition-colors pointer-events-none"></div>
                                     <div className="flex items-center gap-2 mb-2">
