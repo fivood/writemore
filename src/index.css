@@ -374,31 +374,28 @@ html {
   );
 }
 
-/* ── Bento 卡片 hover 时旋转彩色渐变边框（mask-composite 技巧，无需改 JSX） ── */
-.bento-hover-ring {
+/* ── Bento 卡片 hover 旋转彩色渐变边框（外层 wrapper::before，绕过 overflow:hidden 限制） ── */
+.bento-ring-wrapper {
   position: relative;
+  padding: 2px;
+  border-radius: calc(1.5rem + 3px);
 }
-.bento-hover-ring::after {
+.bento-ring-wrapper::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 2px;
   background: conic-gradient(
     from var(--palace-angle),
     #f59e0b, #ec4899, #8b5cf6, #3b82f6, #10b981, #facc15, #f59e0b
   );
   animation: palace-border-spin 3s linear infinite;
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
   opacity: 0;
   transition: opacity 0.25s ease-out;
+  z-index: 0;
+  pointer-events: none;
 }
-.bento-hover-ring:hover::after {
+.bento-ring-wrapper:hover::before {
   opacity: 1;
 }
 
