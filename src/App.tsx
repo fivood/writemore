@@ -6,7 +6,7 @@ declare const __APP_VERSION__: string;
 const APP_VERSION: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';
 const CUSTOM_CATEGORY_STORAGE_KEY = 'writemore_custom_categories_v1';
 import { useStore } from './store';
-import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost, Brain, Users, Mic, Accessibility, History, Eye, Wifi, CheckCircle2, AlertCircle, LogOut, CloudOff, Package, Zap, Layers, Map as MapIcon, Tag } from 'lucide-react';
+import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost, Brain, Users, Mic, Accessibility, History, Eye, Wifi, CheckCircle2, AlertCircle, LogOut, CloudOff, Package, Zap, Layers, Map as MapIcon, Tag, Home } from 'lucide-react';
 import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngine';
 import { saveDraftToDb, toggleFavoriteWordSet, isPromptFavorited, togglePromptFavorite } from './data/draftEngine';
 import { pickRandomScene } from './data/scenes';
@@ -933,6 +933,15 @@ export default function App() {
             <header className="fixed top-0 left-0 right-0 z-50 glass-panel bg-surface/70 dark:bg-[#100e0d]/75 border-b border-outline-variant/10 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full safe-area-top">
                 <div className="text-lg md:text-xl font-bold text-primary font-headline tracking-tight">灵感是橡果</div>
                 <nav className="hidden md:flex space-x-8 items-center font-headline text-base tracking-tight">
+                    {isWriting && (
+                        <button
+                            onClick={handleBackToModeSelect}
+                            className="flex items-center space-x-1.5 transition-all duration-300 ease-in-out text-on-surface-variant hover:text-primary"
+                        >
+                            <Home size={20} />
+                            <span>首页</span>
+                        </button>
+                    )}
                     <button className={`flex items-center space-x-1.5 transition-all duration-300 ease-in-out ${store.activeTab === 'inspire' ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant hover:text-primary'}`} onClick={() => handleTopTabChange('inspire')}>
                         <Sparkles size={20} />
                         <span>灵感</span>
@@ -1006,12 +1015,20 @@ export default function App() {
                     { tab: 'palace', Icon: Landmark, label: '宫殿' },
                     { tab: 'favorites', Icon: Star, label: '收藏' },
                     { tab: 'history', Icon: BookOpen, label: '历史' },
-                ].map(t => (
-                    <button key={t.tab} onClick={() => handleTopTabChange(t.tab)} className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors ${store.activeTab === t.tab ? 'text-primary' : 'text-on-surface-variant'}`}>
-                        <t.Icon size={22} />
-                        <span className="text-[10px] font-label mt-0.5">{t.label}</span>
-                    </button>
-                ))}
+                ].map(t => {
+                    const isHomeBtn = isWriting && t.tab === 'inspire';
+                    const BtnIcon = isHomeBtn ? Home : t.Icon;
+                    return (
+                        <button
+                            key={t.tab}
+                            onClick={isHomeBtn ? handleBackToModeSelect : () => handleTopTabChange(t.tab)}
+                            className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors ${store.activeTab === t.tab ? 'text-primary' : 'text-on-surface-variant'}`}
+                        >
+                            <BtnIcon size={22} />
+                            <span className="text-[10px] font-label mt-0.5">{isHomeBtn ? '首页' : t.label}</span>
+                        </button>
+                    );
+                })}
             </nav>
 
             <div className="flex h-screen pb-[56px] md:pb-[45px]" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
