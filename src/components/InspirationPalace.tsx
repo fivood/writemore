@@ -8,7 +8,7 @@ import type { Draft, WordSet, WritingMode } from '../types';
 import { WRITING_MODES } from '../types';
 import { chatCompletion } from '../services/ai';
 import { buildInspirationRemixPrompt } from '../services/prompts';
-import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX, Trash2, X, Save, ArrowUpRight } from 'lucide-react';
+import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX, Trash2, X, Save, ArrowUpRight, CheckSquare, Square, ListChecks } from 'lucide-react';
 
 interface PalaceItem {
     draft: Draft;
@@ -47,6 +47,9 @@ export default function InspirationPalace() {
     const [searchQuery, setSearchQuery] = useState('');
     const [aiRemixResult, setAiRemixResult] = useState('');
     const [aiRemixLoading, setAiRemixLoading] = useState(false);
+    // 选择模式
+    const [selectMode, setSelectMode] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [previewItem, setPreviewItem] = useState<PalaceItem | null>(null);
     const [previewTitle, setPreviewTitle] = useState('');
     const [previewContent, setPreviewContent] = useState('');
@@ -247,13 +250,19 @@ export default function InspirationPalace() {
     };
 
     async function handleAiRemix() {
-        // 只用当前分类下的卡片
-        const remixSource = filterMode === 'all' ? items : items.filter(it => resolveMode(it.draft, it.wordSet) === filterMode);
-        if (!store.aiEnabled || remixSource.length < 2) return;
+        if (!store.aiEnabled) return;
+        // 选择模式下用已选卡片；否则用当前筛选结果（原逻辑）
+        let source: PalaceItem[];
+        if (selectMode && selectedIds.size > 0) {
+            source = items.filter(it => selectedIds.has(it.draft.id));
+        } else {
+            source = filterMode === 'all' ? items : items.filter(it => resolveMode(it.draft, it.wordSet) === filterMode);
+        }
+        if (source.length < 2) return;
         setAiRemixLoading(true);
         setAiRemixResult('');
         try {
-            const shuffled = [...remixSource].sort(() => Math.random() - 0.5);
+            const shuffled = [...source].sort(() => Math.random() - 0.5);
             const picked = shuffled.slice(0, Math.min(5, shuffled.length)).map(it => it.draft);
             const msgs = buildInspirationRemixPrompt(picked);
             const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
@@ -400,15 +409,35 @@ export default function InspirationPalace() {
                         })}
 
                         {/* Search */}
-                        <div className="relative ml-auto">
-                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
-                            <input
-                                type="text"
-                                placeholder="搜索灵感..."
-                                value={searchQuery}
-                                onChange={e => setSearchQuery(e.target.value)}
-                                className="pl-9 pr-4 py-2 bg-surface-container rounded-full border border-outline-variant/30 text-xs font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all w-48"
-                            />
+                        <div className="ml-auto flex items-center gap-2">
+                            {/* 选择模式开关 */}
+                            {store.aiEnabled && (
+                                <button
+                                    onClick={() => {
+                                        setSelectMode(v => !v);
+                                        setSelectedIds(new Set());
+                                        setAiRemixResult('');
+                                    }}
+                                    title={selectMode ? '退出选择' : '选择卡片进行 AI 再创作'}
+                                    className={`p-2 rounded-full border transition-colors text-xs font-label flex items-center gap-1 ${
+                                        selectMode
+                                            ? 'bg-violet-100 dark:bg-violet-500/20 border-violet-300 dark:border-violet-400/30 text-violet-700 dark:text-violet-300'
+                                            : 'bg-surface-container border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high'
+                                    }`}
+                                >
+                                    <ListChecks size={16} />
+                                </button>
+                            )}
+                            <div className="relative">
+                                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
+                                <input
+                                    type="text"
+                                    placeholder="搜索灵感..."
+                                    value={searchQuery}
+                                    onChange={e => setSearchQuery(e.target.value)}
+                                    className="pl-9 pr-4 py-2 bg-surface-container rounded-full border border-outline-variant/30 text-xs font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all w-48"
+                                />
+                            </div>
                         </div>
                     </div>
                 )}
@@ -445,25 +474,57 @@ export default function InspirationPalace() {
                             const mLabel = getModeLabel(mode);
                             const mStyle = MODE_STYLE[mode];
                             const sceneTitle = getSceneTitle(item.draft.sceneId);
+                            const isSelected = selectedIds.has(item.draft.id);
                             return (
                                 <div
                                     key={item.draft.id}
-                                    onClick={() => handleOpen(item)}
-                                    className={`bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-xl border border-outline-variant/20 border-l-4 ${mStyle.leftAccent} ${mStyle.hoverBorder} cursor-pointer group transition-all duration-200 hover:-translate-y-1 hover:shadow-lg relative flex flex-col`}
+                                    onClick={() => {
+                                        if (selectMode) {
+                                            setSelectedIds(prev => {
+                                                const next = new Set(prev);
+                                                next.has(item.draft.id) ? next.delete(item.draft.id) : next.add(item.draft.id);
+                                                return next;
+                                            });
+                                        } else {
+                                            handleOpen(item);
+                                        }
+                                    }}
+                                    className={`bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-xl border-l-4 ${mStyle.leftAccent} cursor-pointer group transition-all duration-200 relative flex flex-col ${
+                                        selectMode
+                                            ? isSelected
+                                                ? 'border-2 border-violet-400 dark:border-violet-400/70 shadow-md -translate-y-0.5'
+                                                : 'border border-outline-variant/20 hover:border-violet-300/50'
+                                            : `border border-outline-variant/20 ${mStyle.hoverBorder} hover:-translate-y-1 hover:shadow-lg`
+                                    }`}
                                 >
-                                    {/* 水印图标 — 极低透明度装饰 */}
-                                    <div className="absolute -bottom-1 -right-1 opacity-[0.05] group-hover:opacity-[0.09] transition-opacity duration-300 pointer-events-none select-none" aria-hidden="true">
-                                        <mStyle.Icon size={76} />
+                                    {/* 水印图标 — 右上角小尺寸装饰，hover 时让删除按钟接管该位置 */}
+                                    <div className={`absolute top-2.5 right-2.5 transition-opacity duration-200 pointer-events-none select-none ${
+                                        selectMode
+                                            ? 'opacity-0'
+                                            : 'opacity-[0.08] group-hover:opacity-0'
+                                    }`} aria-hidden="true">
+                                        <mStyle.Icon size={28} />
                                     </div>
 
-                                    {/* Delete */}
-                                    <button
-                                        onClick={e => handleDelete(e, item.draft.id)}
-                                        className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 z-10"
-                                        title="删除"
-                                    >
-                                        <Trash2 size={20} />
-                                    </button>
+                                    {/* 选择模式 checkbox */}
+                                    {selectMode && (
+                                        <div className={`absolute top-3 right-3 transition-colors ${
+                                            isSelected ? 'text-violet-500' : 'text-outline'
+                                        }`}>
+                                            {isSelected ? <CheckSquare size={20} /> : <Square size={20} />}
+                                        </div>
+                                    )}
+
+                                    {/* Delete — 选择模式下隐藏 */}
+                                    {!selectMode && (
+                                        <button
+                                            onClick={e => handleDelete(e, item.draft.id)}
+                                            className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 z-10"
+                                            title="删除"
+                                        >
+                                            <Trash2 size={20} />
+                                        </button>
+                                    )}
 
                                     {/* Mode badge + date */}
                                     <div className="relative flex items-center justify-between mb-3 pr-8">
@@ -518,6 +579,45 @@ export default function InspirationPalace() {
                     </div>
                 )}
             </div>
+
+            {/* 底部浮动多选操作栏 */}
+            {selectMode && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 bg-surface/95 dark:bg-[#1a1715]/95 backdrop-blur border border-outline-variant/20 rounded-2xl shadow-xl text-sm font-label transition-all">
+                    <span className="text-on-surface-variant whitespace-nowrap">
+                        已选 <strong className="text-on-surface">{selectedIds.size}</strong> 张
+                    </span>
+                    <div className="w-px h-4 bg-outline-variant/30" />
+                    <button
+                        onClick={() => setSelectedIds(new Set(displayed.map(it => it.draft.id)))}
+                        className="text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap"
+                    >
+                        全选当前视图
+                    </button>
+                    <button
+                        onClick={() => setSelectedIds(new Set())}
+                        disabled={selectedIds.size === 0}
+                        className="text-on-surface-variant hover:text-on-surface transition-colors disabled:opacity-30 whitespace-nowrap"
+                    >
+                        清空
+                    </button>
+                    <div className="w-px h-4 bg-outline-variant/30" />
+                    <button
+                        onClick={handleAiRemix}
+                        disabled={selectedIds.size < 2 || aiRemixLoading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+                    >
+                        {aiRemixLoading ? <LoaderCircle size={15} className="animate-spin" /> : <Sparkles size={15} />}
+                        <span>{aiRemixLoading ? '生成中…' : `AI 再创作 (${selectedIds.size})`}</span>
+                    </button>
+                    <button
+                        onClick={() => { setSelectMode(false); setSelectedIds(new Set()); }}
+                        className="p-1.5 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"
+                        title="退出选择"
+                    >
+                        <X size={18} />
+                    </button>
+                </div>
+            )}
 
             {previewItem && (
                 <div className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={closePreview}>
