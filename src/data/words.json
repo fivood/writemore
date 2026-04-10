@@ -81,7 +81,7 @@
     "id": "w0008",
     "text": "虫洞",
     "explanation": "连接两个时空的假想通道",
-    "category": "地名",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -125,7 +125,7 @@
     "id": "w0012",
     "text": "冷冻休眠",
     "explanation": "通过极低温保存生命体的技术",
-    "category": "人物",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -180,7 +180,7 @@
     "id": "w0017",
     "text": "星际殖民",
     "explanation": "在其他星球建立人类居住地",
-    "category": "地名",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -191,7 +191,7 @@
     "id": "w0018",
     "text": "意识上传",
     "explanation": "将人类意识转移到数字载体",
-    "category": "实物",
+    "category": "动作",
     "genres": [
       "科幻"
     ],
@@ -364,7 +364,7 @@
   {
     "id": "w0034",
     "text": "穹顶",
-    "category": "抽象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -414,7 +414,7 @@
   {
     "id": "w0039",
     "text": "激光",
-    "category": "感官",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -624,7 +624,7 @@
   {
     "id": "w0060",
     "text": "末日",
-    "category": "实物",
+    "category": "意象",
     "genres": [
       "科幻"
     ],
@@ -704,7 +704,7 @@
   {
     "id": "w0068",
     "text": "磁悬浮",
-    "category": "抽象",
+    "category": "实物",
     "genres": [
       "科幻"
     ],
@@ -2035,7 +2035,7 @@
   {
     "id": "w0201",
     "text": "灵魂",
-    "category": "人物",
+    "category": "意象",
     "genres": [
       "科幻",
       "奇幻"
@@ -2056,7 +2056,7 @@
   {
     "id": "w0203",
     "text": "幻觉",
-    "category": "感官",
+    "category": "状态",
     "genres": [
       "科幻",
       "奇幻"
@@ -2720,7 +2720,7 @@
   {
     "id": "w0268",
     "text": "真相",
-    "category": "人物",
+    "category": "抽象",
     "genres": [
       "悬疑"
     ],
@@ -2820,7 +2820,7 @@
   {
     "id": "w0278",
     "text": "溺水",
-    "category": "实物",
+    "category": "状态",
     "genres": [
       "悬疑"
     ],
@@ -2881,7 +2881,7 @@
   {
     "id": "w0284",
     "text": "密道",
-    "category": "抽象",
+    "category": "地名",
     "genres": [
       "悬疑"
     ],
@@ -2891,7 +2891,7 @@
   {
     "id": "w0285",
     "text": "隧道",
-    "category": "抽象",
+    "category": "地名",
     "genres": [
       "悬疑"
     ],
@@ -3838,7 +3838,7 @@
   {
     "id": "w0379",
     "text": "阴影",
-    "category": "感官",
+    "category": "意象",
     "genres": [
       "悬疑"
     ],
@@ -4299,12 +4299,13 @@
   {
     "id": "w0424",
     "text": "混沌",
-    "category": "抽象",
+    "category": "人物",
     "genres": [
       "奇幻"
     ],
     "source": "builtin",
-    "enabled": true
+    "enabled": true,
+    "explanation": "传说中上古四凶之一，形如犬，不辨是非，象征混乱无序"
   },
   {
     "id": "w0425",
@@ -5701,7 +5702,7 @@
   {
     "id": "w0563",
     "text": "灵魂宝石",
-    "category": "人物",
+    "category": "实物",
     "genres": [
       "奇幻"
     ],
@@ -6059,7 +6060,7 @@
   {
     "id": "w0598",
     "text": "牵手",
-    "category": "人物",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -6900,7 +6901,7 @@
   {
     "id": "w0682",
     "text": "试探",
-    "category": "人物",
+    "category": "动作",
     "genres": [
       "言情"
     ],
@@ -8418,7 +8419,7 @@
   {
     "id": "w0833",
     "text": "古道",
-    "category": "抽象",
+    "category": "地名",
     "genres": [
       "武侠"
     ],
@@ -8548,7 +8549,7 @@
   {
     "id": "w0846",
     "text": "论剑",
-    "category": "实物",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -8588,7 +8589,7 @@
   {
     "id": "w0850",
     "text": "结义",
-    "category": "抽象",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -8598,7 +8599,7 @@
   {
     "id": "w0851",
     "text": "拜师",
-    "category": "人物",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -8608,7 +8609,7 @@
   {
     "id": "w0852",
     "text": "下山",
-    "category": "地名",
+    "category": "动作",
     "genres": [
       "武侠"
     ],
@@ -11212,7 +11213,7 @@
   {
     "id": "w1110",
     "text": "探花",
-    "category": "实物",
+    "category": "人物",
     "genres": [
       "历史"
     ],
@@ -11272,7 +11273,7 @@
   {
     "id": "w1116",
     "text": "兵法",
-    "category": "动作",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11282,7 +11283,7 @@
   {
     "id": "w1117",
     "text": "阵法",
-    "category": "动作",
+    "category": "实物",
     "genres": [
       "历史"
     ],
@@ -11292,7 +11293,7 @@
   {
     "id": "w1118",
     "text": "攻城",
-    "category": "地名",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11302,7 +11303,7 @@
   {
     "id": "w1119",
     "text": "守城",
-    "category": "地名",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11482,7 +11483,7 @@
   {
     "id": "w1137",
     "text": "茶马古道",
-    "category": "抽象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11502,7 +11503,7 @@
   {
     "id": "w1139",
     "text": "官道",
-    "category": "抽象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11512,7 +11513,7 @@
   {
     "id": "w1140",
     "text": "栈道",
-    "category": "抽象",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11522,7 +11523,7 @@
   {
     "id": "w1141",
     "text": "水路",
-    "category": "实物",
+    "category": "地名",
     "genres": [
       "历史"
     ],
@@ -11562,7 +11563,7 @@
   {
     "id": "w1145",
     "text": "互市",
-    "category": "地名",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -11864,7 +11865,7 @@
   {
     "id": "w1175",
     "text": "起义",
-    "category": "抽象",
+    "category": "动作",
     "genres": [
       "历史"
     ],
@@ -13108,7 +13109,7 @@
   {
     "id": "w1298",
     "text": "幻觉",
-    "category": "感官",
+    "category": "状态",
     "genres": [
       "恐怖",
       "奇幻"
@@ -13151,7 +13152,7 @@
   {
     "id": "w1302",
     "text": "阴影",
-    "category": "感官",
+    "category": "意象",
     "genres": [
       "恐怖"
     ],
@@ -13682,7 +13683,7 @@
   {
     "id": "w1355",
     "text": "隧道",
-    "category": "抽象",
+    "category": "地名",
     "genres": [
       "恐怖"
     ],
@@ -14208,7 +14209,7 @@
   {
     "id": "w1407",
     "text": "骇人",
-    "category": "人物",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -14238,7 +14239,7 @@
   {
     "id": "w1410",
     "text": "瘆人",
-    "category": "人物",
+    "category": "状态",
     "genres": [
       "恐怖"
     ],
@@ -14337,7 +14338,7 @@
   {
     "id": "w1419",
     "text": "空间",
-    "category": "地名",
+    "category": "抽象",
     "genres": [
       "通用"
     ],
@@ -15471,7 +15472,7 @@
   {
     "id": "w1532",
     "text": "真相",
-    "category": "人物",
+    "category": "抽象",
     "genres": [
       "通用",
       "悬疑"
@@ -17747,6 +17748,28 @@
     "text": "物是人非",
     "explanation": "景物依旧而人事已非，感叹世事变迁",
     "category": "意象",
+    "genres": [
+      "通用"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1749",
+    "text": "克隆人",
+    "explanation": "通过无性繁殖技术复制出的、与原体基因完全相同的人",
+    "category": "人物",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1750",
+    "text": "信",
+    "explanation": "书写在纸上传递消息与情感的信件，寄托离别与思念",
+    "category": "实物",
     "genres": [
       "通用"
     ],
