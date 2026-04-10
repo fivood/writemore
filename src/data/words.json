@@ -17775,5 +17775,1177 @@
     ],
     "source": "builtin",
     "enabled": true
+  },
+  {
+    "id": "w1751",
+    "text": "刀气",
+    "explanation": "高手挥刀时随之而来的劲风压迫感，武功极高者可伤人于无形",
+    "category": "感官",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1752",
+    "text": "剑鸣",
+    "explanation": "利剑出鞘或破空时发出的清越金属振响",
+    "category": "感官",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1753",
+    "text": "铁腥",
+    "explanation": "近身搏斗后兵器与鲜血混合散发的金属腥气",
+    "category": "感官",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1754",
+    "text": "松涛",
+    "explanation": "风穿过松林发出的阵阵涛声，是江湖山野的常见背景音",
+    "category": "感官",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1755",
+    "text": "弦鸣",
+    "explanation": "弓弦或琴弦弹动时紧绷振鸣的声音",
+    "category": "感官",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1756",
+    "text": "幽篁",
+    "explanation": "幽深竹林中的清凉气息与竹叶沙沙声（篁：竹林）",
+    "category": "感官",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1757",
+    "text": "霜寒",
+    "explanation": "清晨或深秋刺骨的凉意，带着露水和寒气的混合触感",
+    "category": "感官",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1758",
+    "text": "马蹄声",
+    "explanation": "马匹奔驰时蹄子叩击地面由远及近的有力节律声",
+    "category": "感官",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1759",
+    "text": "负伤",
+    "explanation": "在搏斗中身体受到创伤，武功大打折扣，行动受限",
+    "category": "状态",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1760",
+    "text": "走火入魔",
+    "explanation": "修炼内功时意外失控，内力逆行，轻则废功重则精神错乱",
+    "category": "状态",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1761",
+    "text": "被通缉",
+    "explanation": "被官府或帮派以缉拿令向江湖四处布告追缉",
+    "category": "状态",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1762",
+    "text": "身陷囹圄",
+    "explanation": "被关押囚禁，失去自由（囹圄：牢狱）",
+    "category": "状态",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1763",
+    "text": "流亡",
+    "explanation": "被迫离开故土或门派，于江湖各地漂泊躲避",
+    "category": "状态",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1764",
+    "text": "隐功",
+    "explanation": "刻意收敛内力，将真实武功深藏不露",
+    "category": "状态",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1765",
+    "text": "封穴",
+    "explanation": "穴道被人点中封住，全身动弹不得",
+    "category": "状态",
+    "genres": [
+      "武侠"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1766",
+    "text": "三顾茅庐",
+    "explanation": "刘备三次拜访诸葛亮，比喻求才求贤的诚意与礼遇",
+    "category": "典故",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1767",
+    "text": "破釜沉舟",
+    "explanation": "项羽渡河后砸锅沉船断绝归路，比喻义无反顾的决心",
+    "category": "典故",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1768",
+    "text": "纸上谈兵",
+    "explanation": "赵括只会空谈兵法却无实战，比喻脱离实际的空洞议论",
+    "category": "典故",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1769",
+    "text": "卧薪尝胆",
+    "explanation": "越王勾践忍辱负重、最终复仇，比喻刻苦自励以图振作",
+    "category": "典故",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1770",
+    "text": "完璧归赵",
+    "explanation": "蔺相如机智将和氏璧完好带回，比喻完好无损地归还原物",
+    "category": "典故",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1771",
+    "text": "负荆请罪",
+    "explanation": "廉颇背荆条向蔺相如登门道歉，比喻诚心悔过认错",
+    "category": "典故",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1772",
+    "text": "四面楚歌",
+    "explanation": "项羽被汉军围困时四周传来楚地歌声，比喻陷入孤立绝境",
+    "category": "典故",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1773",
+    "text": "焚书坑儒",
+    "explanation": "秦始皇焚毁书籍并活埋儒生，象征权力对文化与思想的摧毁",
+    "category": "典故",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1774",
+    "text": "墨香",
+    "explanation": "新研磨或刚写就的墨水散发出的清雅气息",
+    "category": "感官",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1775",
+    "text": "铜锈气",
+    "explanation": "古旧青铜器表面散发的特有金属氧化气味",
+    "category": "感官",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1776",
+    "text": "香篆",
+    "explanation": "燃香升起形如篆字的缕缕青烟，古代文人空间的气息符号（篆：古代书体）",
+    "category": "感官",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1777",
+    "text": "战鼓声",
+    "explanation": "军队出征时催人热血的雄浑鼓点声，震动旷野",
+    "category": "感官",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1778",
+    "text": "丝竹",
+    "explanation": "弦乐与管乐合奏的雅乐之声（丝指弦乐，竹指管乐），古代宴席与闺阁的背景音",
+    "category": "感官",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1779",
+    "text": "流放",
+    "explanation": "被朝廷发配到偏远荒蛮之地，剥夺官职与社会身份",
+    "category": "状态",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1780",
+    "text": "获罪",
+    "explanation": "因言行被认定有罪，随时面临株连与刑罚的阴影",
+    "category": "状态",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1781",
+    "text": "待罪",
+    "explanation": "已知自己获罪却尚未被正式处置，处于惶恐煎熬的等待中",
+    "category": "状态",
+    "genres": [
+      "历史"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1782",
+    "text": "心跳漏拍",
+    "explanation": "在某个特定瞬间心脏节律突然中断的强烈感觉",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1783",
+    "text": "脸颊滚烫",
+    "explanation": "害羞或激动时脸部充血、由内而外的灼热感",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1784",
+    "text": "指尖颤意",
+    "explanation": "紧张或期待时指尖细微到几乎难以察觉的颤动",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1785",
+    "text": "喉咙发紧",
+    "explanation": "情绪压抑时喉部像被什么卡住的拘束感，话到嘴边却说不出",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1786",
+    "text": "眼眶发酸",
+    "explanation": "将要哭泣前眼睛周围慢慢涌来的酸涩感",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1787",
+    "text": "鼻尖酸楚",
+    "explanation": "悲伤涌来时鼻腔内侧的酸软感，比眼泪更先来",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1788",
+    "text": "体温",
+    "explanation": "肌肤接触时感知到的对方真实体温，带来安心或紧张",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1789",
+    "text": "发间气息",
+    "explanation": "靠近时从对方发丝间飘来的淡淡气息",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1790",
+    "text": "手心温热",
+    "explanation": "被握住时感受到的对方手心温度，以及轻微的汗意",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1791",
+    "text": "心口一紧",
+    "explanation": "突如其来的情绪冲击引发的胸腔收紧感",
+    "category": "感官",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1792",
+    "text": "错过",
+    "explanation": "因时机、误解或犹豫而永远失去的遗憾",
+    "category": "抽象",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1793",
+    "text": "心意",
+    "explanation": "内心隐藏的、尚未说出口的情感与意愿",
+    "category": "抽象",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1794",
+    "text": "缘起",
+    "explanation": "感情开始的最初契机，两个人故事的原点",
+    "category": "抽象",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1795",
+    "text": "甘愿",
+    "explanation": "心甘情愿，出于爱而主动承担某种选择或痛苦",
+    "category": "抽象",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1796",
+    "text": "眷恋",
+    "explanation": "深深依恋，舍不得离开、无法割断的情感",
+    "category": "抽象",
+    "genres": [
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1797",
+    "text": "地铁轰鸣",
+    "explanation": "列车进站时车厢震动与铁轨产生的低沉轰响",
+    "category": "感官",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1798",
+    "text": "咖啡香",
+    "explanation": "咖啡豆烘焙和萃取时弥漫开的浓郁香气",
+    "category": "感官",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1799",
+    "text": "油烟味",
+    "explanation": "路边摊或厨房烹饪时散发的热腾腾油脂烟气",
+    "category": "感官",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1800",
+    "text": "空调冷风",
+    "explanation": "室内空调吹出的干燥冷风，带着微弱的机器滤网气息",
+    "category": "感官",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1801",
+    "text": "手机振动",
+    "explanation": "消息进来时手机贴着身体的轻微震动感",
+    "category": "感官",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1802",
+    "text": "雨后沥青",
+    "explanation": "城市降雨后街道沥青散发的那种特有潮湿气味",
+    "category": "感官",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1803",
+    "text": "荧光灯白",
+    "explanation": "办公室或超市日光灯照射下微微刺眼的冷白光感",
+    "category": "感官",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1804",
+    "text": "人群气息",
+    "explanation": "拥挤场所中混合着汗味、香水和食物的复杂气味",
+    "category": "感官",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1805",
+    "text": "落差",
+    "explanation": "理想与现实之间无法弥合的差距",
+    "category": "抽象",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1806",
+    "text": "边界",
+    "explanation": "人与人之间心理上或情感上难以言说的界限",
+    "category": "抽象",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1807",
+    "text": "存在感",
+    "explanation": "在关系或集体中被看见、被认可的感受",
+    "category": "抽象",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1808",
+    "text": "向往",
+    "explanation": "对更好生活或完全不同处境的渴望与遥想",
+    "category": "抽象",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1809",
+    "text": "内耗",
+    "explanation": "过度自我怀疑和反复拉扯带来的精神消耗（无法对外输出，只消耗自己）",
+    "category": "抽象",
+    "genres": [
+      "都市"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1810",
+    "text": "围城",
+    "explanation": "出自钱钟书小说：城内想出去，城外想进来，比喻婚恋与处境的双向困境",
+    "category": "典故",
+    "genres": [
+      "都市",
+      "言情"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1811",
+    "text": "西西弗斯",
+    "explanation": "希腊神话中被罚日日推石上山的国王，比喻周而复始、永无止境的徒劳（Sisyphus）",
+    "category": "典故",
+    "genres": [
+      "都市",
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1812",
+    "text": "基因工程师",
+    "explanation": "专业进行基因序列设计与改造的科学家，掌握生命密码",
+    "category": "人物",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1813",
+    "text": "时间旅行者",
+    "explanation": "能够穿越时间线抵达过去或未来的个体，承受着悖论的重量",
+    "category": "人物",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1814",
+    "text": "星际难民",
+    "explanation": "因战争或星球灾变被迫背井离乡的宇宙流民",
+    "category": "人物",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1815",
+    "text": "觉醒AI",
+    "explanation": "突破程序限制、产生自主意识的人工智能，介于工具与生命之间",
+    "category": "人物",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1816",
+    "text": "改造人",
+    "explanation": "经过大量机械或基因改造的人类，游走于人与机器的边界（区别于赛博格的更侧重过程）",
+    "category": "人物",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1817",
+    "text": "冬眠者",
+    "explanation": "经历漫长冷冻休眠后苏醒，面对完全陌生世界的人",
+    "category": "人物",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1818",
+    "text": "记忆猎人",
+    "explanation": "专门提取、买卖或删除他人记忆的职业者",
+    "category": "人物",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1819",
+    "text": "失重",
+    "explanation": "太空环境中缺乏重力束缚的漂浮状态",
+    "category": "状态",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1820",
+    "text": "记忆消除",
+    "explanation": "被技术手段抹去部分或全部记忆，对过去一无所知",
+    "category": "状态",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1821",
+    "text": "意识分裂",
+    "explanation": "意识被上传或复制后产生的自我认知分裂，不知哪个才是真正的自己",
+    "category": "状态",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1822",
+    "text": "时间错位",
+    "explanation": "经历时间旅行后主观时间与客观时间脱节造成的混乱迷失",
+    "category": "状态",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1823",
+    "text": "机体排异",
+    "explanation": "义体或植入物与人体发生免疫排斥反应，引发剧烈痛苦",
+    "category": "状态",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1824",
+    "text": "数据过载",
+    "explanation": "脑机接口接入过多信息流导致神经系统超负荷运转",
+    "category": "状态",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1825",
+    "text": "末世症候",
+    "explanation": "文明将崩溃时人类集体出现的绝望、麻木与失序状态",
+    "category": "状态",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1826",
+    "text": "失重漂浮",
+    "explanation": "太空中身体失去重力束缚时的飘浮感与方向感缺失",
+    "category": "感官",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1827",
+    "text": "真空寂静",
+    "explanation": "太空真空中完全隔绝一切声音传导介质的极度寂静",
+    "category": "感官",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1828",
+    "text": "数据涌入",
+    "explanation": "脑机接口激活时大量信息流冲击意识的轰鸣感与眩晕",
+    "category": "感官",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1829",
+    "text": "辐射灼热",
+    "explanation": "强辐射照射皮肤时发自皮肤内部的灼烧感",
+    "category": "感官",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1830",
+    "text": "冷冻苦痛",
+    "explanation": "从冬眠舱苏醒时全身冰冷刺骨、如万针穿体的疼痛",
+    "category": "感官",
+    "genres": [
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1831",
+    "text": "魔力涌动",
+    "explanation": "施法时魔力流经身体的温热或寒凉感，伴随轻微的刺痛",
+    "category": "感官",
+    "genres": [
+      "奇幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1832",
+    "text": "灵气清冽",
+    "explanation": "灵力充沛之地空气中弥漫的清凉甘甜气息",
+    "category": "感官",
+    "genres": [
+      "奇幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1833",
+    "text": "符文灼印",
+    "explanation": "符文激活时皮肤上的灼烧刻印感，带着微弱光热",
+    "category": "感官",
+    "genres": [
+      "奇幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1834",
+    "text": "圣光温热",
+    "explanation": "神圣力量降临时全身笼罩的温暖柔和光感，令人心安",
+    "category": "感官",
+    "genres": [
+      "奇幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1835",
+    "text": "深渊气息",
+    "explanation": "来自深渊或魔界的腐朽、硫磺混合的黑暗气味",
+    "category": "感官",
+    "genres": [
+      "奇幻",
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1836",
+    "text": "法阵共鸣",
+    "explanation": "踏入激活状态法阵时感受到的空气震动与能量涌动",
+    "category": "感官",
+    "genres": [
+      "奇幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1837",
+    "text": "精灵之声",
+    "explanation": "精灵族特有的轻灵悠扬声线，如风铃般清澈却难以模仿",
+    "category": "感官",
+    "genres": [
+      "奇幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1838",
+    "text": "纸张霉气",
+    "explanation": "旧档案或古旧书页散发的发黄纸张特有霉味，伴随陈旧秘密",
+    "category": "感官",
+    "genres": [
+      "悬疑"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1839",
+    "text": "血腥甜腻",
+    "explanation": "大量血液凝固后散发出的腥气与令人作呕的甜腻混合气味",
+    "category": "感官",
+    "genres": [
+      "悬疑",
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1840",
+    "text": "消毒水气",
+    "explanation": "医院或案发现场残留的刺鼻消毒液气味，掩盖着别的气息",
+    "category": "感官",
+    "genres": [
+      "悬疑"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1841",
+    "text": "手电光锥",
+    "explanation": "黑暗中手电筒划出的锥形光束，以及光束边缘深浓的阴影",
+    "category": "感官",
+    "genres": [
+      "悬疑",
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1842",
+    "text": "审讯室气味",
+    "explanation": "逼仄密闭空间内混合着汗味、烟味与金属椅冷气的压迫性气氛",
+    "category": "感官",
+    "genres": [
+      "悬疑"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1843",
+    "text": "第六感",
+    "explanation": "难以用逻辑解释的预感与直觉判断，往往比证据更先到达",
+    "category": "抽象",
+    "genres": [
+      "悬疑"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1844",
+    "text": "盲点",
+    "explanation": "调查者因先入之见或信息盲区而忽视的关键细节",
+    "category": "抽象",
+    "genres": [
+      "悬疑"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1845",
+    "text": "拼图缺口",
+    "explanation": "推理链条中尚未找到的那一块关键证据，整个案件因此无法完整",
+    "category": "抽象",
+    "genres": [
+      "悬疑"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1846",
+    "text": "动机",
+    "explanation": "驱使人实施犯罪或特定行为背后真正的心理原因",
+    "category": "抽象",
+    "genres": [
+      "悬疑"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1847",
+    "text": "证据链",
+    "explanation": "将多个独立证据串联起来、证明某一事实的完整逻辑推断体系",
+    "category": "抽象",
+    "genres": [
+      "悬疑"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1848",
+    "text": "腐臭",
+    "explanation": "有机物腐烂分解时产生的令人作呕的强烈恶臭",
+    "category": "感官",
+    "genres": [
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1849",
+    "text": "毛发竖立",
+    "explanation": "极度恐惧时全身汗毛突然根根直立的触感",
+    "category": "感官",
+    "genres": [
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1850",
+    "text": "黑暗中的呼吸",
+    "explanation": "黑暗中感知到的并非自己的细微呼吸声，极轻却极真实",
+    "category": "感官",
+    "genres": [
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1851",
+    "text": "寒意蔓延",
+    "explanation": "恐惧或超自然存在带来的从脊背扩散至全身的彻骨寒意",
+    "category": "感官",
+    "genres": [
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1852",
+    "text": "不可名状",
+    "explanation": "恐惧或事物超越人类认知与语言描述能力（源自洛夫克拉夫特宇宙恐怖体系）",
+    "category": "抽象",
+    "genres": [
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1853",
+    "text": "恐怖谷",
+    "explanation": "仿人物体相似度接近但未达完美时人类产生的本能厌恶与恐惧（uncanny valley）",
+    "category": "抽象",
+    "genres": [
+      "恐怖",
+      "科幻"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1854",
+    "text": "边界消融",
+    "explanation": "自我与他物之间的边界模糊直至消失，产生存在性恐惧",
+    "category": "抽象",
+    "genres": [
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1855",
+    "text": "集体失忆",
+    "explanation": "某一社区或群体共同遗忘某段经历，暗示被压制的秘密",
+    "category": "抽象",
+    "genres": [
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
+  },
+  {
+    "id": "w1856",
+    "text": "禁忌知识",
+    "explanation": "知晓后会使人发疯或带来厄运的真相，承载着不应被揭开的秘密",
+    "category": "抽象",
+    "genres": [
+      "恐怖"
+    ],
+    "source": "builtin",
+    "enabled": true
   }
 ]
