@@ -479,7 +479,7 @@ export default function InspirationPalace() {
                                 // 选中时外层包裹旋转彩色渐变边框
                                 <div
                                     key={item.draft.id}
-                                    className={isSelected ? 'p-[2px] rounded-[13px] palace-selected-ring shadow-lg -translate-y-0.5 transition-transform duration-200' : 'rounded-xl transition-transform duration-200'}
+                                    className={isSelected ? 'p-[2px] rounded-[13px] palace-selected-ring shadow-lg -translate-y-0.5 transition-transform duration-200 flex flex-col' : 'rounded-xl transition-transform duration-200 flex flex-col'}
                                 >
                                 <div
                                     onClick={() => {
@@ -493,7 +493,7 @@ export default function InspirationPalace() {
                                             handleOpen(item);
                                         }
                                     }}
-                                    className={`bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-xl border-l-4 ${mStyle.leftAccent} cursor-pointer group transition-all duration-200 relative flex flex-col ${
+                                    className={`bg-surface-container bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-xl border-l-4 ${mStyle.leftAccent} cursor-pointer group transition-all duration-200 relative flex flex-col h-full ${
                                         selectMode
                                             ? isSelected
                                                 ? 'border-none'
