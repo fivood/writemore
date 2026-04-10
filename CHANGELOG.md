@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-- UI: 灵感宫殿多选模式——选中卡片改为旋转彩色渐变光晕边框（amber→rose→violet→blue→emerald 循环，2.4s/圈，亮/暗双主题各自调校饱和度）
+## [0.1.12] - 2026-04-10
+
+### Changed
+- UI: 首页 Bento 模式卡片 hover 时显示旋转彩色弧形边框（与灵感宫殿选中态同款动画，带透明缺口）
+- UI: 灵感宫殿多选模式——选中卡片旋转彩色渐变边框（2px，弧形带缺口，2.4s/圈）
+- UI: 全局圆角收缩——Bento 卡片 24px→16px，弹窗 16px→12px，内容卡片 12px→8px，整体更紧凑
 
 ## [0.1.11] - 2026-04-10
 
