@@ -204,7 +204,7 @@ function ImportPreviewModal({
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-surface-container rounded-2xl w-full max-w-3xl mx-4 max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-surface-container rounded-lg w-full max-w-3xl mx-4 max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="p-6 pb-4 border-b border-outline-variant/15">
           <h3 className="font-headline text-xl font-bold text-on-surface flex items-center space-x-2 mb-4">
@@ -773,7 +773,7 @@ export default function LibraryPage() {
         </div>
 
         {/* Stats bar */}
-        <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
+        <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-lg border border-outline-variant/15">
           <button
             onClick={() => setSourceFilter('all')}
             className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'all' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
@@ -986,7 +986,7 @@ export default function LibraryPage() {
       {/* Add/Edit Modal */}
       {showModal && editing && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setShowModal(false)}>
-          <div className="bg-surface-container rounded-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-surface-container rounded-lg w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
             <h3 className="font-headline text-xl font-bold text-on-surface mb-6 flex items-center space-x-2">
               {editing.id ? <Pencil size={26} className="text-primary" /> : <PlusCircle size={26} className="text-primary" />}
               <span>{editing.id ? '编辑词条' : '添加词条'}</span>
@@ -1068,7 +1068,7 @@ export default function LibraryPage() {
 
       {showCategoryModal && (
         <div className="fixed inset-0 z-[210] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setShowCategoryModal(false)}>
-          <div className="bg-surface-container rounded-2xl w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-surface-container rounded-lg w-full max-w-md mx-4 p-6" onClick={e => e.stopPropagation()}>
             <h3 className="font-headline text-xl font-bold text-on-surface mb-5 flex items-center space-x-2">
               <Tag size={24} className="text-primary" />
               <span>新增分类</span>
@@ -1126,7 +1126,7 @@ export default function LibraryPage() {
 
       {showCategoryManageModal && (
         <div className="fixed inset-0 z-[210] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setShowCategoryManageModal(false)}>
-          <div className="bg-surface-container rounded-2xl w-full max-w-3xl mx-4 p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-surface-container rounded-lg w-full max-w-3xl mx-4 p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h3 className="font-headline text-xl font-bold text-on-surface mb-5 flex items-center space-x-2">
               <Pencil size={24} className="text-primary" />
               <span>管理自定义分类</span>
@@ -1137,7 +1137,7 @@ export default function LibraryPage() {
             ) : (
               <div className="space-y-3">
                 {manageDraftCategories.map((item, idx) => (
-                  <div key={`${idx}_${item.name}`} className="rounded-xl border border-outline-variant/20 p-3 bg-surface-container-low/50">
+                  <div key={`${idx}_${item.name}`} className="rounded-lg border border-outline-variant/20 p-3 bg-surface-container-low/50">
                     <div className="flex items-center gap-3 mb-2">
                       <input
                         type="text"

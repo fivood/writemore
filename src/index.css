@@ -363,31 +363,53 @@ html {
 .palace-selected-ring {
   background: conic-gradient(
     from var(--palace-angle),
-    #f59e0b, #ec4899, #8b5cf6, #3b82f6, #10b981, #facc15, #f59e0b
+    transparent 0deg,
+    #f59e0b 25deg,
+    #ec4899 80deg,
+    #8b5cf6 140deg,
+    #3b82f6 190deg,
+    #10b981 245deg,
+    #facc15 295deg,
+    transparent 330deg,
+    transparent 360deg
   );
   animation: palace-border-spin 2.4s linear infinite;
 }
 .dark .palace-selected-ring {
   background: conic-gradient(
     from var(--palace-angle),
-    #fbbf24, #f472b6, #a78bfa, #60a5fa, #34d399, #fde047, #fbbf24
+    transparent 0deg,
+    #fbbf24 25deg,
+    #f472b6 80deg,
+    #a78bfa 140deg,
+    #60a5fa 190deg,
+    #34d399 245deg,
+    #fde047 295deg,
+    transparent 330deg,
+    transparent 360deg
   );
 }
 
-/* ── Bento 卡片 hover 旋转彩色渐变边框（外层 wrapper::before，绕过 overflow:hidden 限制） ── */
+/* ── Bento 卡片 hover 旋转彩色渐变边框（1px 弧形环，outset 方案） ── */
 .bento-ring-wrapper {
   position: relative;
-  padding: 2px;
-  border-radius: calc(1.5rem + 3px);
 }
 .bento-ring-wrapper::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
+  inset: -1px;
+  border-radius: calc(1rem + 1px);
   background: conic-gradient(
     from var(--palace-angle),
-    #f59e0b, #ec4899, #8b5cf6, #3b82f6, #10b981, #facc15, #f59e0b
+    transparent 0deg,
+    #f59e0b 25deg,
+    #ec4899 80deg,
+    #8b5cf6 140deg,
+    #3b82f6 190deg,
+    #10b981 245deg,
+    #facc15 295deg,
+    transparent 330deg,
+    transparent 360deg
   );
   animation: palace-border-spin 3s linear infinite;
   opacity: 0;

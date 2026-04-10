@@ -351,7 +351,7 @@ export default function InspirationPalace() {
 
                 {/* AI Remix Result */}
                 {aiRemixResult && (
-                    <div className="mb-6 bg-violet-50/60 dark:bg-violet-200/20 border border-violet-200/40 dark:border-violet-400/10 rounded-xl p-4">
+                    <div className="mb-6 bg-violet-50/60 dark:bg-violet-200/20 border border-violet-200/40 dark:border-violet-400/10 rounded-lg p-4">
                         <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-600 mb-2 flex items-center gap-1">
                             <Sparkles size={14} />AI 灵感再创作
                         </p>
@@ -449,7 +449,7 @@ export default function InspirationPalace() {
                         <p className="mt-4 text-on-surface-variant text-sm font-label">加载中...</p>
                     </div>
                 ) : items.length === 0 ? (
-                    <div className="text-center py-24 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
+                    <div className="text-center py-24 bg-surface-container-low/50 rounded-lg border border-dashed border-outline-variant/30">
                         <span className="text-5xl mb-4 block">🏛</span>
                         <p className="text-on-surface-variant font-label text-lg mb-1">灵感宫殿还是空的</p>
                         <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
@@ -479,7 +479,7 @@ export default function InspirationPalace() {
                                 // 选中时外层包裹旋转彩色渐变边框
                                 <div
                                     key={item.draft.id}
-                                    className={isSelected ? 'p-[2px] rounded-[13px] palace-selected-ring shadow-lg -translate-y-0.5 transition-transform duration-200 flex flex-col' : 'rounded-xl transition-transform duration-200 flex flex-col'}
+                                    className={isSelected ? 'p-[1px] rounded-[9px] palace-selected-ring shadow-lg -translate-y-0.5 transition-transform duration-200 flex flex-col' : 'rounded-lg transition-transform duration-200 flex flex-col'}
                                 >
                                 <div
                                     onClick={() => {
@@ -493,7 +493,7 @@ export default function InspirationPalace() {
                                             handleOpen(item);
                                         }
                                     }}
-                                    className={`bg-surface-container bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-xl border-l-4 ${mStyle.leftAccent} cursor-pointer group transition-all duration-200 relative flex flex-col h-full ${
+                                    className={`bg-surface-container bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-lg border-l-4 ${mStyle.leftAccent} cursor-pointer group transition-all duration-200 relative flex flex-col h-full ${
                                         selectMode
                                             ? isSelected
                                                 ? 'border-none'
@@ -587,7 +587,7 @@ export default function InspirationPalace() {
 
             {/* 底部浮动多选操作栏 */}
             {selectMode && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 bg-surface/95 dark:bg-[#1a1715]/95 backdrop-blur border border-outline-variant/20 rounded-2xl shadow-xl text-sm font-label transition-all">
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 bg-surface/95 dark:bg-[#1a1715]/95 backdrop-blur border border-outline-variant/20 rounded-lg shadow-xl text-sm font-label transition-all">
                     <span className="text-on-surface-variant whitespace-nowrap">
                         已选 <strong className="text-on-surface">{selectedIds.size}</strong> 张
                     </span>
@@ -626,7 +626,7 @@ export default function InspirationPalace() {
 
             {previewItem && (
                 <div className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={closePreview}>
-                    <div className="w-full max-w-4xl max-h-[90vh] bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+                    <div className="w-full max-w-4xl max-h-[90vh] bg-surface border border-outline-variant/20 rounded-lg shadow-2xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15 bg-surface-container-low/60">
                             <div className="min-w-0">
                                 <p className="text-[12px] font-label uppercase tracking-widest text-outline">全文查看与编辑</p>
@@ -648,7 +648,7 @@ export default function InspirationPalace() {
                                 value={previewContent}
                                 onChange={e => setPreviewContent(e.target.value)}
                                 placeholder="正文内容..."
-                                className="w-full min-h-[48vh] bg-surface-container-low/40 border border-outline-variant/20 rounded-xl p-4 text-sm md:text-base leading-relaxed text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
+                                className="w-full min-h-[48vh] bg-surface-container-low/40 border border-outline-variant/20 rounded-lg p-4 text-sm md:text-base leading-relaxed text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
                             />
                         </div>
 

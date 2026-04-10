@@ -66,7 +66,7 @@ function CalendarHeatmap({ items }: { items: HistoryItem[] }) {
   const dayLabels = ['', '一', '', '三', '', '五', ''];
 
   return (
-    <div className="bg-surface-container p-5 rounded-xl border border-outline-variant/15 mb-6">
+    <div className="bg-surface-container p-5 rounded-lg border border-outline-variant/15 mb-6">
       <div className="flex items-center space-x-2 mb-4">
         <Calendar size={20} className="text-primary" />
         <span className="font-label text-sm font-semibold text-on-surface">写作日历</span>
@@ -398,7 +398,7 @@ export default function HistoryPage() {
 
         {/* Stats bar */}
         {history.length > 0 && (
-          <div className="flex items-center flex-wrap gap-4 mb-6 p-3 md:p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
+          <div className="flex items-center flex-wrap gap-4 mb-6 p-3 md:p-4 bg-surface-container-low/60 rounded-lg border border-outline-variant/15">
             <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
               <FileText size={20} className="text-primary" />
               <span className="font-bold text-on-surface">{stats.totalDrafts}</span>
@@ -499,7 +499,7 @@ export default function HistoryPage() {
             <p className="mt-4 text-on-surface-variant text-sm font-label">加载中...</p>
           </div>
         ) : history.length === 0 ? (
-          <div className="text-center py-24 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
+          <div className="text-center py-24 bg-surface-container-low/50 rounded-lg border border-dashed border-outline-variant/30">
             <BookOpen size={48} className="text-outline mb-4" />
             <p className="text-on-surface-variant font-label text-lg mb-1">还没有写作记录</p>
             <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
@@ -525,7 +525,7 @@ export default function HistoryPage() {
               <div
                 key={item.draft.id}
                 onClick={() => selectMode ? toggleSelect(item.draft.id) : handleOpenDraft(item)}
-                className={`bg-surface-container p-5 rounded-xl border hover:border-primary/30 cursor-pointer group transition-all duration-300 hover:-translate-y-0.5 relative flex flex-col ${
+                className={`bg-surface-container p-5 rounded-lg border hover:border-primary/30 cursor-pointer group transition-all duration-300 hover:-translate-y-0.5 relative flex flex-col ${
                   selectMode && selectedIds.has(item.draft.id) ? 'border-primary ring-2 ring-primary/20' : 'border-outline-variant/15'
                 }`}
               >
@@ -588,7 +588,7 @@ export default function HistoryPage() {
 
       {previewItem && (
         <div className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={closePreview}>
-          <div className="w-full max-w-4xl max-h-[90vh] bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-4xl max-h-[90vh] bg-surface border border-outline-variant/20 rounded-lg shadow-2xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15 bg-surface-container-low/60">
               <div className="min-w-0">
                 <p className="text-[12px] font-label uppercase tracking-widest text-outline">全文查看与编辑</p>
@@ -610,7 +610,7 @@ export default function HistoryPage() {
                 value={previewContent}
                 onChange={e => setPreviewContent(e.target.value)}
                 placeholder="正文内容..."
-                className="w-full min-h-[48vh] bg-surface-container-low/40 border border-outline-variant/20 rounded-xl p-4 text-sm md:text-base leading-relaxed text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
+                className="w-full min-h-[48vh] bg-surface-container-low/40 border border-outline-variant/20 rounded-lg p-4 text-sm md:text-base leading-relaxed text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
               />
             </div>
 

@@ -1225,12 +1225,12 @@ export default function App() {
                                 {/* 词汇灵感 — large (8 cols, 2 rows) */}
                                 <div className="col-span-2 md:col-span-8 row-span-2 bento-ring-wrapper">
                                 <button onClick={() => selectMode('words')}
-                                    className="w-full h-full glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-5 md:p-8 flex flex-col justify-between group bento-glow-amber transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
+                                    className="w-full h-full glass-panel bg-surface-container dark:bg-surface-container rounded-2xl border border-outline-variant/10 p-5 md:p-8 flex flex-col justify-between group bento-glow-amber transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
                                 >
                                     <div className="absolute -right-16 -top-16 w-56 h-56 bg-amber-400/5 dark:bg-[#ffb148]/5 blur-[80px] rounded-full group-hover:bg-amber-400/10 dark:group-hover:bg-[#ffb148]/10 transition-colors pointer-events-none"></div>
                                     <div>
                                         <div className="flex items-center gap-3 mb-4">
-                                            <span className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-[#ffb148]">
+                                            <span className="p-3 rounded-lg bg-amber-500/10 text-amber-600 dark:text-[#ffb148]">
                                                 <Dices size={30} />
                                             </span>
                                             <h2 className="font-headline text-lg md:text-2xl text-on-surface">词汇灵感</h2>
@@ -1248,11 +1248,11 @@ export default function App() {
                                 {/* 梦境记录 — small (4 cols, 1 row) */}
                                 <div className="col-span-1 md:col-span-4 row-span-1 bento-ring-wrapper">
                                 <button onClick={() => selectMode('dream')}
-                                    className="w-full h-full glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-violet transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
+                                    className="w-full h-full glass-panel bg-surface-container dark:bg-surface-container rounded-2xl border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-violet transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
                                 >
                                     <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-violet-400/5 dark:bg-[#ba9eff]/5 blur-[60px] rounded-full group-hover:bg-violet-400/10 dark:group-hover:bg-[#ba9eff]/10 transition-colors pointer-events-none"></div>
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="p-2 rounded-xl bg-violet-500/10 text-violet-600 dark:text-[#ba9eff]">
+                                        <span className="p-2 rounded-lg bg-violet-500/10 text-violet-600 dark:text-[#ba9eff]">
                                             <MoonStar size={22} />
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">梦境记录</h2>
@@ -1264,11 +1264,11 @@ export default function App() {
                                 {/* 角色描写 — small (4 cols, 1 row) */}
                                 <div className="col-span-1 md:col-span-4 row-span-1 bento-ring-wrapper">
                                 <button onClick={() => selectMode('character')}
-                                    className="w-full h-full glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-fuchsia transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
+                                    className="w-full h-full glass-panel bg-surface-container dark:bg-surface-container rounded-2xl border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-fuchsia transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
                                 >
                                     <div className="absolute -left-8 -top-8 w-36 h-36 bg-fuchsia-400/5 dark:bg-fuchsia-300/5 blur-[60px] rounded-full group-hover:bg-fuchsia-400/10 transition-colors pointer-events-none"></div>
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="p-2 rounded-xl bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300">
+                                        <span className="p-2 rounded-lg bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300">
                                             <User size={22} />
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">角色描写</h2>
@@ -1280,11 +1280,11 @@ export default function App() {
                                 {/* 自由发挥 — medium (5 cols, 1 row) */}
                                 <div className="col-span-1 md:col-span-5 row-span-1 bento-ring-wrapper">
                                 <button onClick={() => selectMode('free')}
-                                    className="w-full h-full glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-green transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
+                                    className="w-full h-full glass-panel bg-surface-container dark:bg-surface-container rounded-2xl border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-green transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
                                 >
                                     <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-emerald-400/5 dark:bg-[#69f6b8]/5 blur-[80px] rounded-full group-hover:bg-emerald-400/10 dark:group-hover:bg-[#69f6b8]/10 transition-colors pointer-events-none"></div>
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#69f6b8]">
+                                        <span className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-[#69f6b8]">
                                             <PencilLine size={22} />
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">自由发挥</h2>
@@ -1296,13 +1296,13 @@ export default function App() {
                                 {/* 场景描写 — medium (4 cols, 1 row) */}
                                 <div className="col-span-1 md:col-span-4 row-span-1 bento-ring-wrapper">
                                 <button onClick={() => selectMode('scene')}
-                                    className="w-full h-full glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-blue transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
+                                    className="w-full h-full glass-panel bg-surface-container dark:bg-surface-container rounded-2xl border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-blue transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
                                 >
                                     <div className="absolute right-0 top-0 w-full h-full pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity">
-                                        <div className="w-full h-full bg-gradient-to-br from-blue-400/20 to-transparent rounded-[1.5rem]"></div>
+                                        <div className="w-full h-full bg-gradient-to-br from-blue-400/20 to-transparent rounded-2xl"></div>
                                     </div>
                                     <div className="flex items-center gap-2 mb-2 relative">
-                                        <span className="p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-300">
+                                        <span className="p-2 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-300">
                                             <Mountain size={22} />
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">场景描写</h2>
@@ -1314,11 +1314,11 @@ export default function App() {
                                 {/* 写作挑战 — medium (3 cols, 1 row) */}
                                 <div className="col-span-2 md:col-span-3 row-span-1 bento-ring-wrapper">
                                 <button onClick={() => selectMode('challenge')}
-                                    className="w-full h-full glass-panel bg-surface-container/60 dark:bg-surface-container/60 rounded-[1.5rem] border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-rose transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
+                                    className="w-full h-full glass-panel bg-surface-container dark:bg-surface-container rounded-2xl border border-outline-variant/10 p-4 md:p-6 flex flex-col justify-between group bento-glow-rose transition-all duration-500 overflow-hidden relative z-[1] text-left active:scale-[0.99]"
                                 >
                                     <div className="absolute -right-8 -top-8 w-36 h-36 bg-rose-400/5 dark:bg-rose-300/5 blur-[60px] rounded-full group-hover:bg-rose-400/10 transition-colors pointer-events-none"></div>
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-300">
+                                        <span className="p-2 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-300">
                                             <CircleHelp size={22} />
                                         </span>
                                         <h2 className="font-headline text-lg text-on-surface">写作挑战</h2>
@@ -1410,7 +1410,7 @@ export default function App() {
                                                 <button
                                                     onClick={handleAiSceneDeepDive}
                                                     disabled={aiSceneLoading || !store.currentScene}
-                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-lg text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
                                                 >
                                                     {aiSceneLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                                                     <span>{aiSceneLoading ? '生成中…' : 'AI 补充感官细节'}</span>
@@ -1418,13 +1418,13 @@ export default function App() {
                                                 <button
                                                     onClick={handleAiScene}
                                                     disabled={aiSceneLoading}
-                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-lg text-xs font-label text-blue-700 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-500/10 transition-colors disabled:opacity-50"
                                                 >
                                                     <Bot size={16} />
                                                     <span>AI 生成新场景</span>
                                                 </button>
                                                 {aiSceneExtra && (
-                                                    <div className="bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl p-3">
+                                                    <div className="bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-lg p-3">
                                                         <p className="text-[12px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-600 mb-1.5 flex items-center gap-1">
                                                             <Sparkles size={14} />感官引导
                                                         </p>
@@ -1445,7 +1445,7 @@ export default function App() {
                                         <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">记录你的梦</p>
                                     </div>
                                     <div className="flex-1 space-y-4">
-                                        <div className="bg-stone-50/80 dark:bg-stone-500/10 border border-violet-200/60 dark:border-violet-400/15 rounded-xl p-4">
+                                        <div className="bg-stone-50/80 dark:bg-stone-500/10 border border-violet-200/60 dark:border-violet-400/15 rounded-lg p-4">
                                             <p className="font-headline text-sm font-medium text-violet-600 dark:text-violet-500 mb-2">让梦指引你</p>
                                             <ul className="text-xs text-violet-600/70 dark:text-violet-600/80 space-y-1.5 leading-relaxed">
                                             <li>梦能够到达我们的理性到达不了的地方。</li>
@@ -1468,7 +1468,7 @@ export default function App() {
                                         <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">想到什么写什么</p>
                                     </div>
                                     <div className="flex-1 space-y-4">
-                                        <div className="bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-400/15 rounded-xl p-4">
+                                        <div className="bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-400/15 rounded-lg p-4">
                                             <p className="font-headline text-sm font-medium text-emerald-900 dark:text-emerald-600 mb-2">✍ 自由模式</p>
                                             <p className="text-xs text-emerald-800/70 dark:text-emerald-600/70 leading-relaxed">没有提示、没有限制。把脑子里的想法直接咀尾到纸上。想写什么就写什么。</p>
                                         </div>
@@ -1483,7 +1483,7 @@ export default function App() {
                                         <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant mt-1">你问我不一定答</p>
                                     </div>
                                     <div className="flex-1 flex flex-col space-y-4">
-                                        <div className="bg-rose-50/80 dark:bg-rose-500/10 border border-rose-200/60 dark:border-rose-400/15 rounded-xl p-4">
+                                        <div className="bg-rose-50/80 dark:bg-rose-500/10 border border-rose-200/60 dark:border-rose-400/15 rounded-lg p-4">
                                             <p className="font-headline text-sm font-medium text-rose-900 dark:text-rose-500 mb-2">💭 练习提示</p>
                                             <ul className="text-xs text-rose-800/70 dark:text-rose-600/70 space-y-1.5 leading-relaxed">
                                                 <li>• 不必写出「标准答案」</li>
@@ -1647,7 +1647,7 @@ export default function App() {
                                     </div>
 
                                     {store.currentWords.length > 0 && (
-                                        <div className={`flex items-center space-x-2 px-4 py-3 rounded-xl border ${store.drawnGenre ? (genreStyleMap[store.drawnGenre]?.bg ?? 'bg-stone-100 border-stone-200') : 'bg-surface-container-high border-outline-variant/30'}`}>
+                                        <div className={`flex items-center space-x-2 px-4 py-3 rounded-lg border ${store.drawnGenre ? (genreStyleMap[store.drawnGenre]?.bg ?? 'bg-stone-100 border-stone-200') : 'bg-surface-container-high border-outline-variant/30'}`}>
                                             {(() => {
                                                 const GenreIcon = (store.drawnGenre && genreIconMap[store.drawnGenre]) || Sparkles;
                                                 return <GenreIcon size={20} />;
@@ -1667,7 +1667,7 @@ export default function App() {
 
                                     {/* AI 写作引导 */}
                                     {store.aiEnabled && store.currentWords.length > 0 && (
-                                        <div className="bg-amber-50/60 dark:bg-amber-500/5 border border-amber-200/40 dark:border-amber-400/10 rounded-xl p-3">
+                                        <div className="bg-amber-50/60 dark:bg-amber-500/5 border border-amber-200/40 dark:border-amber-400/10 rounded-lg p-3">
                                             {aiWordHint ? (
                                                 <div>
                                                     <p className="text-[12px] font-label uppercase tracking-widest text-amber-600 dark:text-amber-500 mb-1.5 flex items-center gap-1">
@@ -1704,7 +1704,7 @@ export default function App() {
                                             const cat = w.category || w.genres?.[0] || '意象';
                                             const catStyle = CATEGORY_STYLE[cat] ?? CATEGORY_STYLE['意象'];
                                             return (
-                                                <div key={`${w.id}_${i}`} className={`${catStyle.glow} bg-surface-container p-6 rounded-2xl border border-outline-variant/10 custom-shadow dark:shadow-none relative overflow-hidden group transition-all hover:bg-surface-container-high`}>
+                                                <div key={`${w.id}_${i}`} className={`${catStyle.glow} bg-surface-container p-6 rounded-lg border border-outline-variant/10 custom-shadow dark:shadow-none relative overflow-hidden group transition-all hover:bg-surface-container-high`}>
                                                     <div className="flex justify-between items-start mb-4 relative z-10">
                                                         <span className={`px-2 py-1 text-[12px] font-bold font-label rounded-lg tracking-wider uppercase ${catStyle.badge}`}>
                                                             {w.category || w.genres?.[0] || '意象'}
@@ -1738,7 +1738,7 @@ export default function App() {
                                         <h3 className="font-headline text-2xl text-on-surface">描写挑战</h3>
                                     </div>
 
-                                    <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
+                                    <div className="bg-surface-container p-6 rounded-lg border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                                         <Mountain size={34} className="text-blue-400 dark:text-[#69a8f6] mb-4 block" />
                                         <div className="flex items-start justify-between gap-3 mb-3">
                                             <h4 className="font-headline text-xl font-bold text-stone-900 dark:text-on-surface">{store.currentScene.title}</h4>
@@ -1774,7 +1774,7 @@ export default function App() {
                                         <h3 className="font-headline text-2xl text-on-surface">习作题目</h3>
                                     </div>
 
-                                    <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
+                                    <div className="bg-surface-container p-6 rounded-lg border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                                         <CircleHelp size={34} className="text-rose-400 dark:text-rose-300 mb-4 block" />
                                         <div className="flex items-start justify-between gap-3">
                                             <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
@@ -1795,7 +1795,7 @@ export default function App() {
                                         <button
                                             onClick={handleAiChallenge}
                                             disabled={aiChallengeLoading}
-                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50/60 dark:bg-rose-500/5 border border-rose-200/40 dark:border-rose-400/10 rounded-xl text-xs font-label text-rose-700 dark:text-rose-400 hover:bg-rose-100/60 dark:hover:bg-rose-500/10 transition-colors disabled:opacity-50"
+                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50/60 dark:bg-rose-500/5 border border-rose-200/40 dark:border-rose-400/10 rounded-lg text-xs font-label text-rose-700 dark:text-rose-400 hover:bg-rose-100/60 dark:hover:bg-rose-500/10 transition-colors disabled:opacity-50"
                                         >
                                             {aiChallengeLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                                             <span>{aiChallengeLoading ? '出题中…' : 'AI 出一道题'}</span>
@@ -1835,7 +1835,7 @@ export default function App() {
                                             </div>
                                         )}
 
-                                        <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
+                                        <div className="bg-surface-container p-6 rounded-lg border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
                                             <User size={30} className="text-fuchsia-400 dark:text-fuchsia-300 mb-4 block" />
                                             <div className="flex items-start justify-between gap-3">
                                                 <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
@@ -1852,7 +1852,7 @@ export default function App() {
                                                 <button
                                                     onClick={handleAiCharacterDeep}
                                                     disabled={aiCharacterLoading}
-                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-lg text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
                                                 >
                                                     {aiCharacterLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                                                     <span>{aiCharacterLoading ? '思考中…' : 'AI 深挖角色'}</span>
@@ -1860,13 +1860,13 @@ export default function App() {
                                                 <button
                                                     onClick={handleAiCharacterGenerate}
                                                     disabled={aiCharacterGenLoading}
-                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-lg text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
                                                 >
                                                     {aiCharacterGenLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                                                     <span>{aiCharacterGenLoading ? '出题中…' : 'AI 出一道角色题'}</span>
                                                 </button>
                                                 {aiCharacterExtra && (
-                                                    <div className="bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl p-3">
+                                                    <div className="bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-lg p-3">
                                                         <p className="text-[12px] font-label uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-600 mb-1.5 flex items-center gap-1">
                                                             <Sparkles size={14} />AI 追问
                                                         </p>
@@ -1960,7 +1960,7 @@ export default function App() {
 
                                     {/* AI 写后反馈面板 */}
                                     {aiFeedback && (
-                                        <div className="mt-6 bg-emerald-50/70 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-2xl p-5">
+                                        <div className="mt-6 bg-emerald-50/70 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-lg p-5">
                                             <div className="flex items-center justify-between mb-3">
                                                 <p className="text-[12px] font-label uppercase tracking-widest text-emerald-600 dark:text-emerald-600 flex items-center gap-1">
                                                     <MessageSquareText size={15} />AI 写作反馈
@@ -1975,7 +1975,7 @@ export default function App() {
 
                                     {/* AI 解梦面板 */}
                                     {aiDreamInterpret && (
-                                        <div className="mt-6 bg-violet-50/70 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-2xl p-5">
+                                        <div className="mt-6 bg-violet-50/70 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-lg p-5">
                                             <div className="flex items-center justify-between mb-3">
                                                 <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-600 flex items-center gap-1">
                                                     <MoonStar size={15} />AI 解梦
@@ -2072,7 +2072,7 @@ export default function App() {
             {/* AI Settings Modal */}
             {showAiSettings && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowAiSettings(false)}>
-                    <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                    <div className="bg-surface border border-outline-variant/20 rounded-lg shadow-2xl w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex items-center space-x-2">
                                 <Bot size={26} className="text-primary" />
@@ -2263,7 +2263,7 @@ export default function App() {
             {/* Cloud Login Modal */}
             {showCloudLogin && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowCloudLogin(false)}>
-                    <div className="bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                    <div className="bg-surface border border-outline-variant/20 rounded-lg shadow-2xl w-full max-w-sm mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex items-center space-x-2">
                                 <Cloud size={26} className="text-primary" />
@@ -2276,7 +2276,7 @@ export default function App() {
 
                         {store.cloudUser ? (
                             <div className="space-y-4">
-                                <div className="flex items-center gap-3 p-3 bg-emerald-50/60 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-xl">
+                                <div className="flex items-center gap-3 p-3 bg-emerald-50/60 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-lg">
                                     <CheckCircle2 size={22} className="text-emerald-500" />
                                     <div>
                                         <p className="text-sm font-label font-medium text-on-surface">已登录</p>
@@ -2286,14 +2286,14 @@ export default function App() {
                                 <button
                                     onClick={async () => { await syncFromCloud(store.cloudUser!.id); showToast('✅ 同步完成'); }}
                                     disabled={cloudSyncing}
-                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-label font-medium hover:bg-primary/15 transition-colors disabled:opacity-50"
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg text-sm font-label font-medium hover:bg-primary/15 transition-colors disabled:opacity-50"
                                 >
                                     {cloudSyncing ? <LoaderCircle size={20} className="animate-spin" /> : <RefreshCw size={20} />}
                                     {cloudSyncing ? '同步中…' : '立即从云端同步'}
                                 </button>
                                 <button
                                     onClick={async () => { await signOut(); showToast('已退出登录'); setShowCloudLogin(false); }}
-                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-outline-variant/30 rounded-xl text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-outline-variant/30 rounded-lg text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
                                 >
                                     <LogOut size={20} />退出登录
                                 </button>
@@ -2309,13 +2309,13 @@ export default function App() {
                                 </div>
                                 <button
                                     onClick={() => setShowCloudLogin(false)}
-                                    className="w-full py-2.5 border border-outline-variant/30 rounded-xl text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
+                                    className="w-full py-2.5 border border-outline-variant/30 rounded-lg text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
                                 >关闭</button>
                             </div>
                         ) : (
                             <div className="space-y-4">
                                 {/* 模式切换 */}
-                                <div className="flex rounded-xl overflow-hidden border border-outline-variant/30">
+                                <div className="flex rounded-lg overflow-hidden border border-outline-variant/30">
                                     <button
                                         onClick={() => { setCloudAuthMode('login'); setCloudAuthError(''); }}
                                         className={`flex-1 py-2 text-sm font-label font-medium transition-colors ${cloudAuthMode === 'login' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
@@ -2328,7 +2328,7 @@ export default function App() {
 
                                 {/* 注册说明 */}
                                 {cloudAuthMode === 'register' && (
-                                    <div className="flex gap-2.5 p-3 bg-primary/5 border border-primary/15 rounded-xl">
+                                    <div className="flex gap-2.5 p-3 bg-primary/5 border border-primary/15 rounded-lg">
                                         <Info size={18} className="text-primary mt-0.5 shrink-0" />
                                         <p className="text-xs text-on-surface-variant font-label leading-relaxed">
                                             直接填写<strong className="text-on-surface">任意邮箱 + 自定义密码</strong>即可注册，无需邮箱验证。注册后即登录，文章数据加密存储于云端，跨设备同步。
@@ -2341,7 +2341,7 @@ export default function App() {
                                     placeholder="邮箱地址"
                                     value={cloudEmail}
                                     onChange={e => setCloudEmail(e.target.value)}
-                                    className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                                    className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                                 />
                                 <input
                                     type="password"
@@ -2349,7 +2349,7 @@ export default function App() {
                                     value={cloudPassword}
                                     onChange={e => setCloudPassword(e.target.value)}
                                     onKeyDown={e => e.key === 'Enter' && handleCloudAuth()}
-                                    className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                                    className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                                 />
                                 {cloudAuthError && (
                                     <p className="text-xs text-red-500 font-label">{cloudAuthError}</p>
@@ -2357,7 +2357,7 @@ export default function App() {
                                 <button
                                     onClick={handleCloudAuth}
                                     disabled={cloudAuthLoading || !cloudEmail || !cloudPassword}
-                                    className="w-full py-2.5 bg-primary text-on-primary rounded-xl text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
+                                    className="w-full py-2.5 bg-primary text-on-primary rounded-lg text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
                                 >
                                     {cloudAuthLoading ? '处理中…' : cloudAuthMode === 'login' ? '登录' : '注册并登录'}
                                 </button>

@@ -173,7 +173,7 @@ export default function FavoritesPage() {
 
         {/* Stats bar */}
         {totalFavorites > 0 && (
-          <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-xl border border-outline-variant/15">
+          <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-lg border border-outline-variant/15">
             <div className="flex items-center space-x-2 text-sm font-label text-on-surface-variant">
               <Library size={20} className="text-amber-500" />
               <span className="font-bold text-on-surface">{totalFavorites}</span>
@@ -254,7 +254,7 @@ export default function FavoritesPage() {
             <p className="mt-4 text-on-surface-variant text-sm font-label">加载中...</p>
           </div>
         ) : totalFavorites === 0 ? (
-          <div className="text-center py-24 bg-surface-container-low/50 rounded-2xl border border-dashed border-outline-variant/30">
+          <div className="text-center py-24 bg-surface-container-low/50 rounded-lg border border-dashed border-outline-variant/30">
             <Sparkles size={48} className="text-outline mb-4" />
             <p className="text-on-surface-variant font-label text-lg mb-1">空空如也</p>
             <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
@@ -284,7 +284,7 @@ export default function FavoritesPage() {
                     const meta = moduleMeta[item.module];
                     const ModuleIcon = meta.Icon;
                     return (
-                      <div key={item.id} className="bg-surface-container p-5 rounded-xl border border-outline-variant/15 hover:border-amber-500/30 transition-all duration-300 hover:-translate-y-0.5 flex flex-col relative">
+                      <div key={item.id} className="bg-surface-container p-5 rounded-lg border border-outline-variant/15 hover:border-amber-500/30 transition-all duration-300 hover:-translate-y-0.5 flex flex-col relative">
                         <div className="text-xs font-label text-outline mb-3 flex items-center justify-between">
                           <span>{new Date(item.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'numeric', day: 'numeric' })}</span>
                           <button onClick={() => handleUnfavoritePrompt(item.id)} className="text-amber-500 hover:text-outline transition-colors" title="取消收藏">
@@ -328,7 +328,7 @@ export default function FavoritesPage() {
                   {displayedWordSets.map((ws) => (
                     <div
                       key={ws.id}
-                      className={`bg-surface-container p-5 rounded-xl border hover:border-amber-500/30 group transition-all duration-300 hover:-translate-y-0.5 flex flex-col relative ${
+                      className={`bg-surface-container p-5 rounded-lg border hover:border-amber-500/30 group transition-all duration-300 hover:-translate-y-0.5 flex flex-col relative ${
                         selectMode && selectedIds.has(ws.id) ? 'border-amber-500 dark:border-primary ring-2 ring-amber-200 dark:ring-primary/20' : 'border-outline-variant/15'
                       }`}
                       onClick={() => selectMode && toggleSelect(ws.id)}
