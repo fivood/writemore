@@ -11,6 +11,13 @@ All notable changes to this project will be documented in this file.
 - **角色描写 AI 出题**：新增 `buildCharacterGeneratePrompt` prompt 函数，按当前维度（内心/关系/声音/身体/历史/边缘）和风格生成新角色引导题，附有各维度 few-shot 范例；新增 `handleAiCharacterGenerate` 函数，生成后直接存入本地 `characterPrompts` 题库并切换到首条新题。
 - **角色面板新增"AI 出一道角色题"按钮**：与现有"AI 深挖角色"并排，支持加载态。
 
+### Changed (UI)
+
+- **暗色模式 AI 面板文字对比度修复**：5 个 AI 信息面板（词汇引导/场景感官/角色追问/写后反馈/AI 解梦）的体文和标签颜色，从反转调色板中映射为深色的 `*-200/*-400` 档次，统一改为在暗背景下映射为亮色的 `*-600/*-700` 档次，彻底消除低对比度问题。
+- **浅色模式次要文字层次**：`on-surface-variant` 从 `#3d3f3c`（与主文字几乎等深）调整为 `#6e706b`，让次级内容（说明文字、元数据、侧边栏标签）在视觉上与主文字形成清晰的轻重之分，同时保持 WCAG AA 合规。
+- **MDEditor 浅色模式工具栏**：新增 `.w-md-editor-toolbar` 浅色覆盖样式，工具栏背景匹配暖奶油色调（`rgba(240,236,229,0.65)`），按钮颜色与 `on-surface-variant` 一致，hover 状态与全局交互色系统统一。
+- **Toast 动画**：从 `animate-bounce`（抖动感强，打断专注）改为自定义 `animate-toast-in`（0.2s ease-out 淡入上移），出现时更轻柔。
+
 ## [0.1.7] - 2026-03-27
 
 ### 0.1.7 Changed

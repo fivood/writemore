@@ -1206,10 +1206,10 @@ export default function App() {
                                                 </button>
                                                 {aiSceneExtra && (
                                                     <div className="bg-blue-50/60 dark:bg-blue-500/5 border border-blue-200/40 dark:border-blue-400/10 rounded-xl p-3">
-                                                        <p className="text-[12px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-1.5 flex items-center gap-1">
+                                                        <p className="text-[12px] font-label uppercase tracking-widest text-blue-600 dark:text-blue-600 mb-1.5 flex items-center gap-1">
                                                             <Sparkles size={14} />感官引导
                                                         </p>
-                                                        <p className="text-sm text-blue-900 dark:text-blue-200 leading-relaxed whitespace-pre-line">{aiSceneExtra}</p>
+                                                        <p className="text-sm text-blue-900 dark:text-blue-700 leading-relaxed whitespace-pre-line">{aiSceneExtra}</p>
                                                     </div>
                                                 )}
                                             </>
@@ -1451,10 +1451,10 @@ export default function App() {
                                         <div className="bg-amber-50/60 dark:bg-amber-500/5 border border-amber-200/40 dark:border-amber-400/10 rounded-xl p-3">
                                             {aiWordHint ? (
                                                 <div>
-                                                    <p className="text-[12px] font-label uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1.5 flex items-center gap-1">
+                                                    <p className="text-[12px] font-label uppercase tracking-widest text-amber-600 dark:text-amber-500 mb-1.5 flex items-center gap-1">
                                                         <Sparkles size={14} />AI 灵感引导
                                                     </p>
-                                                    <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">{aiWordHint}</p>
+                                                    <p className="text-sm text-amber-900 dark:text-amber-600 leading-relaxed">{aiWordHint}</p>
                                                 </div>
                                             ) : (
                                                 <button
@@ -1648,10 +1648,10 @@ export default function App() {
                                                 </button>
                                                 {aiCharacterExtra && (
                                                     <div className="bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-xl p-3">
-                                                        <p className="text-[12px] font-label uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-400 mb-1.5 flex items-center gap-1">
+                                                        <p className="text-[12px] font-label uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-600 mb-1.5 flex items-center gap-1">
                                                             <Sparkles size={14} />AI 追问
                                                         </p>
-                                                        <p className="text-sm text-fuchsia-900 dark:text-fuchsia-200 leading-relaxed">{aiCharacterExtra}</p>
+                                                        <p className="text-sm text-fuchsia-900 dark:text-fuchsia-700 leading-relaxed">{aiCharacterExtra}</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -1743,14 +1743,14 @@ export default function App() {
                                     {aiFeedback && (
                                         <div className="mt-6 bg-emerald-50/70 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-2xl p-5">
                                             <div className="flex items-center justify-between mb-3">
-                                                <p className="text-[12px] font-label uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                                <p className="text-[12px] font-label uppercase tracking-widest text-emerald-600 dark:text-emerald-600 flex items-center gap-1">
                                                     <MessageSquareText size={15} />AI 写作反馈
                                                 </p>
                                                 <button onClick={() => setAiFeedback('')} className="text-emerald-500/60 hover:text-emerald-500 transition-colors">
                                                     <X size={18} />
                                                 </button>
                                             </div>
-                                            <p className="text-sm text-emerald-900 dark:text-emerald-700/70 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
+                                            <p className="text-sm text-emerald-900 dark:text-emerald-700 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
                                         </div>
                                     )}
 
@@ -1758,14 +1758,14 @@ export default function App() {
                                     {aiDreamInterpret && (
                                         <div className="mt-6 bg-violet-50/70 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-2xl p-5">
                                             <div className="flex items-center justify-between mb-3">
-                                                <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-400 flex items-center gap-1">
+                                                <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-600 flex items-center gap-1">
                                                     <MoonStar size={15} />AI 解梦
                                                 </p>
                                                 <button onClick={() => setAiDreamInterpret('')} className="text-violet-500/60 hover:text-violet-500 transition-colors">
                                                     <X size={18} />
                                                 </button>
                                             </div>
-                                            <p className="text-sm text-violet-900 dark:text-violet-300/80 leading-relaxed whitespace-pre-line">{aiDreamInterpret}</p>
+                                            <p className="text-sm text-violet-900 dark:text-violet-700 leading-relaxed whitespace-pre-line">{aiDreamInterpret}</p>
                                         </div>
                                     )}
                                 </div>
@@ -1845,7 +1845,7 @@ export default function App() {
 
             {/* Toast */}
             {toast && (
-                <div className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-surface-container-high text-on-surface border border-outline/20 shadow-lg px-6 py-3 rounded-full font-label text-sm z-[100] animate-bounce">
+                <div className="fixed bottom-16 left-1/2 -translate-x-1/2 bg-surface-container-high text-on-surface border border-outline/20 shadow-lg px-6 py-3 rounded-full font-label text-sm z-[100] animate-toast-in">
                     {toast}
                 </div>
             )}
