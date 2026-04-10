@@ -43,6 +43,10 @@ export default function App() {
     const [cloudAuthError, setCloudAuthError] = useState('');
     const [cloudSyncing, setCloudSyncing] = useState(false);
     const [updateBanner, setUpdateBanner] = useState<{ version: string; url: string } | null>(null);
+    const [updateDownloading, setUpdateDownloading] = useState(false);
+    const [updateProgress, setUpdateProgress] = useState(0);
+    const [updateInstalled, setUpdateInstalled] = useState(false);
+    const updateObjRef = useRef<any>(null);
     const [aiWordHint, setAiWordHint] = useState('');
     const [aiWordHintLoading, setAiWordHintLoading] = useState(false);
     const [aiSceneExtra, setAiSceneExtra] = useState('');
@@ -267,26 +271,46 @@ export default function App() {
         }
     }
 
-    // 版本更新检测（每天检查一次）
+    // 版本更新检测
     useEffect(() => {
-        const CHECK_KEY = 'update_last_check';
-        const last = localStorage.getItem(CHECK_KEY);
-        const today = new Date().toISOString().slice(0, 10);
-        if (last === today) return;
-        if (!GITHUB_REPO || GITHUB_REPO.startsWith('your-')) return;
-        fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`, {
-            headers: { Accept: 'application/vnd.github+json' },
-        })
-            .then(r => r.ok ? r.json() : null)
-            .then(data => {
-                if (!data) return;
-                localStorage.setItem(CHECK_KEY, today);
-                const latest = (data.tag_name as string).replace(/^v/, '');
-                if (latest !== APP_VERSION) {
-                    setUpdateBanner({ version: data.tag_name, url: data.html_url });
+        const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+
+        if (isTauri) {
+            // Tauri 桌面端：使用插件直接下载安装，3s 后静默检查
+            const timer = setTimeout(async () => {
+                try {
+                    const { check } = await import('@tauri-apps/plugin-updater');
+                    const update = await check();
+                    if (update?.available) {
+                        updateObjRef.current = update;
+                        setUpdateBanner({ version: update.version, url: '' });
+                    }
+                } catch {
+                    // 离线或网络错误，静默忽略
                 }
+            }, 3000);
+            return () => clearTimeout(timer);
+        } else {
+            // Web 版：GitHub API 检查（每天一次），跳转到 Release 页面
+            const CHECK_KEY = 'update_last_check';
+            const last = localStorage.getItem(CHECK_KEY);
+            const today = new Date().toISOString().slice(0, 10);
+            if (last === today) return;
+            if (!GITHUB_REPO || GITHUB_REPO.startsWith('your-')) return;
+            fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`, {
+                headers: { Accept: 'application/vnd.github+json' },
             })
-            .catch(() => {/* 离线时静默失败 */ });
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    if (!data) return;
+                    localStorage.setItem(CHECK_KEY, today);
+                    const latest = (data.tag_name as string).replace(/^v/, '');
+                    if (latest !== APP_VERSION) {
+                        setUpdateBanner({ version: data.tag_name, url: data.html_url });
+                    }
+                })
+                .catch(() => {/* 离线时静默失败 */ });
+        }
     }, []);
 
     // Timer
@@ -691,6 +715,39 @@ export default function App() {
         }
     }
 
+    async function handleTauriUpdate() {
+        if (!updateObjRef.current) return;
+        setUpdateDownloading(true);
+        setUpdateProgress(0);
+        try {
+            let downloaded = 0;
+            let total = 0;
+            await updateObjRef.current.downloadAndInstall((event: { event: string; data: { contentLength?: number; chunkLength?: number } }) => {
+                if (event.event === 'Started') {
+                    total = event.data.contentLength ?? 0;
+                } else if (event.event === 'Progress') {
+                    downloaded += event.data.chunkLength ?? 0;
+                    if (total > 0) setUpdateProgress(Math.round(downloaded / total * 100));
+                } else if (event.event === 'Finished') {
+                    setUpdateInstalled(true);
+                    setUpdateDownloading(false);
+                }
+            });
+        } catch {
+            showToast('更新下载失败，请前往 GitHub 手动下载');
+            setUpdateDownloading(false);
+        }
+    }
+
+    async function handleTauriRelaunch() {
+        try {
+            const { relaunch } = await import('@tauri-apps/plugin-process');
+            await relaunch();
+        } catch {
+            showToast('请手动重启应用以完成更新');
+        }
+    }
+
     async function handleAiCharacterGenerate() {
         if (!store.aiEnabled) return;
         setAiCharacterGenLoading(true);
@@ -989,21 +1046,57 @@ export default function App() {
 
             {/* 更新横幅 */}
             {updateBanner && (
-                <div className="fixed left-0 right-0 z-40 flex items-center justify-between px-6 py-2 bg-primary text-on-primary text-xs font-label" style={{ top: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
-                    <span className="flex items-center gap-1.5">
-                        <Info size={16} />
-                        新版本 <strong>{updateBanner.version}</strong> 已发布！
-                    </span>
-                    <div className="flex items-center gap-3">
-                        <a
-                            href={updateBanner.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline underline-offset-2 hover:opacity-80"
-                        >查看更新内容</a>
-                        <button onClick={() => setUpdateBanner(null)} className="opacity-70 hover:opacity-100 transition-opacity">
-                            <X size={18} />
-                        </button>
+                <div className="fixed left-0 right-0 z-40 bg-primary text-on-primary text-xs font-label" style={{ top: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
+                    {/* 进度条（下载中时显示） */}
+                    {updateDownloading && (
+                        <div className="h-0.5 bg-on-primary/20">
+                            <div
+                                className="h-full bg-on-primary transition-all duration-300"
+                                style={{ width: `${updateProgress}%` }}
+                            />
+                        </div>
+                    )}
+                    <div className="flex items-center justify-between px-6 py-2">
+                        <span className="flex items-center gap-1.5">
+                            <Info size={16} />
+                            新版本 <strong>{updateBanner.version}</strong> 已发布！
+                        </span>
+                        <div className="flex items-center gap-3">
+                            {updateObjRef.current ? (
+                                /* Tauri 桌面端：下载安装 */
+                                updateInstalled ? (
+                                    <button
+                                        onClick={handleTauriRelaunch}
+                                        className="flex items-center gap-1 font-semibold underline underline-offset-2 hover:opacity-80"
+                                    >
+                                        <RefreshCw size={14} /> 重启以完成更新
+                                    </button>
+                                ) : updateDownloading ? (
+                                    <span className="flex items-center gap-1 opacity-80">
+                                        <LoaderCircle size={14} className="animate-spin" />
+                                        {updateProgress > 0 ? `${updateProgress}%` : '准备下载…'}
+                                    </span>
+                                ) : (
+                                    <button
+                                        onClick={handleTauriUpdate}
+                                        className="flex items-center gap-1 font-semibold underline underline-offset-2 hover:opacity-80"
+                                    >
+                                        <Download size={14} /> 立即下载安装
+                                    </button>
+                                )
+                            ) : (
+                                /* Web 版：跳转 GitHub */
+                                <a
+                                    href={updateBanner.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline underline-offset-2 hover:opacity-80"
+                                >查看更新内容</a>
+                            )}
+                            <button onClick={() => setUpdateBanner(null)} className="opacity-70 hover:opacity-100 transition-opacity">
+                                <X size={18} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

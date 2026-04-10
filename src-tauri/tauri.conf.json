@@ -35,5 +35,12 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDhGOTM1RTc3NzY4NjE2OTkKUldTWkZvWjJkMTZUajYxTXJtN2NucjVhNkUrRWdiMXlYdWIwaWd3Z281cUYwTmVKWk5IdVE3dzQK",
+      "endpoints": ["https://github.com/fivood/writemore/releases/latest/download/latest.json"],
+      "dialog": false
+    }
   }
 }
