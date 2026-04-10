@@ -22,7 +22,7 @@ import FavoritesPage from './components/FavoritesPage';
 import LibraryPage from './components/LibraryPage';
 import InspirationPalace from './components/InspirationPalace';
 import { API_PRESETS, testConnection, chatCompletion, chatCompletionStream } from './services/ai';
-import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt } from './services/prompts';
+import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt, buildDreamInterpretationPrompt } from './services/prompts';
 import { supabase, signIn, signUp, signOut, pushDraft, pullDrafts, pushWordSet, pullWordSets, SUPABASE_ENABLED } from './services/supabase';
 
 export default function App() {
@@ -53,6 +53,8 @@ export default function App() {
     const [aiContinueLoading, setAiContinueLoading] = useState(false);
     const [aiFeedback, setAiFeedback] = useState('');
     const [aiFeedbackLoading, setAiFeedbackLoading] = useState(false);
+    const [aiDreamInterpret, setAiDreamInterpret] = useState('');
+    const [aiDreamInterpretLoading, setAiDreamInterpretLoading] = useState(false);
     const editorRef = useRef<HTMLTextAreaElement>(null);
     const isSavingRef = useRef(false);
     // Incremented whenever a new draw/mode-switch session begins, so that an
@@ -320,6 +322,7 @@ export default function App() {
         setAiSceneExtra('');
         setAiCharacterExtra('');
         setAiFeedback('');
+        setAiDreamInterpret('');
     }
 
     function mergeAiFeedbackIntoContent(content: string, feedback: string) {
@@ -538,7 +541,8 @@ export default function App() {
                 store.setCurrentDraftId(draftId);
             }
             showToast(`💾 已保存 (${contentToSave.replace(/\s/g, '').length}字)`);
-            refreshTodayWords();
+            // 传入本次保存得到的 draftId，避免闭包读到过时的 currentDraftId 导致双重计数
+            refreshTodayWords(draftId);
             // 后台推送到云端
             if (SUPABASE_ENABLED && s.cloudUser) {
                 const saved = await db.drafts.get(draftId);
@@ -707,6 +711,22 @@ export default function App() {
         }
     }
 
+    async function handleAiDreamInterpret() {
+        if (!store.aiEnabled || !store.editorContent.trim()) return;
+        setAiDreamInterpretLoading(true);
+        setAiDreamInterpret('');
+        try {
+            const msgs = buildDreamInterpretationPrompt(store.editorTitle, store.editorContent);
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 500 });
+            setAiDreamInterpret(result);
+        } catch (e) {
+            showToast('AI 解梦失败');
+            console.error(e);
+        } finally {
+            setAiDreamInterpretLoading(false);
+        }
+    }
+
     // Auto-save
     useEffect(() => {
         if (store.activeTab !== 'inspire' || store.writingMode === null) return;
@@ -720,20 +740,29 @@ export default function App() {
         setTimeout(() => setToast(''), 2500);
     }
 
-    async function refreshTodayWords() {
+    async function refreshTodayWords(excludeDraftId?: string | null) {
         try {
             const todayStr = new Date().toISOString().slice(0, 10);
+            // 使用传入的参数；若未传则从 store 取最新值（避免闭包过时）
+            const currentId = excludeDraftId !== undefined ? excludeDraftId : useStore.getState().currentDraftId;
             const drafts = await db.drafts.toArray();
             const total = drafts
                 .filter(d => !d.deletedFromPalace)
                 .filter(d => new Date(d.updatedAt).toISOString().slice(0, 10) === todayStr)
-                .filter(d => d.id !== store.currentDraftId)
+                .filter(d => d.id !== currentId)
                 .reduce((sum, d) => sum + (d.wordCount || 0), 0);
             setTodayOtherDraftsWords(total);
         } catch { }
     }
 
     useEffect(() => { refreshTodayWords(); }, [store.currentDraftId]);
+
+    // 切换 tab 或退出写作模式时也刷新今日字数，避免字数长时间不更新
+    useEffect(() => {
+        if (store.activeTab !== 'inspire' || store.writingMode === null) {
+            refreshTodayWords();
+        }
+    }, [store.activeTab, store.writingMode]);
 
     useEffect(() => {
         let cancelled = false;
@@ -1673,6 +1702,21 @@ export default function App() {
                                             <p className="text-sm text-emerald-900 dark:text-emerald-700/70 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
                                         </div>
                                     )}
+
+                                    {/* AI 解梦面板 */}
+                                    {aiDreamInterpret && (
+                                        <div className="mt-6 bg-violet-50/70 dark:bg-violet-500/5 border border-violet-200/40 dark:border-violet-400/10 rounded-2xl p-5">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-400 flex items-center gap-1">
+                                                    <MoonStar size={15} />AI 解梦
+                                                </p>
+                                                <button onClick={() => setAiDreamInterpret('')} className="text-violet-500/60 hover:text-violet-500 transition-colors">
+                                                    <X size={18} />
+                                                </button>
+                                            </div>
+                                            <p className="text-sm text-violet-900 dark:text-violet-300/80 leading-relaxed whitespace-pre-line">{aiDreamInterpret}</p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Zen Toolbar */}
@@ -1701,6 +1745,16 @@ export default function App() {
                                             >
                                                 {aiFeedbackLoading ? <LoaderCircle size={22} className="animate-spin" /> : <MessageSquareText size={22} />}
                                             </button>
+                                            {store.writingMode === 'dream' && (
+                                                <button
+                                                    onClick={handleAiDreamInterpret}
+                                                    disabled={aiDreamInterpretLoading}
+                                                    title="AI 解梦"
+                                                    className="w-10 h-10 rounded-full flex items-center justify-center text-violet-500 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-all disabled:opacity-40"
+                                                >
+                                                    {aiDreamInterpretLoading ? <LoaderCircle size={22} className="animate-spin" /> : <MoonStar size={22} />}
+                                                </button>
+                                            )}
                                         </>
                                     )}
                                     <div className="h-px w-6 bg-outline-variant/20 mx-auto"></div>
