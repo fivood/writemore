@@ -134,6 +134,21 @@ export default function App() {
         store.updateStreak();
     }, []);
 
+    // Rescue any unsaved content from the previous session.
+    // writingMode is reset to null on hydration (onRehydrateStorage), so the app always
+    // opens at the home screen. If the user had meaningful content in the editor that
+    // wasn't saved before they closed the app, persist it to DB now before it
+    // disappears when they next enter a mode and clearAiTransientOutputs resets everything.
+    useEffect(() => {
+        const s = useStore.getState();
+        if (s.editorContent.replace(/[\s\u200B-\u200D\uFEFF]/g, '').length > 0) {
+            handleSave().then(() => {
+                store.setEditorTitle('');
+                store.setEditorContent('');
+            });
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     useEffect(() => {
         const updateCustomCategoryIcons = () => setCustomCategoryIconKeyMap(loadCustomCategoryIconKeyMap());
         updateCustomCategoryIcons();

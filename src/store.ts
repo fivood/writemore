@@ -217,6 +217,12 @@ export const useStore = create<AppState>()(
         }
         return persistedState;
       },
+      // Always start at the home screen, never resume mid-session on reload.
+      // This runs synchronously during store hydration, so the very first render
+      // already sees writingMode: null — no flash of the writing interface.
+      onRehydrateStorage: () => (state) => {
+        if (state) state.writingMode = null;
+      },
       partialize: (s) => ({
         theme: s.theme,
         selectedGenres: s.selectedGenres,
