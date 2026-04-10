@@ -479,7 +479,7 @@ export default function InspirationPalace() {
                                 // 选中时外层包裹旋转彩色渐变边框
                                 <div
                                     key={item.draft.id}
-                                    className={isSelected ? 'p-[1px] rounded-[9px] palace-selected-ring shadow-lg -translate-y-0.5 transition-transform duration-200 flex flex-col' : 'rounded-lg transition-transform duration-200 flex flex-col'}
+                                    className={isSelected ? 'p-[2px] rounded-[10px] palace-selected-ring shadow-lg -translate-y-0.5 transition-transform duration-200 flex flex-col' : 'rounded-lg transition-transform duration-200 flex flex-col'}
                                 >
                                 <div
                                     onClick={() => {

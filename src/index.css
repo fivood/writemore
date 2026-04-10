@@ -397,8 +397,8 @@ html {
 .bento-ring-wrapper::before {
   content: '';
   position: absolute;
-  inset: -1px;
-  border-radius: calc(1rem + 1px);
+  inset: -2px;
+  border-radius: calc(1rem + 2px);
   background: conic-gradient(
     from var(--palace-angle),
     transparent 0deg,
