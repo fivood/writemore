@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- UI: 灵感宫殿卡片重设计——每种写作模式卡片加入左侧 4px 彩色边框锚点、顶部模式主色调渐变底色、右下角极低透明度水印图标、hover 时更明显上浮（-translate-y-1）和 shadow-lg；词条 chip 改为对应模式配色。
+
 ## [0.1.9] - 2026-04-10
 
 ### Added

@@ -19,13 +19,24 @@ function hasMeaningfulContent(content: string) {
     return content.replace(/[\s\u200B-\u200D\uFEFF]/g, '').length > 0;
 }
 
-const MODE_STYLE: Record<WritingMode, { Icon: React.ComponentType<{ size?: number; className?: string }>; bg: string; border: string; text: string }> = {
-    words:     { Icon: Dices,      bg: 'bg-amber-50   dark:bg-amber-500/10',   border: 'border-amber-200   dark:border-amber-400/20',   text: 'text-amber-800   dark:text-amber-300'   },
-    free:      { Icon: PencilLine, bg: 'bg-emerald-50  dark:bg-emerald-500/10', border: 'border-emerald-200  dark:border-emerald-400/20', text: 'text-emerald-800  dark:text-emerald-300' },
-    scene:     { Icon: Mountain,   bg: 'bg-blue-50     dark:bg-blue-500/10',    border: 'border-blue-200     dark:border-blue-400/20',    text: 'text-blue-800     dark:text-blue-300'    },
-    dream:     { Icon: MoonStar,   bg: 'bg-violet-50   dark:bg-violet-500/10',  border: 'border-violet-200   dark:border-violet-400/20',  text: 'text-violet-800   dark:text-violet-300'  },
-    challenge: { Icon: CircleHelp, bg: 'bg-rose-50     dark:bg-rose-500/10',    border: 'border-rose-200     dark:border-rose-400/20',    text: 'text-rose-800     dark:text-rose-300'    },
-    character: { Icon: Users,      bg: 'bg-fuchsia-50  dark:bg-fuchsia-500/10', border: 'border-fuchsia-200  dark:border-fuchsia-400/20', text: 'text-fuchsia-800  dark:text-fuchsia-300' },
+/** 推断旧稿件（无 writingMode）的真实模式：有实际词条 → words，否则 → free */
+function resolveMode(draft: Draft, wordSet?: WordSet): WritingMode {
+    if (draft.writingMode) return draft.writingMode;
+    return (wordSet && wordSet.words.length > 0) ? 'words' : 'free';
+}
+
+const MODE_STYLE: Record<WritingMode, {
+    Icon: React.ComponentType<{ size?: number; className?: string }>;
+    bg: string; border: string; text: string;
+    // 卡片样式增强
+    cardFrom: string; leftAccent: string; hoverBorder: string; chipBg: string;
+}> = {
+    words:     { Icon: Dices,      bg: 'bg-amber-50   dark:bg-amber-500/10',   border: 'border-amber-200   dark:border-amber-400/20',   text: 'text-amber-800   dark:text-amber-300',   cardFrom: 'from-amber-50/50   dark:from-amber-500/8',   leftAccent: 'border-l-amber-400   dark:border-l-amber-400/60',   hoverBorder: 'hover:border-amber-300/60   dark:hover:border-amber-400/35',   chipBg: 'bg-amber-50   dark:bg-amber-500/15 text-amber-700   dark:text-amber-300 border-amber-200/60   dark:border-amber-400/20'   },
+    free:      { Icon: PencilLine, bg: 'bg-emerald-50  dark:bg-emerald-500/10', border: 'border-emerald-200  dark:border-emerald-400/20', text: 'text-emerald-800  dark:text-emerald-300', cardFrom: 'from-emerald-50/50 dark:from-emerald-500/8', leftAccent: 'border-l-emerald-400 dark:border-l-emerald-400/60', hoverBorder: 'hover:border-emerald-300/60 dark:hover:border-emerald-400/35', chipBg: 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-400/20' },
+    scene:     { Icon: Mountain,   bg: 'bg-blue-50     dark:bg-blue-500/10',    border: 'border-blue-200     dark:border-blue-400/20',    text: 'text-blue-800     dark:text-blue-300',    cardFrom: 'from-blue-50/50     dark:from-blue-500/8',   leftAccent: 'border-l-blue-400     dark:border-l-blue-400/60',   hoverBorder: 'hover:border-blue-300/60     dark:hover:border-blue-400/35',   chipBg: 'bg-blue-50     dark:bg-blue-500/15 text-blue-700     dark:text-blue-300 border-blue-200/60     dark:border-blue-400/20'     },
+    dream:     { Icon: MoonStar,   bg: 'bg-violet-50   dark:bg-violet-500/10',  border: 'border-violet-200   dark:border-violet-400/20',  text: 'text-violet-800   dark:text-violet-300',  cardFrom: 'from-violet-50/50   dark:from-violet-500/8', leftAccent: 'border-l-violet-500   dark:border-l-violet-400/60', hoverBorder: 'hover:border-violet-300/60   dark:hover:border-violet-400/35', chipBg: 'bg-violet-50   dark:bg-violet-500/15 text-violet-700   dark:text-violet-300 border-violet-200/60   dark:border-violet-400/20'   },
+    challenge: { Icon: CircleHelp, bg: 'bg-rose-50     dark:bg-rose-500/10',    border: 'border-rose-200     dark:border-rose-400/20',    text: 'text-rose-800     dark:text-rose-300',    cardFrom: 'from-rose-50/50     dark:from-rose-500/8',   leftAccent: 'border-l-rose-400     dark:border-l-rose-400/60',   hoverBorder: 'hover:border-rose-300/60     dark:hover:border-rose-400/35',   chipBg: 'bg-rose-50     dark:bg-rose-500/15 text-rose-700     dark:text-rose-300 border-rose-200/60     dark:border-rose-400/20'     },
+    character: { Icon: Users,      bg: 'bg-fuchsia-50  dark:bg-fuchsia-500/10', border: 'border-fuchsia-200  dark:border-fuchsia-400/20', text: 'text-fuchsia-800  dark:text-fuchsia-300', cardFrom: 'from-fuchsia-50/50 dark:from-fuchsia-500/8', leftAccent: 'border-l-fuchsia-400 dark:border-l-fuchsia-400/60', hoverBorder: 'hover:border-fuchsia-300/60 dark:hover:border-fuchsia-400/35', chipBg: 'bg-fuchsia-50 dark:bg-fuchsia-500/15 text-fuchsia-700 dark:text-fuchsia-300 border-fuchsia-200/60 dark:border-fuchsia-400/20' },
 };
 
 export default function InspirationPalace() {
@@ -53,13 +64,27 @@ export default function InspirationPalace() {
         try {
             const drafts = await db.drafts.orderBy('updatedAt').reverse().toArray();
             const result: PalaceItem[] = [];
+            const toMigrate: { id: string; mode: WritingMode }[] = [];
             for (const draft of drafts) {
                 if (draft.deletedFromPalace) continue;
-                if (draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0) continue;
                 const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
+                // 旧稿件没有 writingMode，根据关联词条推断真实模式并写回 DB
+                if (!draft.writingMode) {
+                    const inferred = resolveMode(draft, wordSet);
+                    draft.writingMode = inferred;
+                    toMigrate.push({ id: draft.id, mode: inferred });
+                }
+                // dream 空稿过滤（需在推断之后）
+                if (draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0) continue;
                 result.push({ draft, wordSet });
             }
             setItems(result);
+            // 一次性静默写回，修复历史数据
+            if (toMigrate.length > 0) {
+                Promise.all(toMigrate.map(({ id, mode }) =>
+                    db.drafts.update(id, { writingMode: mode })
+                )).catch(console.error);
+            }
         } catch (e) {
             console.error('Failed to load palace items', e);
         } finally {
@@ -70,7 +95,7 @@ export default function InspirationPalace() {
     const displayed = useMemo(() => {
         let result = items;
         if (filterMode !== 'all') {
-            result = result.filter(it => (it.draft.writingMode || 'words') === filterMode);
+            result = result.filter(it => resolveMode(it.draft, it.wordSet) === filterMode);
         }
         if (searchQuery.trim()) {
             const q = searchQuery.trim().toLowerCase();
@@ -87,7 +112,7 @@ export default function InspirationPalace() {
         const totalWords = items.reduce((s, it) => s + it.draft.wordCount, 0);
         const byMode: Record<string, number> = {};
         items.forEach(it => {
-            const m = it.draft.writingMode || 'words';
+            const m = resolveMode(it.draft, it.wordSet);
             byMode[m] = (byMode[m] || 0) + 1;
         });
         return { total, totalWords, byMode };
@@ -99,7 +124,7 @@ export default function InspirationPalace() {
         store.setCurrentDraftId(item.draft.id);
         store.setCurrentWordSetId(item.draft.wordSetId);
         if (item.wordSet) store.setCurrentWords(item.wordSet.words);
-        const mode = item.draft.writingMode || 'words';
+        const mode = resolveMode(item.draft, item.wordSet);
         store.setWritingMode(mode);
         if (mode === 'scene' && item.draft.sceneId) {
             const scene = SCENE_PROMPTS.find(s => s.id === item.draft.sceneId);
@@ -223,7 +248,7 @@ export default function InspirationPalace() {
 
     async function handleAiRemix() {
         // 只用当前分类下的卡片
-        const remixSource = filterMode === 'all' ? items : items.filter(it => (it.draft.writingMode || 'words') === filterMode);
+        const remixSource = filterMode === 'all' ? items : items.filter(it => resolveMode(it.draft, it.wordSet) === filterMode);
         if (!store.aiEnabled || remixSource.length < 2) return;
         setAiRemixLoading(true);
         setAiRemixResult('');
@@ -255,7 +280,7 @@ export default function InspirationPalace() {
         items.forEach((item, i) => {
             const title = item.draft.title || '未命名灵感';
             const date = new Date(item.draft.updatedAt).toLocaleString('zh-CN');
-            const mode = item.draft.writingMode || 'words';
+            const mode = item.draft.writingMode || 'words';  // already resolved in fetchItems
             const wordsLine = item.wordSet?.words.length
                 ? `**灵感词条**：${item.wordSet.words.map(w => w.text).join(' · ')}\n\n`
                 : '';
@@ -416,7 +441,7 @@ export default function InspirationPalace() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                         {displayed.map(item => {
-                            const mode = item.draft.writingMode || 'words';
+                            const mode = resolveMode(item.draft, item.wordSet);
                             const mLabel = getModeLabel(mode);
                             const mStyle = MODE_STYLE[mode];
                             const sceneTitle = getSceneTitle(item.draft.sceneId);
@@ -424,19 +449,24 @@ export default function InspirationPalace() {
                                 <div
                                     key={item.draft.id}
                                     onClick={() => handleOpen(item)}
-                                    className={`bg-surface-container p-5 rounded-xl border border-outline-variant/15 hover:border-primary/30 cursor-pointer group transition-all duration-300 hover:-translate-y-0.5 relative flex flex-col`}
+                                    className={`bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-xl border border-outline-variant/20 border-l-4 ${mStyle.leftAccent} ${mStyle.hoverBorder} cursor-pointer group transition-all duration-200 hover:-translate-y-1 hover:shadow-lg relative flex flex-col`}
                                 >
+                                    {/* 水印图标 — 极低透明度装饰 */}
+                                    <div className="absolute -bottom-1 -right-1 opacity-[0.05] group-hover:opacity-[0.09] transition-opacity duration-300 pointer-events-none select-none" aria-hidden="true">
+                                        <mStyle.Icon size={76} />
+                                    </div>
+
                                     {/* Delete */}
                                     <button
                                         onClick={e => handleDelete(e, item.draft.id)}
-                                        className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                                        className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 z-10"
                                         title="删除"
                                     >
                                         <Trash2 size={20} />
                                     </button>
 
                                     {/* Mode badge + date */}
-                                    <div className="flex items-center justify-between mb-3 pr-8">
+                                    <div className="relative flex items-center justify-between mb-3 pr-8">
                                         <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[12px] font-label font-medium border ${mStyle.bg} ${mStyle.border} ${mStyle.text}`}>
                                             <mStyle.Icon size={14} />
                                             <span>{mLabel?.label}</span>
@@ -447,37 +477,37 @@ export default function InspirationPalace() {
                                     </div>
 
                                     {/* Title */}
-                                    <h3 className="font-headline text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors truncate">
+                                    <h3 className="relative font-headline text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors truncate">
                                         {item.draft.title || '未命名灵感'}
                                     </h3>
 
                                     {/* Scene subtitle */}
                                     {sceneTitle && (
-                                        <p className="text-xs text-blue-500 font-label mb-2 flex items-center space-x-1">
+                                        <p className="relative text-xs text-blue-500 font-label mb-2 flex items-center space-x-1">
                                             <Mountain size={14} />
                                             <span>{sceneTitle}</span>
                                         </p>
                                     )}
 
                                     {/* Preview */}
-                                    <p className="text-on-surface-variant text-sm line-clamp-3 mb-4 min-h-[54px] leading-relaxed flex-1">
+                                    <p className="relative text-on-surface-variant text-sm line-clamp-3 mb-4 min-h-[54px] leading-relaxed flex-1">
                                         {item.draft.content ? item.draft.content.replace(/[#*>_`\[\]]/g, '').slice(0, 150) : '没有任何内容...'}
                                     </p>
 
                                     {/* Bottom: word count + word chips */}
-                                    <div className="flex items-center justify-between pt-3 border-t border-outline-variant/10">
+                                    <div className="relative flex items-center justify-between pt-3 border-t border-outline-variant/10">
                                         <span className="text-[12px] tracking-wider uppercase bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-label font-medium">
                                             {item.draft.wordCount} 字
                                         </span>
                                         {item.wordSet && item.wordSet.words.length > 0 && (
                                             <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
                                                 {item.wordSet.words.slice(0, 4).map((w, idx) => (
-                                                    <span key={idx} className="px-1.5 py-0.5 bg-surface-container-high text-on-surface-variant text-[14px] rounded border border-outline-variant/20 font-label">
+                                                    <span key={idx} className={`px-1.5 py-0.5 text-[12px] rounded border font-label ${mStyle.chipBg}`}>
                                                         {w.text}
                                                     </span>
                                                 ))}
                                                 {item.wordSet.words.length > 4 && (
-                                                    <span className="text-[14px] text-outline font-label">+{item.wordSet.words.length - 4}</span>
+                                                    <span className="text-[12px] text-outline font-label">+{item.wordSet.words.length - 4}</span>
                                                 )}
                                             </div>
                                         )}
