@@ -25,3 +25,7 @@ dist-ssr
 
 # Tauri signing key (private key — never commit)
 src-tauri/updater.key
+
+# GitHub directory
+.github/
+
