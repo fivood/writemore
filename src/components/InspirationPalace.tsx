@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { db } from '../db';
 import { useStore } from '../store';
 import { SCENE_PROMPTS } from '../data/scenes';
@@ -67,27 +67,15 @@ export default function InspirationPalace() {
         try {
             const drafts = await db.drafts.orderBy('updatedAt').reverse().toArray();
             const result: PalaceItem[] = [];
-            const toMigrate: { id: string; mode: WritingMode }[] = [];
             for (const draft of drafts) {
                 if (draft.deletedFromPalace) continue;
                 const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
-                // 旧稿件没有 writingMode，根据关联词条推断真实模式并写回 DB
-                if (!draft.writingMode) {
-                    const inferred = resolveMode(draft, wordSet);
-                    draft.writingMode = inferred;
-                    toMigrate.push({ id: draft.id, mode: inferred });
-                }
-                // dream 空稿过滤（需在推断之后）
-                if (draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0) continue;
+                const mode = draft.writingMode || resolveMode(draft, wordSet);
+                // dream 空稿过滤
+                if (mode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0) continue;
                 result.push({ draft, wordSet });
             }
             setItems(result);
-            // 一次性静默写回，修复历史数据
-            if (toMigrate.length > 0) {
-                Promise.all(toMigrate.map(({ id, mode }) =>
-                    db.drafts.update(id, { writingMode: mode })
-                )).catch(console.error);
-            }
         } catch (e) {
             console.error('Failed to load palace items', e);
         } finally {

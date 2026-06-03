@@ -7,7 +7,7 @@ const APP_VERSION: string = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSI
 const CUSTOM_CATEGORY_STORAGE_KEY = 'writemore_custom_categories_v1';
 const IS_TAURI = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 import { useStore } from './store';
-import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost, Brain, Users, Mic, Accessibility, History, Eye, Wifi, CheckCircle2, AlertCircle, LogOut, CloudOff, Package, Zap, Layers, Map as MapIcon, Tag, Home } from 'lucide-react';
+import { Sparkles, Landmark, Star, BookOpen, Bot, Cloud, RefreshCw, Moon, Sun, Info, X, Dices, MoonStar, User, PencilLine, Mountain, CircleHelp, ArrowLeft, Download, Shuffle, ChevronsLeft, ChevronsRight, Lock, LockOpen, LoaderCircle, Save, Upload, PanelLeft, MessageSquareText, Maximize, Flame, Timer, Rocket, Search, BookText, Heart, Sword, Building2, ScrollText, Ghost, Brain, Users, Mic, Accessibility, History, Eye, Package, Zap, Layers, Map as MapIcon, Tag, Home } from 'lucide-react';
 import { drawRandomWords, loadUserData, pickRandomGenre } from './data/wordEngine';
 import { saveDraftToDb, toggleFavoriteWordSet, isPromptFavorited, togglePromptFavorite } from './data/draftEngine';
 import { pickRandomScene } from './data/scenes';
@@ -22,9 +22,11 @@ import HistoryPage from './components/HistoryPage';
 import FavoritesPage from './components/FavoritesPage';
 import LibraryPage from './components/LibraryPage';
 import InspirationPalace from './components/InspirationPalace';
-import { API_PRESETS, testConnection, chatCompletion, chatCompletionStream } from './services/ai';
+import AiSettingsModal from './components/AiSettingsModal';
+import CloudLoginModal from './components/CloudLoginModal';
+import { chatCompletion, chatCompletionStream } from './services/ai';
 import { buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt, buildCharacterDeepPrompt, buildCharacterGeneratePrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt, buildDreamInterpretationPrompt } from './services/prompts';
-import { supabase, signIn, signUp, signOut, pushDraft, pullDrafts, pushWordSet, pullWordSets, SUPABASE_ENABLED } from './services/supabase';
+import { supabase, pushDraft, pullDrafts, pushWordSet, pullWordSets, SUPABASE_ENABLED } from './services/supabase';
 
 export default function App() {
     const store = useStore();
@@ -32,16 +34,8 @@ export default function App() {
     const [wordsSubView, setWordsSubView] = useState<'write' | 'library'>('write');
     const [todayOtherDraftsWords, setTodayOtherDraftsWords] = useState(0);
     const [showAiSettings, setShowAiSettings] = useState(false);
-    const [aiTestStatus, setAiTestStatus] = useState<'idle' | 'testing' | 'success' | 'fail'>('idle');
-    const [aiTestError, setAiTestError] = useState('');
-    const [aiAvailModels, setAiAvailModels] = useState<string[]>([]);
-    const [aiModelsLoading, setAiModelsLoading] = useState(false);
     const [showCloudLogin, setShowCloudLogin] = useState(false);
-    const [cloudEmail, setCloudEmail] = useState('');
-    const [cloudPassword, setCloudPassword] = useState('');
-    const [cloudAuthMode, setCloudAuthMode] = useState<'login' | 'register'>('login');
-    const [cloudAuthLoading, setCloudAuthLoading] = useState(false);
-    const [cloudAuthError, setCloudAuthError] = useState('');
+    const lastSavedContentRef = useRef('');
     const [cloudSyncing, setCloudSyncing] = useState(false);
     const [updateBanner, setUpdateBanner] = useState<{ version: string; url: string } | null>(null);
     const [updateDownloading, setUpdateDownloading] = useState(false);
@@ -142,6 +136,25 @@ export default function App() {
     useEffect(() => {
         loadUserData();
         store.updateStreak();
+
+        // 一次性数据迁移：老版本没有 writingMode 字段的 Draft 修复
+        async function migrateLegacyDrafts() {
+            try {
+                const drafts = await db.drafts.toArray();
+                const legacy = drafts.filter(d => !d.writingMode);
+                if (legacy.length === 0) return;
+                
+                for (const d of legacy) {
+                    const wordSet = d.wordSetId ? await db.wordSets.get(d.wordSetId) : undefined;
+                    const mode = (wordSet && wordSet.words.length > 0) ? 'words' : 'free';
+                    await db.drafts.update(d.id, { writingMode: mode });
+                }
+                console.log(`✨ 成功迁移了 ${legacy.length} 篇老版本草稿数据`);
+            } catch (e) {
+                console.error('Legacy drafts migration failed', e);
+            }
+        }
+        migrateLegacyDrafts();
     }, []);
 
     // Rescue any unsaved content from the previous session.
@@ -208,10 +221,22 @@ export default function App() {
                 }
             }
 
-            // 云端 → 本地：云端更新的覆盖本地
+            // 云端 → 本地：云端更新的覆盖本地，且本地覆盖前执行快照备份
             for (const cd of cloudDrafts) {
                 const local = localDrafts.find(d => d.id === cd.id);
-                if (!local || new Date(cd.updatedAt) > new Date(local.updatedAt)) {
+                if (!local) {
+                    await db.drafts.put(cd);
+                } else if (new Date(cd.updatedAt) > new Date(local.updatedAt)) {
+                    if (local.content !== cd.content) {
+                        const backupId = `${local.id}_backup_${Date.now()}`;
+                        await db.drafts.put({
+                            ...local,
+                            id: backupId,
+                            title: `[冲突备份] ${local.title || '无标题'}`,
+                            deletedFromPalace: true,
+                            updatedAt: new Date(),
+                        });
+                    }
                     await db.drafts.put(cd);
                 }
             }
@@ -250,32 +275,7 @@ export default function App() {
         }
     }
 
-    async function handleCloudAuth() {
-        setCloudAuthLoading(true);
-        setCloudAuthError('');
-        try {
-            const fn = cloudAuthMode === 'login' ? signIn : signUp;
-            const { error } = await fn(cloudEmail, cloudPassword);
-            if (error) {
-                const msg = error.message;
-                if (msg.includes('Invalid login credentials')) throw new Error('邮箱或密码错误，或邮箱尚未验证');
-                if (msg.includes('Email not confirmed')) throw new Error('邮箱未验证，请先去邮箱点击确认链接');
-                if (msg.includes('User already registered')) throw new Error('该邮箱已注册，请直接登录');
-                throw error;
-            }
-            if (cloudAuthMode === 'register') {
-                showToast('📧 注册成功！请去邮箱点击确认链接后再登录');
-                setCloudAuthMode('login');
-            } else {
-                setShowCloudLogin(false);
-                showToast('☁️ 登录成功，数据将自动同步');
-            }
-        } catch (e) {
-            setCloudAuthError(e instanceof Error ? e.message : '操作失败');
-        } finally {
-            setCloudAuthLoading(false);
-        }
-    }
+
 
     // 版本更新检测
     useEffect(() => {
@@ -989,12 +989,34 @@ export default function App() {
     }
 
     // Auto-save
+    // 短延迟防抖自动保存 (2.5s)
     useEffect(() => {
         if (store.activeTab !== 'inspire' || store.writingMode === null) return;
         if (!hasMeaningfulContent(store.editorContent)) return;
-        const timer = setTimeout(handleSave, 30000);
+        if (store.editorContent === lastSavedContentRef.current) return;
+
+        const timer = setTimeout(() => {
+            handleSave();
+            lastSavedContentRef.current = store.editorContent;
+        }, 2500);
+
         return () => clearTimeout(timer);
     }, [store.activeTab, store.writingMode, store.editorContent]);
+
+    // 周期性节流自动保存 (60s)
+    useEffect(() => {
+        if (store.activeTab !== 'inspire' || store.writingMode === null) return;
+
+        const interval = setInterval(() => {
+            const currentContent = useStore.getState().editorContent;
+            if (hasMeaningfulContent(currentContent) && currentContent !== lastSavedContentRef.current) {
+                handleSave();
+                lastSavedContentRef.current = currentContent;
+            }
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, [store.activeTab, store.writingMode]);
 
     function showToast(msg: string) {
         setToast(msg);
@@ -1127,8 +1149,7 @@ export default function App() {
     }, [customCategoryIconKeyMap]);
 
     const isWriting = store.writingMode !== null && store.activeTab === 'inspire';
-    const aiBaseNormalized = store.aiConfig.apiBase.replace(/\/+$/, '').toLowerCase();
-    const canFetchModels = !!store.aiConfig.apiKey || aiBaseNormalized.includes('localhost:11434') || aiBaseNormalized.includes('127.0.0.1:11434');
+
 
     return (
         <div className="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen">
@@ -1286,7 +1307,7 @@ export default function App() {
                 })}
             </nav>
 
-            <div className="flex h-screen pb-[56px] md:pb-[45px]" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
+            <div className="flex h-screen h-[100dvh] pb-[56px] md:pb-[45px]" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
 
                 {/* ━━━ Mode Selection Screen (Bento) ━━━ */}
                 {store.activeTab === 'inspire' && !isWriting && (
@@ -1708,7 +1729,22 @@ export default function App() {
 
                         {/* Word Inspiration Panel */}
                         {store.writingMode === 'words' && wordsSubView !== 'library' && (
-                            <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
+                            <>
+{/* 移动端遮罩 */}
+                            {mobilePanel && (
+                                <div 
+                                    className="md:hidden fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+                                    onClick={() => setMobilePanel(false)}
+                                />
+                            )}
+                            <section className={`
+                                ${mobilePanel 
+                                    ? 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] bg-surface-container-low shadow-2xl translate-x-0' 
+                                    : 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] translate-x-full md:translate-x-0'
+                                } 
+                                transition-transform duration-300 ease-in-out overflow-y-auto pt-4 px-4 pb-20
+                                md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto
+                            `}>
                                 <div className="p-5 md:p-8 flex flex-col space-y-6">
                                     <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                                     <div className="mb-2">
@@ -1803,12 +1839,27 @@ export default function App() {
                                         })}
                                     </div>
                                 </div>
-                            </section>
+                            </section></>
                         )}
 
                         {/* Scene Prompt Panel */}
                         {store.writingMode === 'scene' && store.currentScene && (
-                            <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
+                            <>
+{/* 移动端遮罩 */}
+                            {mobilePanel && (
+                                <div 
+                                    className="md:hidden fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+                                    onClick={() => setMobilePanel(false)}
+                                />
+                            )}
+                            <section className={`
+                                ${mobilePanel 
+                                    ? 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] bg-surface-container-low shadow-2xl translate-x-0' 
+                                    : 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] translate-x-full md:translate-x-0'
+                                } 
+                                transition-transform duration-300 ease-in-out overflow-y-auto pt-4 px-4 pb-20
+                                md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto
+                            `}>
                                 <div className="p-5 md:p-8 flex flex-col space-y-6">
                                     <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                                     <div className="mb-2">
@@ -1836,12 +1887,27 @@ export default function App() {
                                     </div>
 
                                 </div>
-                            </section>
+                            </section></>
                         )}
 
                         {/* Challenge Panel */}
                         {store.writingMode === 'challenge' && store.currentChallenge && (
-                            <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
+                            <>
+{/* 移动端遮罩 */}
+                            {mobilePanel && (
+                                <div 
+                                    className="md:hidden fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+                                    onClick={() => setMobilePanel(false)}
+                                />
+                            )}
+                            <section className={`
+                                ${mobilePanel 
+                                    ? 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] bg-surface-container-low shadow-2xl translate-x-0' 
+                                    : 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] translate-x-full md:translate-x-0'
+                                } 
+                                transition-transform duration-300 ease-in-out overflow-y-auto pt-4 px-4 pb-20
+                                md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto
+                            `}>
                                 <div className="p-5 md:p-8 flex flex-col space-y-6">
                                     <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                                     <div className="mb-2">
@@ -1882,14 +1948,29 @@ export default function App() {
                                         </button>
                                     )}
                                 </div>
-                            </section>
+                            </section></>
                         )}
 
                         {/* Character Prompt Panel */}
                         {store.writingMode === 'character' && store.currentCharacterPrompt && (() => {
                             const layer = CHARACTER_LAYERS.find(l => l.id === store.currentCharacterPrompt!.layer);
                             return (
-                                <section className={`${mobilePanel ? 'fixed inset-0 z-[60] bg-surface-container-low overflow-y-auto pt-4' : 'hidden'} md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
+                                <>
+                                {/* 移动端遮罩 */}
+                                {mobilePanel && (
+                                    <div 
+                                        className="md:hidden fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+                                        onClick={() => setMobilePanel(false)}
+                                    />
+                                )}
+                                <section className={`
+                                    ${mobilePanel 
+                                        ? 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] bg-surface-container-low shadow-2xl translate-x-0' 
+                                        : 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] translate-x-full md:translate-x-0'
+                                    } 
+                                    transition-transform duration-300 ease-in-out overflow-y-auto pt-4 px-4 pb-20
+                                    md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto
+                                `}>
                                     <div className="p-5 md:p-8 flex flex-col space-y-6">
                                         <button onClick={() => setMobilePanel(false)} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
                                         <div className="mb-2">
@@ -1956,7 +2037,7 @@ export default function App() {
                                             </div>
                                         )}
                                     </div>
-                                </section>
+                                </section></>
                             );
                         })()}
                         {store.writingMode === 'words' && wordsSubView === 'library' ? <LibraryPage /> : (
@@ -2150,314 +2231,19 @@ export default function App() {
             )}
 
             {/* AI Settings Modal */}
-            {showAiSettings && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowAiSettings(false)}>
-                    <div className="bg-surface border border-outline-variant/20 rounded-lg shadow-2xl w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-                        <div className="flex justify-between items-center mb-6">
-                            <div className="flex items-center space-x-2">
-                                <Bot size={26} className="text-primary" />
-                                <h2 className="font-headline text-xl font-bold text-on-surface">AI 设置</h2>
-                            </div>
-                            <button onClick={() => setShowAiSettings(false)} className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className="space-y-5">
-                            {/* Enable toggle */}
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="font-label text-sm font-medium text-on-surface">启用 AI 功能</p>
-                                    <p className="text-xs text-on-surface-variant">开启后可使用 AI 生成灵感、续写等辅助功能</p>
-                                </div>
-                                <button
-                                    onClick={() => store.setAiEnabled(!store.aiEnabled)}
-                                    className={`relative w-11 h-6 rounded-full transition-colors ${store.aiEnabled ? 'bg-primary' : 'bg-outline-variant/40'}`}
-                                >
-                                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${store.aiEnabled ? 'translate-x-5' : ''}`} />
-                                </button>
-                            </div>
-
-                            {/* Preset */}
-                            <div>
-                                <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">快速选择</label>
-                                <div className="flex gap-2 flex-wrap">
-                                    {API_PRESETS.map(p => (
-                                        <button
-                                            key={p.label}
-                                            onClick={() => {
-                                                store.setAiConfig({ apiBase: p.base, model: p.models[0] });
-                                                setAiTestStatus('idle');
-                                            }}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-label border transition-colors ${store.aiConfig.apiBase === p.base
-                                                    ? 'bg-primary/10 border-primary/30 text-primary font-medium'
-                                                    : 'bg-surface-container border-outline-variant/20 text-on-surface-variant hover:bg-surface-container-high'
-                                                }`}
-                                        >
-                                            {p.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* API Base */}
-                            <div>
-                                <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">API 地址</label>
-                                <input
-                                    type="url"
-                                    value={store.aiConfig.apiBase}
-                                    onChange={e => { store.setAiConfig({ apiBase: e.target.value }); setAiTestStatus('idle'); }}
-                                    placeholder="https://api.openai.com/v1"
-                                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
-                                />
-                            </div>
-
-                            {/* API Key */}
-                            <div>
-                                <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">API Key</label>
-                                <input
-                                    type="password"
-                                    value={store.aiConfig.apiKey}
-                                    onChange={e => { store.setAiConfig({ apiKey: e.target.value }); setAiTestStatus('idle'); }}
-                                    placeholder="sk-..."
-                                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
-                                />
-                                <p className="text-[13px] text-on-surface-variant mt-1">密钥仅存储在浏览器本地，不会上传到任何服务器</p>
-                            </div>
-
-                            {/* Model */}
-                            <div>
-                                <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">模型</label>
-                                <div className="flex flex-col sm:flex-row gap-2 mb-2">
-                                    <input
-                                        type="text"
-                                        value={store.aiConfig.model}
-                                        onChange={e => { store.setAiConfig({ model: e.target.value }); setAiTestStatus('idle'); }}
-                                        placeholder="gemini-1.5-flash"
-                                        className="flex-1 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
-                                    />
-                                    {canFetchModels && (
-                                        <button
-                                            onClick={async () => {
-                                                setAiModelsLoading(true);
-                                                setAiAvailModels([]);
-                                                try {
-                                                    const base = store.aiConfig.apiBase.replace(/\/+$/, '');
-                                                    const res = await fetch(`${base}/models`, {
-                                                        headers: store.aiConfig.apiKey ? { Authorization: `Bearer ${store.aiConfig.apiKey}` } : undefined,
-                                                    });
-                                                    const data = await res.json();
-                                                    const ids: string[] = (data.data ?? data.models ?? []).map((m: Record<string, string>) => m.id ?? m.name?.replace('models/', '') ?? '').filter(Boolean);
-                                                    setAiAvailModels(ids);
-                                                } catch { setAiAvailModels([]); }
-                                                finally { setAiModelsLoading(false); }
-                                            }}
-                                            disabled={aiModelsLoading}
-                                            title={store.aiConfig.apiKey ? '获取该 Key 可用的模型列表' : '获取本地可用模型列表'}
-                                            className="px-3 py-2 border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors disabled:opacity-50 whitespace-nowrap"
-                                        >
-                                            {aiModelsLoading ? '获取中…' : '可用模型'}
-                                        </button>
-                                    )}
-                                </div>
-                                {aiAvailModels.length > 0 && (
-                                    <div className="max-h-32 overflow-y-auto flex flex-wrap gap-1 mb-1">
-                                        {aiAvailModels.map(m => (
-                                            <button
-                                                key={m}
-                                                onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
-                                                className={`px-2 py-0.5 rounded text-[13px] font-label border transition-colors ${store.aiConfig.model === m
-                                                        ? 'bg-primary/10 border-primary/30 text-primary'
-                                                        : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'
-                                                    }`}
-                                            >
-                                                {m}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                                {/* Quick model buttons for current preset */}
-                                {aiAvailModels.length === 0 && (() => {
-                                    const preset = API_PRESETS.find(p => store.aiConfig.apiBase.includes(new URL(p.base).host));
-                                    if (!preset || preset.models.length <= 1) return null;
-                                    return (
-                                        <div className="flex gap-1 flex-wrap">
-                                            {preset.models.map(m => (
-                                                <button
-                                                    key={m}
-                                                    onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
-                                                    className={`px-2 py-1 rounded text-[13px] font-label border transition-colors ${store.aiConfig.model === m
-                                                            ? 'bg-primary/10 border-primary/30 text-primary'
-                                                            : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'
-                                                        }`}
-                                                >
-                                                    {m}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    );
-                                })()}
-                            </div>
-
-                            {/* Test connection */}
-                            <div className="flex items-center gap-3 pt-2">
-                                <button
-                                    onClick={async () => {
-                                        setAiTestStatus('testing');
-                                        setAiTestError('');
-                                        const err = await testConnection(store.aiConfig);
-                                        if (err === null) {
-                                            setAiTestStatus('success');
-                                        } else {
-                                            setAiTestStatus('fail');
-                                            setAiTestError(err);
-                                        }
-                                    }}
-                                    disabled={aiTestStatus === 'testing'}
-                                    className="flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
-                                >
-                                    {aiTestStatus === 'testing' ? <LoaderCircle size={18} className="animate-spin" /> : <Wifi size={18} />}
-                                    <span>{aiTestStatus === 'testing' ? '测试中…' : '测试连接'}</span>
-                                </button>
-                                {aiTestStatus === 'success' && (
-                                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-sm font-label">
-                                        <CheckCircle2 size={18} />连接成功
-                                    </span>
-                                )}
-                                {aiTestStatus === 'fail' && (
-                                    <div className="flex flex-col gap-1">
-                                        <span className="flex items-center gap-1 text-red-600 dark:text-red-400 text-sm font-label">
-                                            <AlertCircle size={18} />连接失败
-                                        </span>
-                                        {aiTestError && (
-                                            <span className="text-[13px] text-red-500/80 dark:text-red-400/70 font-mono break-all max-w-xs">{aiTestError}</span>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <AiSettingsModal 
+                isOpen={showAiSettings} 
+                onClose={() => setShowAiSettings(false)} 
+            />
 
             {/* Cloud Login Modal */}
-            {showCloudLogin && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShowCloudLogin(false)}>
-                    <div className="bg-surface border border-outline-variant/20 rounded-lg shadow-2xl w-full max-w-sm mx-4 p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-                        <div className="flex justify-between items-center mb-6">
-                            <div className="flex items-center space-x-2">
-                                <Cloud size={26} className="text-primary" />
-                                <h2 className="font-headline text-xl font-bold text-on-surface">云端同步</h2>
-                            </div>
-                            <button onClick={() => setShowCloudLogin(false)} className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        {store.cloudUser ? (
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3 p-3 bg-emerald-50/60 dark:bg-emerald-500/5 border border-emerald-200/40 dark:border-emerald-400/10 rounded-lg">
-                                    <CheckCircle2 size={22} className="text-emerald-500" />
-                                    <div>
-                                        <p className="text-sm font-label font-medium text-on-surface">已登录</p>
-                                        <p className="text-xs text-on-surface-variant">{store.cloudUser.email}</p>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={async () => { await syncFromCloud(store.cloudUser!.id); showToast('✅ 同步完成'); }}
-                                    disabled={cloudSyncing}
-                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-lg text-sm font-label font-medium hover:bg-primary/15 transition-colors disabled:opacity-50"
-                                >
-                                    {cloudSyncing ? <LoaderCircle size={20} className="animate-spin" /> : <RefreshCw size={20} />}
-                                    {cloudSyncing ? '同步中…' : '立即从云端同步'}
-                                </button>
-                                <button
-                                    onClick={async () => { await signOut(); showToast('已退出登录'); setShowCloudLogin(false); }}
-                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-outline-variant/30 rounded-lg text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
-                                >
-                                    <LogOut size={20} />退出登录
-                                </button>
-                            </div>
-                        ) : !SUPABASE_ENABLED ? (
-                            <div className="space-y-6 text-center">
-                                <CloudOff size={48} className="text-on-surface-variant/40" />
-                                <div>
-                                    <p className="font-label font-medium text-on-surface mb-1">云同步未启用</p>
-                                    <p className="text-sm text-on-surface-variant leading-relaxed">
-                                        当前版本未配置 Supabase 凭据。<br />如需云同步功能，请联系开发者配置，<br />或在项目 <code className="bg-surface-container px-1 rounded text-xs">.env.local</code> 中填入凭据后重新构建。
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={() => setShowCloudLogin(false)}
-                                    className="w-full py-2.5 border border-outline-variant/30 rounded-lg text-sm font-label text-on-surface-variant hover:bg-surface-container transition-colors"
-                                >关闭</button>
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {/* 模式切换 */}
-                                <div className="flex rounded-lg overflow-hidden border border-outline-variant/30">
-                                    <button
-                                        onClick={() => { setCloudAuthMode('login'); setCloudAuthError(''); }}
-                                        className={`flex-1 py-2 text-sm font-label font-medium transition-colors ${cloudAuthMode === 'login' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
-                                    >登录</button>
-                                    <button
-                                        onClick={() => { setCloudAuthMode('register'); setCloudAuthError(''); }}
-                                        className={`flex-1 py-2 text-sm font-label font-medium transition-colors ${cloudAuthMode === 'register' ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
-                                    >注册账号</button>
-                                </div>
-
-                                {/* 注册说明 */}
-                                {cloudAuthMode === 'register' && (
-                                    <div className="flex gap-2.5 p-3 bg-primary/5 border border-primary/15 rounded-lg">
-                                        <Info size={18} className="text-primary mt-0.5 shrink-0" />
-                                        <p className="text-xs text-on-surface-variant font-label leading-relaxed">
-                                            直接填写<strong className="text-on-surface">任意邮箱 + 自定义密码</strong>即可注册，无需邮箱验证。注册后即登录，文章数据加密存储于云端，跨设备同步。
-                                        </p>
-                                    </div>
-                                )}
-
-                                <input
-                                    type="email"
-                                    placeholder="邮箱地址"
-                                    value={cloudEmail}
-                                    onChange={e => setCloudEmail(e.target.value)}
-                                    className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
-                                />
-                                <input
-                                    type="password"
-                                    placeholder="密码（至少6位）"
-                                    value={cloudPassword}
-                                    onChange={e => setCloudPassword(e.target.value)}
-                                    onKeyDown={e => e.key === 'Enter' && handleCloudAuth()}
-                                    className="w-full px-3 py-2.5 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
-                                />
-                                {cloudAuthError && (
-                                    <p className="text-xs text-red-500 font-label">{cloudAuthError}</p>
-                                )}
-                                <button
-                                    onClick={handleCloudAuth}
-                                    disabled={cloudAuthLoading || !cloudEmail || !cloudPassword}
-                                    className="w-full py-2.5 bg-primary text-on-primary rounded-lg text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
-                                >
-                                    {cloudAuthLoading ? '处理中…' : cloudAuthMode === 'login' ? '登录' : '注册并登录'}
-                                </button>
-
-                                {/* 底部提示 */}
-                                <div className="flex items-center justify-center gap-1.5 text-xs text-on-surface-variant font-label">
-                                    <Lock size={14} />
-                                    <span>数据仅你本人可见，任何人无法访问</span>
-                                </div>
-
-                                {cloudAuthMode === 'login' && (
-                                    <p className="text-xs text-on-surface-variant text-center font-label">
-                                        没有账号？点击上方<button className="text-primary underline-offset-2 hover:underline ml-0.5" onClick={() => { setCloudAuthMode('register'); setCloudAuthError(''); }}>注册账号</button>
-                                    </p>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
+            <CloudLoginModal 
+                isOpen={showCloudLogin} 
+                onClose={() => setShowCloudLogin(false)} 
+                showToast={showToast}
+                syncFromCloud={syncFromCloud}
+                cloudSyncing={cloudSyncing}
+            />
         </div>
     );
 }
