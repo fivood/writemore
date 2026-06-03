@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 // ── 填入你的 GitHub 用户名/仓库名 ──────────────────────────────
 const GITHUB_REPO = 'fivood/writemore';
@@ -67,6 +67,10 @@ export default function App() {
     // Incremented whenever a new draw/mode-switch session begins, so that an
     // in-flight handleSave won't overwrite currentWordSetId after the session resets.
     const wordSessionRef = useRef(0);
+    // AbortController for in-flight AI requests — allows cancellation on mode switch
+    const aiAbortRef = useRef<AbortController | null>(null);
+    // Ref-based lock to prevent concurrent AI calls (faster than useState for race conditions)
+    const aiLockRef = useRef(false);
     const [isSceneFavorited, setIsSceneFavorited] = useState(false);
     const [isChallengeFavorited, setIsChallengeFavorited] = useState(false);
     const [isCharacterFavorited, setIsCharacterFavorited] = useState(false);
@@ -381,6 +385,31 @@ export default function App() {
         setAiCharacterExtra('');
         setAiFeedback('');
         setAiDreamInterpret('');
+        // 取消正在进行的 AI 请求
+        if (aiAbortRef.current) {
+            aiAbortRef.current.abort();
+            aiAbortRef.current = null;
+        }
+        aiLockRef.current = false;
+    }
+
+    /**
+     * 从 AI 返回的文本中提取 JSON（兼容 markdown 代码块包裹）
+     */
+    function extractJSON(text: string): string {
+        const fenced = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+        if (fenced) return fenced[1].trim();
+        const braced = text.match(/\{[\s\S]*\}/);
+        if (braced) return braced[0];
+        return text;
+    }
+
+    /** 创建新的 AbortController 并注册到 ref（自动取消上一个） */
+    function newAiAbort(): AbortSignal {
+        if (aiAbortRef.current) aiAbortRef.current.abort();
+        const controller = new AbortController();
+        aiAbortRef.current = controller;
+        return controller.signal;
     }
 
     function mergeAiFeedbackIntoContent(content: string, feedback: string) {
@@ -628,68 +657,91 @@ export default function App() {
     // ── AI 增强功能 ──
 
     async function handleAiWordHint() {
-        if (!store.aiEnabled || store.currentWords.length === 0) return;
+        if (!store.aiEnabled || store.currentWords.length === 0 || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiWordHintLoading(true);
         setAiWordHint('');
+        const signal = newAiAbort();
         try {
             const msgs = buildWordInspirationPrompt(store.currentWords, store.drawnGenre);
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200 });
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200, signal });
             setAiWordHint(result);
         } catch (e) {
-            showToast('AI 生成失败，请检查设置');
+            if (!signal.aborted) showToast('AI 生成失败，请检查设置');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiWordHintLoading(false);
         }
     }
 
     async function handleAiScene() {
-        if (!store.aiEnabled) return;
+        if (!store.aiEnabled || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiSceneLoading(true);
+        const signal = newAiAbort();
         try {
             const existing = store.currentScene ? [store.currentScene.title] : [];
             const msgs = buildSceneGeneratePrompt(existing);
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
-            const parsed = JSON.parse(result);
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300, signal });
+            const parsed = JSON.parse(extractJSON(result));
             if (parsed.title && parsed.description) {
-                store.setCurrentScene({
+                const newScene = {
                     id: `ai_${Date.now()}`,
                     title: parsed.title,
                     description: parsed.description,
                     tags: parsed.tags || [],
+                };
+                store.setCurrentScene(newScene);
+                // 持久化 AI 生成的场景到收藏表，使其可被灵感宫殿引用
+                await db.promptFavorites.put({
+                    id: `scene_${newScene.id}`,
+                    module: 'scene',
+                    itemId: newScene.id,
+                    title: newScene.title,
+                    description: newScene.description,
+                    tags: newScene.tags,
+                    isAi: true,
+                    createdAt: new Date(),
                 });
             }
         } catch (e) {
-            showToast('AI 场景生成失败');
+            if (!signal.aborted) showToast('AI 场景生成失败');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiSceneLoading(false);
         }
     }
 
     async function handleAiSceneDeepDive() {
-        if (!store.aiEnabled || !store.currentScene) return;
+        if (!store.aiEnabled || !store.currentScene || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiSceneLoading(true);
         setAiSceneExtra('');
+        const signal = newAiAbort();
         try {
             const msgs = buildSceneDeepDivePrompt(store.currentScene.title, store.currentScene.description);
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200 });
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200, signal });
             setAiSceneExtra(result);
         } catch (e) {
-            showToast('AI 生成失败');
+            if (!signal.aborted) showToast('AI 生成失败');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiSceneLoading(false);
         }
     }
 
     async function handleAiChallenge() {
-        if (!store.aiEnabled) return;
+        if (!store.aiEnabled || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiChallengeLoading(true);
+        const signal = newAiAbort();
         try {
             const existing = store.currentChallenge ? [store.currentChallenge.text] : [];
             const msgs = buildChallengeGeneratePrompt(existing, store.drawnGenre);
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300, signal });
             // Strip leading numbering/bullets that the model sometimes adds despite instructions
             // e.g. "1. ", "①", "- ", "• ", "（1）" etc.
             const stripPrefix = (s: string) => s.replace(/^[\s\uff08（(]*[\d①②③一二三][\s.、.）).\uff09]*/, '').replace(/^[-•*]\s*/, '').trim();
@@ -709,26 +761,30 @@ export default function App() {
                 showToast(`✨ AI 出了 ${lines.length} 道题并已保存到题库`);
             }
         } catch (e) {
-            showToast('AI 出题失败');
+            if (!signal.aborted) showToast('AI 出题失败');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiChallengeLoading(false);
         }
     }
 
     async function handleAiCharacterDeep() {
-        if (!store.aiEnabled || !store.currentCharacterPrompt) return;
+        if (!store.aiEnabled || !store.currentCharacterPrompt || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiCharacterLoading(true);
         setAiCharacterExtra('');
+        const signal = newAiAbort();
         try {
             const layerName = CHARACTER_LAYERS.find(l => l.id === store.currentCharacterPrompt!.layer)?.name || '';
             const msgs = buildCharacterDeepPrompt(store.currentCharacterPrompt.text, layerName);
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200 });
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 200, signal });
             setAiCharacterExtra(result);
         } catch (e) {
-            showToast('AI 生成失败');
+            if (!signal.aborted) showToast('AI 生成失败');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiCharacterLoading(false);
         }
     }
@@ -815,8 +871,10 @@ export default function App() {
     }
 
     async function handleAiCharacterGenerate() {
-        if (!store.aiEnabled) return;
+        if (!store.aiEnabled || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiCharacterGenLoading(true);
+        const signal = newAiAbort();
         try {
             const currentLayer = store.currentCharacterPrompt
                 ? CHARACTER_LAYERS.find(l => l.id === store.currentCharacterPrompt!.layer)
@@ -833,7 +891,7 @@ export default function App() {
                 genre: store.drawnGenre,
                 existingTexts: allTexts,
             });
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 400 });
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 400, signal });
             const stripPrefix = (s: string) => s.replace(/^[\s\uff08（(]*[\d①②③一二三][\s.、.）).\uff09]*/, '').replace(/^[-•*]\s*/, '').trim();
             const lines = result.split('\n').map(l => stripPrefix(l.trim())).filter(l => l.length > 0);
             if (lines.length > 0) {
@@ -849,61 +907,83 @@ export default function App() {
                 showToast(`✨ AI 出了 ${lines.length} 道角色题并已保存到题库`);
             }
         } catch (e) {
-            showToast('AI 出题失败');
+            if (!signal.aborted) showToast('AI 出题失败');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiCharacterGenLoading(false);
         }
     }
 
     async function handleAiContinue() {
-        if (!store.aiEnabled || !store.editorContent.trim()) return;
+        if (!store.aiEnabled || !store.editorContent.trim() || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiContinueLoading(true);
         const baseContent = store.editorContent;
         const aiSectionPrefix = '\n\n---\n\n### AI 续写\n\n';
         const accumulated = { text: '' };
+        let rafId = 0;
+        const signal = newAiAbort();
         try {
+            const contentLen = baseContent.replace(/\s/g, '').length;
             const msgs = buildContinueWritingPrompt(store.editorTitle, baseContent, store.writingMode);
+            if (contentLen > 600) showToast('📝 AI 仅参考最后 600 字进行续写');
             await chatCompletionStream(store.aiConfig, msgs, (chunk) => {
                 accumulated.text += chunk;
-                store.setEditorContent(baseContent + aiSectionPrefix + accumulated.text);
-            }, { maxTokens: 400 });
+                // 使用 rAF 节流，避免每个 token 都触发 re-render
+                cancelAnimationFrame(rafId);
+                rafId = requestAnimationFrame(() => {
+                    store.setEditorContent(baseContent + aiSectionPrefix + accumulated.text);
+                });
+            }, { maxTokens: 400, signal });
+            // 确保最终内容被写入
+            cancelAnimationFrame(rafId);
+            store.setEditorContent(baseContent + aiSectionPrefix + accumulated.text);
         } catch (e) {
-            showToast('AI 续写失败');
+            if (!signal.aborted) showToast('AI 续写失败');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiContinueLoading(false);
         }
     }
 
     async function handleAiFeedback() {
-        if (!store.aiEnabled || !store.editorContent.trim()) return;
+        if (!store.aiEnabled || !store.editorContent.trim() || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiFeedbackLoading(true);
         setAiFeedback('');
+        const signal = newAiAbort();
         try {
+            const contentLen = store.editorContent.replace(/\s/g, '').length;
+            if (contentLen > 800) showToast('📝 AI 仅分析前 800 字');
             const msgs = buildWritingFeedbackPrompt(store.editorTitle, store.editorContent);
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300, signal });
             setAiFeedback(result);
         } catch (e) {
-            showToast('AI 反馈失败');
+            if (!signal.aborted) showToast('AI 反馈失败');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiFeedbackLoading(false);
         }
     }
 
     async function handleAiDreamInterpret() {
-        if (!store.aiEnabled || !store.editorContent.trim()) return;
+        if (!store.aiEnabled || !store.editorContent.trim() || aiLockRef.current) return;
+        aiLockRef.current = true;
         setAiDreamInterpretLoading(true);
         setAiDreamInterpret('');
+        const signal = newAiAbort();
         try {
             const msgs = buildDreamInterpretationPrompt(store.editorTitle, store.editorContent);
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 500 });
+            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 500, signal });
             setAiDreamInterpret(result);
         } catch (e) {
-            showToast('AI 解梦失败');
+            if (!signal.aborted) showToast('AI 解梦失败');
             console.error(e);
         } finally {
+            aiLockRef.current = false;
             setAiDreamInterpretLoading(false);
         }
     }

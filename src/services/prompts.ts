@@ -232,7 +232,7 @@ export function buildWritingFeedbackPrompt(title: string, content: string): Chat
 标题：${title || '（无标题）'}
 ${content.slice(0, 800)}
 
-请选拡一个亮点和一个可提升方向，面向下列维度进行选择：感官描写、节奏感、画面感、情感表达、语言新鲜度。语气以鼓励为主。`,
+请选择一个亮点和一个可提升方向，面向下列维度进行选择：感官描写、节奏感、画面感、情感表达、语言新鲜度。语气以鼓励为主。`,
     },
   ];
 }
