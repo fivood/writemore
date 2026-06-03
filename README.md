@@ -1,205 +1,150 @@
-# WriteMore · 灵感是橡果
+# WriteMore · 灵感是橡果 🌰
 
 想写什么，不想写什么，有什么灵感，没有灵感，都可以是打开它的原因。
 
-一个记录碎片想法的工具。
-
-数据优先存储在浏览器本地（IndexedDB），可选登录账号后自动同步到云端，多设备共享草稿。
-
-## 版本说明
-
-- 查看完整更新记录：`CHANGELOG.md`
-- 当前版本：`0.1.7`
-
-
-## 快速开始
-
-### 网页版（无需安装）
-
-直接访问：**https://fivood.github.io/writemore/**
-
-数据存储在浏览器本地，登录账号可同步到云端。
-
-#### iPad / iPhone 安装为 App
-
-1. Safari 打开上方网址
-2. 点击底部 **分享按钮**（方块+箭头图标）
-3. 选择 **「添加到主屏幕」**
-4. 主屏幕出现图标后，点击即可全屏运行
+一个温润、优雅且极富设计感的写作灵感记录与卡片抽取工具。数据默认存储在浏览器本地（IndexedDB），在配置 Supabase 后可实现多端云同步，让灵感在桌面端与移动端之间无缝流动。
 
 ---
 
-### Windows 桌面版
+## 🚀 最新版本亮点 (`v0.1.13`)
 
-前往 [Releases 页面](https://github.com/fivood/writemore/releases/latest) 下载最新版本：
+在最新版中，我们针对项目进行了深度的架构解耦和移动端高质感适配：
+- **弹窗组件化解耦**：将 `AI 设置` 与 `云端同步` 两个繁重的弹窗彻底解耦为独立 React 组件，大幅精简了全局根组件 `App.tsx`，**有效防止高频文本打字时的全局无用重绘，打字流畅度成倍提升**。
+- **高质感移动端适配**：
+  - **BottomSheet 底部抽屉**：在移动端/小屏幕下，所有设置和同步弹窗自动贴合底部以抽屉样式弹出，单手操作更舒适。
+  - **右侧平滑滑入抽屉 (Drawer)**：小屏下灵感面板由生硬的“显/隐”重构为**平滑自右侧滑入的抽屉组件**，配合透明磨砂玻璃遮罩及任意空白处点击关闭，效果更 premium。
+  - **视口高度修复**：利用 `dvh`（Dynamic Viewport Height）替换 `100vh`，彻底解决了移动端浏览器（Safari/Chrome）底部工具栏遮挡底部 Tab 栏的高度缺陷。
+- **双时效自动保存策略**：结合 **2.5秒短延迟打字防抖** 与 **60秒强制周期性节流** 机制，确保高频打字不中断的同时绝不丢失任何字词，离线写作更踏实。
+- **同步冲突快照备份**：双向同步中云端覆盖本地前，自动在本地保存一份 title 带有 `[冲突备份]` 标记的 IndexedDB 隐藏草稿备份，提供数据安全垫，防止多端修改被单向覆盖。
 
-| 文件 | 说明 |
-|------|------|
-| `WriteMore_*_x64-setup.exe` | 安装包（推荐） |
-| `WriteMore_*_x64_en-US.msi` | MSI 安装包 |
-| `app.exe`（在 zip 内） | 绿色版，解压后直接双击运行 |
+---
 
-> **提示**：首次运行需要 [WebView2 Runtime](https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/)。Windows 11 / Windows 10 21H2+ 已内置，无需单独安装。
+## 🎨 核心功能
 
-## 功能
-
-### 六种写作模式
-
+### 1. 六种沉浸式写作模式
 | 模式 | 说明 |
-|------|------|
-| **词汇灵感** | 从 9 大分类词库中随机抽取词条，围绕它们展开想象 |
-| **场景描写** | 多个精心设计的场景提示，练习感官描写能力 |
-| **写作挑战** | 涵盖展示型写作、陈词滥调改造、感官练习等多种挑战题目 |
-| **角色描写** | 从内心、关系、声音、身体、历史、边缘视角六个维度深挖角色 |
-| **梦境记录** | 自由记录梦境，捕捉潜意识的素材 |
-| **自由发挥** | 无提示、无限制，纯粹的自由书写 |
+| :--- | :--- |
+| **🔮 词汇灵感** | 从内置的 9 大经典词库中随机刷新词条，锁定你的心仪字词，围绕它们展开想象 |
+| **🏞️ 场景描写** | 多个精心提炼的场景设定，训练您的多维度感官描写与环境铺垫能力 |
+| **⚔️ 写作挑战** | 涵盖展示型写作、陈词滥调改造、感官专项练习等多种写作挑战题目 |
+| **👥 角色描写** | 从内心、关系、声音、身体、历史背景、边缘视角六个维度深度发掘人物画像 |
+| **🌙 梦境记录** | 自由记录梦境，方便随时捕捉并提取潜意识中的创作素材 |
+| **✍️ 自由发挥** | 无提示、无限制，纯粹专注于码字，享受沉浸写作的纯粹空间 |
 
-### 词库系统
+### 2. 强大的词库管理系统
+- **9 大词汇分类**：意象、实物、动作、状态、感官、抽象、人物、地名、典故。
+- **8 种写作风格**：科幻、悬疑、奇幻、言情、武侠、都市、历史、恐怖。
+- **管理与自定义**：支持个人专属词条的增删改、批量导入与导出（JSON），并支持按分类灵活筛选。
+- **词条锁定 (Lock)**：在随机抽取时，可一键锁定满意的词条，只刷新其余不满意的位置。
 
-- **9 大词汇分类**：意象、实物、动作、状态、感官、抽象、人物、地名、典故
-- **8 种写作风格**：科幻、悬疑、奇幻、言情、武侠、都市、历史、恐怖
-- **词库管理**：支持自定义词条的增删改、批量导入导出（JSON）、按分类筛选
-- **词条锁定**：抽取时可锁定满意的词条，只刷新其余位置
+### 3. AI 智能写作辅助
+- **词汇灵感 AI**：基于您当前抽中的词条，智能提供创意点拨与发想提示。
+- **场景生成与深挖**：AI 协助扩写场景细节，或引导从特定微观视角深挖写作。
+- **AI 定制出题**：根据您所选取的写作风格，现场出题，并可一键自动保存至本地挑战库。
+- **流式智能续写**：基于 SSE 的流式文本输出，节流防抖处理，无缝追加到编辑器中。
+- **写后反馈与评价**：智能分析您的文本，客观指出亮眼文笔，并提供感官等维度的提升建议。
 
-### AI 写作辅助
+### 4. 专注力与数据管理
+- **时间倒计时**：10 / 15 / 20 / 30 分钟限时写作，激发限时爆发力。
+- **灵感宫殿**：以精美卡片陈列历史草稿，支持写作模式过滤、关键词搜索及一键载入恢复写作。
+- **历史热力图**：类似 GitHub Contribution Graph 的写作日历，直观可视化您的写作天数和频率。
+- **快捷键支持**：`Space` 抽取词条，`Ctrl+S` 保存，`Enter` 快速聚焦输入区。
 
-- **词汇灵感 AI**：基于当前词条生成创作灵感提示
-- **场景生成 / 深挖**：AI 扩写场景描述，或从特定视角深挖细节
-- **AI 出题**：根据风格偏好生成定制写作挑战，自动保存到挑战库
-- **人物深挖**：AI 为角色生成心理、历史、关系背景
-- **灵感再创作**：在灵感宫殿中，AI 基于历史草稿重新组合创意
-- **AI 续写**：流式输出，实时追加到当前编辑内容
-- **AI 写后反馈**：完成后获取写作亮点与改进建议
+---
 
-### 编辑器
+## 🛠️ 技术栈与依赖
+- **核心框架**：React 19 + TypeScript
+- **构建工具**：Vite — 高速编译与 HMR
+- **样式系统**：Tailwind CSS 4 — 现代、响应式、暗色模式
+- **状态管理**：Zustand (含持久化存储持久层)
+- **本地存储**：Dexie (IndexedDB) — 本地多表高可靠存储
+- **云同步端**：Supabase — 账号认证与用户数据 upsert 同步
+- **图标系统**：Lucide Icons — 简洁精美、完全组件化
+- **单文件构建**：vite-plugin-singlefile — 将前端完全打包为单个 HTML
+- **桌面包装**：Tauri 2 — Windows/macOS 桌面安装包轻量构建
 
-- **Markdown 编辑器**：支持 Markdown 格式书写
-- **限时写作**：10 / 15 / 20 / 30 分钟倒计时模式
-- **自动保存**：每 30 秒自动存档，登录后同步到云端
-- **导出**：一键导出为 `.md` 文件
-- **全屏专注模式**：沉浸式写作体验
+---
 
-### 数据管理
-
-- **灵感宫殿**：浏览所有历史草稿，按写作模式筛选和关键词搜索，一键恢复继续写作
-- **收藏**：收藏喜欢的词条组合，随时回顾使用
-- **历史热力图**：类 GitHub 贡献图的写作日历，可视化写作习惯
-- **连续打卡**：记录连续写作天数
-
-### 云同步
-
-- 注册 / 登录账号后，草稿和词集自动备份到云端
-- 多设备数据合并（以最后修改时间为准）
-- 支持手动触发全量同步
-
-### 其他特性
-
-- 亮色 / 暗色 / 两种主题
-- 支持导入自定义写作挑战和角色提示（`.md` 文件，每行一条）
-- **PWA**：可在 iOS / Android / 桌面浏览器中"添加到主屏幕"，全屏离线使用
-- **Windows 桌面应用**：提供 `.exe` / `.msi` 安装包
-- 键盘快捷键：`Space` 抽取词条，`Ctrl+S` 保存，`Enter` 聚焦编辑器
-- 版本更新检测：有新版本时顶栏提示
-
-## 技术栈
-
-- **React 19** + **TypeScript**
-- **Vite** — 开发与构建
-- **Tailwind CSS 4** — 样式
-- **Zustand** — 状态管理（含持久化）
-- **Dexie (IndexedDB)** — 本地数据持久化
-- **Supabase** — 云端认证与数据同步
-- **Material Symbols** — 图标
-- **vite-plugin-singlefile** — 构建为单文件
-- **Tauri 2** — Windows 桌面应用打包
-
-## 开发
+## 💻 本地开发
 
 ```bash
-# 安装依赖
+# 克隆仓库
+git clone https://github.com/fivood/writemore.git
+cd writemore
+
+# 安装本地 Node 依赖包
 npm install
 
-# 启动 Web 开发服务器
+# 启动 Web 本地开发服务
 npm run dev
 
-# 启动 Tauri 桌面开发模式
+# 启动 Tauri 桌面应用开发模式
 npm run tauri:dev
 
-# 类型检查
-npx tsc --noEmit
-
-# 构建 Web 版本（输出到 dist/index.html）
+# 构建 Web 单页面版本 (产物输出到 dist/index.html)
 npm run build
 
-# 构建 Windows 桌面安装包
+# 本地进行 Windows 桌面打包（需本地安装有 Rust 和 WiX/NSIS 环境）
 npm run tauri:build
 ```
 
-## 代码规范
+---
 
-### 发版规则
+## 📋 版本发布与部署规则
 
-1. 版本号必须保持一致：
-    - `package.json`
-    - `src-tauri/Cargo.toml`
-    - `src-tauri/tauri.conf.json`
-2. 每次发布必须更新 `CHANGELOG.md`，记录新增、修改、修复。
-3. 仅推送 `main` 不会自动创建 GitHub Release。
-4. 仓库的 Release 工作流由 `v*` 标签触发，必须推送版本标签：
-    - `git tag -a vX.Y.Z -m "release vX.Y.Z"`
-    - `git push origin vX.Y.Z`
-5. 打包前必须本地验证：
-    - `npm run build`
-    - `npm run tauri:build`
-6. 版本发布后，确认 Actions 中 `Release` 工作流成功，并检查 Releases 页面已生成对应版本与安装包资产。
+### 1. 发版版本号一致性
+每次升级发版时，请务必修改并保持以下三个文件的版本号一致：
+- `package.json`
+- `src-tauri/Cargo.toml`
+- `src-tauri/tauri.conf.json`
 
-## 部署
+### 2. 触发 GitHub 自动构建 (CI/CD)
+本项目已配置了 GitHub Actions 自动编译构建工作流。**无需在本地进行繁重的桌面打包**，只需要推送版本标签（Git Tag），GitHub 服务器就会在后台自动完成打包并发布到 Release 页面：
+1. **修改版本号**并提交到 `main` 分支。
+2. **打上版本标签**（版本号需以 `v` 开头，如 `v0.1.13`）：
+   ```bash
+   git tag -a v0.1.13 -m "release v0.1.13"
+   ```
+3. **推送标签到远程**：
+   ```bash
+   git push origin v0.1.13
+   ```
+4. GitHub Actions 触发后，打包生成的 `.exe` 与 `.msi` 资产会自动归档在项目的 [Releases 页面](https://github.com/fivood/writemore/releases)。
 
-### GitHub Pages（自动）
+### 3. PWA 安装与 Pages 部署
+- **网页部署**：向 `main` 推送代码后，Actions 会自动重新生成静态资源并发布到 GitHub Pages 托管空间。
+- **PWA 安装**：在 iPad、iPhone 或 Android 浏览器中打开托管网页后，点击**“分享 -> 添加到主屏幕”**即可将其离线作为独立全屏 App 运行。
 
-推送到 `main` 分支后，GitHub Actions 自动构建并发布到 Pages。
+---
 
-### 桌面安装包
-
-运行 `npm run tauri:build`，产物位于：
-- `src-tauri/target/release/bundle/nsis/WriteMore_x64-setup.exe`
-- `src-tauri/target/release/bundle/msi/WriteMore_x64_en-US.msi`
-
-### PWA 安装（iPad / iPhone / Android）
-
-在浏览器中打开部署后的网页，点击"分享 → 添加到主屏幕"即可安装为全屏应用，支持离线使用。
-
-## 项目结构
+## 📂 项目结构导览
 
 ```
 src/
-├── App.tsx                  # 主界面与写作模式逻辑
-├── store.ts                 # Zustand 全局状态
-├── db.ts                    # Dexie 数据库定义
-├── types.ts                 # 类型与常量
-├── index.css                # 全局样式与暗色主题
+├── App.tsx                  # 写作主区、各模式交互与底栏
+├── store.ts                 # Zustand 状态持久化存取
+├── db.ts                    # Dexie.js IndexedDB 表结构及升级
+├── types.ts                 # 写作模式、词汇分类等 TS 定义
+├── index.css                # Tailwind 4 基础配置与多端主题覆盖
 ├── components/
-│   ├── InspirationPalace.tsx  # 灵感宫殿（草稿管理）
-│   ├── FavoritesPage.tsx      # 收藏页
-│   ├── HistoryPage.tsx        # 历史与热力图
-│   └── LibraryPage.tsx        # 词库管理
+│   ├── InspirationPalace.tsx  # 灵感宫殿草稿管理
+│   ├── FavoritesPage.tsx      # 收藏灵感卡片页
+│   ├── HistoryPage.tsx        # 写作热力图及历史记录
+│   ├── LibraryPage.tsx        # 内置与自定义词库控制
+│   ├── AiSettingsModal.tsx    # [NEW] 自治 AI 调试及选择弹窗
+│   └── CloudLoginModal.tsx    # [NEW] 自治云同步控制及登录弹窗
 ├── services/
-│   ├── ai.ts                  # AI 接口封装（支持任意 OpenAI 兼容 API）
-│   ├── prompts.ts             # 所有 AI prompt 构造函数
-│   └── supabase.ts            # Supabase 认证与云同步
+│   ├── ai.ts                  # OpenAI 兼容 API 封装（支持 AbortController/超时）
+│   ├── prompts.ts             # 智能引导 Prompt 拼装模板
+│   └── supabase.ts            # Supabase 数据库上行/下行备份
 └── data/
-    ├── wordEngine.ts          # 词条抽取引擎
-    ├── words.json             # 内置词库数据
-    └── draftEngine.ts         # 草稿处理工具
-public/
-├── manifest.json            # PWA 清单
-├── sw.js                    # Service Worker（离线缓存）
-└── icons/                   # PWA 图标
-src-tauri/                   # Tauri 桌面应用配置
-.github/workflows/
-└── deploy.yml               # GitHub Pages 自动部署
+    ├── wordEngine.ts          # 随机抽词与类别判定
+    ├── words.json             # 内置的大量灵感分类词库
+    └── draftEngine.ts         # 本地草稿的增删与收藏关联
 ```
 
-## 许可
+---
 
-MIT
+## 📄 许可证
+
+本项目基于 [MIT](LICENSE) 协议开源。
