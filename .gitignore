@@ -27,5 +27,5 @@ dist-ssr
 src-tauri/updater.key
 
 # GitHub directory
-.github/
+# .github/ is allowed so workflows are tracked
 

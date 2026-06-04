@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '版本号 (如 v0.1.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build & Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
+        with:
+          tagName: ${{ github.ref_name || inputs.tag }}
+          releaseName: WriteMore ${{ github.ref_name || inputs.tag }}
+          releaseBody: |
+            ## 下载
+
+            | 文件 | 说明 |
+            |------|------|
+            | `WriteMore_*_x64-setup.exe` | Windows 安装包（推荐） |
+            | `WriteMore_*_x64_en-US.msi` | Windows MSI 安装包 |
+            | `app.exe` | 绿色版，解压直接运行 |
+
+            > **注意**：首次运行需要 [WebView2 Runtime](https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/)，Windows 11 / Windows 10 21H2+ 已内置，无需单独安装。
+
+            ## 网页版
+            直接访问 https://fivood.github.io/writemore/（无需安装，数据存本地）
+          releaseDraft: false
+          prerelease: false
+
+      - name: Generate updater manifest (latest.json)
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if (-not $tag) { $tag = "${{ inputs.tag }}" }
+          $version = $tag.TrimStart('v')
+
+          $nsisDir = "src-tauri/target/release/bundle/nsis"
+          $exeFile = Get-ChildItem $nsisDir -Filter "*.exe" |
+            Where-Object { $_.Name -notmatch '\.sig$' } |
+            Select-Object -First 1
+
+          if (-not $exeFile) {
+            Write-Host "No NSIS installer found, skipping latest.json"
+            exit 0
+          }
+          Write-Host "Found installer: $($exeFile.Name)"
+
+          $sigFile = "$($exeFile.FullName).sig"
+          if (-not (Test-Path $sigFile)) {
+            Write-Host "No .sig file at $sigFile — signing may not have run. Skipping latest.json."
+            exit 0
+          }
+
+          $sig = (Get-Content $sigFile -Raw).Trim()
+          $downloadUrl = "https://github.com/${{ github.repository }}/releases/download/$tag/$($exeFile.Name)"
+          $pubDate = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+          $manifest = [ordered]@{
+            version  = $version
+            notes    = ""
+            pub_date = $pubDate
+            platforms = [ordered]@{
+              "windows-x86_64" = [ordered]@{
+                signature = $sig
+                url       = $downloadUrl
+              }
+            }
+          }
+
+          $manifest | ConvertTo-Json -Depth 5 | Set-Content "latest.json" -Encoding UTF8
+          Write-Host "Generated latest.json:"
+          Get-Content "latest.json"
+
+          gh release upload $tag "latest.json" --clobber
+          Write-Host "Uploaded latest.json to release $tag"
