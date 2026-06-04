@@ -8,7 +8,7 @@ import type { Draft, WordSet, WritingMode } from '../types';
 import { WRITING_MODES } from '../types';
 import { chatCompletion } from '../services/ai';
 import { buildInspirationRemixPrompt } from '../services/prompts';
-import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX, Trash2, X, Save, ArrowUpRight, CheckSquare, Square, ListChecks } from 'lucide-react';
+import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX, Trash2, X, Save, ArrowUpRight, CheckSquare, Square, ListChecks, Merge, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface PalaceItem {
     draft: Draft;
@@ -55,6 +55,10 @@ export default function InspirationPalace() {
     const [previewContent, setPreviewContent] = useState('');
     const [previewSaving, setPreviewSaving] = useState(false);
     const [previewSavedHint, setPreviewSavedHint] = useState(false);
+    // 合并模式
+    const [showMergeModal, setShowMergeModal] = useState(false);
+    const [mergeTitle, setMergeTitle] = useState('');
+    const [mergeItems, setMergeItems] = useState<PalaceItem[]>([]);
     // 无多选
     const hasPreviewChanges = !!previewItem && (
         previewTitle !== (previewItem.draft.title || '') ||
@@ -237,6 +241,83 @@ export default function InspirationPalace() {
         return SCENE_PROMPTS.find(s => s.id === sceneId)?.title;
     };
 
+    const handleOpenMerge = () => {
+        const selected = items.filter(it => selectedIds.has(it.draft.id));
+        if (selected.length < 2) return;
+        setMergeItems(selected);
+        const todayStr = new Date().toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }).replace('/', '-');
+        setMergeTitle(`合并草稿 ${todayStr}`);
+        setShowMergeModal(true);
+    };
+
+    const moveItem = (index: number, direction: 'up' | 'down') => {
+        const nextIndex = direction === 'up' ? index - 1 : index + 1;
+        if (nextIndex < 0 || nextIndex >= mergeItems.length) return;
+        const newItems = [...mergeItems];
+        const temp = newItems[index];
+        newItems[index] = newItems[nextIndex];
+        newItems[nextIndex] = temp;
+        setMergeItems(newItems);
+    };
+
+    const mergedPreview = useMemo(() => {
+        return mergeItems.map((it, idx) => {
+            const title = it.draft.title || `未命名灵感 ${idx + 1}`;
+            const content = it.draft.content || '';
+            return `## ${title}\n\n${content}`;
+        }).join('\n\n---\n\n');
+    }, [mergeItems]);
+
+    async function handleConfirmMerge() {
+        if (mergeItems.length < 2) return;
+        const title = mergeTitle.trim() || '未命名合并草稿';
+        const content = mergedPreview;
+        const wordCount = content.replace(/\s+/g, '').length;
+        const now = new Date();
+        const draftId = `draft_${Date.now()}`;
+        const wordSetId = `ws_empty_${Date.now()}`;
+
+        try {
+            const wordSet: WordSet = {
+                id: wordSetId,
+                words: [],
+                genre: '通用',
+                createdAt: now,
+                isFavorite: false,
+                hasWritten: true,
+            };
+            await db.wordSets.put(wordSet);
+
+            const newDraft: Draft = {
+                id: draftId,
+                wordSetId,
+                title,
+                content,
+                wordCount,
+                createdAt: now,
+                updatedAt: now,
+                writingMode: 'free',
+                deletedFromPalace: false,
+            };
+            await db.drafts.put(newDraft);
+
+            await fetchItems();
+
+            setSelectMode(false);
+            setSelectedIds(new Set());
+            setShowMergeModal(false);
+
+            const item: PalaceItem = {
+                draft: newDraft,
+                wordSet,
+            };
+            loadDraftToEditor(item);
+        } catch (e) {
+            console.error('Failed to merge drafts', e);
+            alert('合并草稿失败，请重试');
+        }
+    }
+
     async function handleAiRemix() {
         if (!store.aiEnabled) return;
         // 选择模式下用已选卡片；否则用当前筛选结果（原逻辑）
@@ -283,7 +364,7 @@ export default function InspirationPalace() {
                 : '';
             lines.push(`## ${i + 1}. ${title}`);
             lines.push(``);
-            lines.push(`> 模式：${mode}　｜　更新：${date}　｜　字数：${item.draft.wordCount}`);
+            lines.push(`> 模式：${mode} | 更新：${date} | 字数：${item.draft.wordCount}`);
             lines.push(``);
             if (wordsLine) lines.push(wordsLine);
             lines.push(item.draft.content || '（无内容）');
@@ -399,14 +480,14 @@ export default function InspirationPalace() {
                         {/* Search */}
                         <div className="ml-auto flex items-center gap-2">
                             {/* 选择模式开关 */}
-                            {store.aiEnabled && (
+                            {items.length >= 2 && (
                                 <button
                                     onClick={() => {
                                         setSelectMode(v => !v);
                                         setSelectedIds(new Set());
                                         setAiRemixResult('');
                                     }}
-                                    title={selectMode ? '退出选择' : '选择卡片进行 AI 再创作'}
+                                    title={selectMode ? '退出选择' : '选择卡片进行合并或 AI 再创作'}
                                     className={`p-2 rounded-full border transition-colors text-xs font-label flex items-center gap-1 ${
                                         selectMode
                                             ? 'bg-violet-100 dark:bg-violet-500/20 border-violet-300 dark:border-violet-400/30 text-violet-700 dark:text-violet-300'
@@ -474,7 +555,11 @@ export default function InspirationPalace() {
                                         if (selectMode) {
                                             setSelectedIds(prev => {
                                                 const next = new Set(prev);
-                                                next.has(item.draft.id) ? next.delete(item.draft.id) : next.add(item.draft.id);
+                                                if (next.has(item.draft.id)) {
+                                                    next.delete(item.draft.id);
+                                                } else {
+                                                    next.add(item.draft.id);
+                                                }
                                                 return next;
                                             });
                                         } else {
@@ -544,7 +629,7 @@ export default function InspirationPalace() {
 
                                     {/* Preview */}
                                     <p className="relative text-on-surface-variant text-sm line-clamp-3 mb-4 min-h-[54px] leading-relaxed flex-1">
-                                        {item.draft.content ? item.draft.content.replace(/[#*>_`\[\]]/g, '').slice(0, 150) : '没有任何内容...'}
+                                        {item.draft.content ? item.draft.content.replace(/[#*>_`[\]]/g, '').slice(0, 150) : '没有任何内容...'}
                                     </p>
 
                                     {/* Bottom: word count + word chips */}
@@ -594,6 +679,14 @@ export default function InspirationPalace() {
                         清空
                     </button>
                     <div className="w-px h-4 bg-outline-variant/30" />
+                    <button
+                        onClick={handleOpenMerge}
+                        disabled={selectedIds.size < 2}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded-lg hover:bg-primary-dim transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+                    >
+                        <Merge size={15} />
+                        <span>灵感合成 ({selectedIds.size})</span>
+                    </button>
                     <button
                         onClick={handleAiRemix}
                         disabled={selectedIds.size < 2 || aiRemixLoading}
@@ -665,6 +758,139 @@ export default function InspirationPalace() {
                                     <span>在编辑器中继续</span>
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showMergeModal && (
+                <div className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowMergeModal(false)}>
+                    <div className="w-full max-w-5xl max-h-[90vh] bg-surface border border-outline-variant/20 rounded-lg shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15 bg-surface-container-low/60">
+                            <div className="min-w-0">
+                                <h3 className="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
+                                    <span className="text-xl">🧩</span>
+                                    <span>灵感拼图合成器</span>
+                                </h3>
+                                <p className="text-xs font-label text-on-surface-variant mt-1">
+                                    调整片段顺序，它们将按序合并拼接为一篇全新长文
+                                </p>
+                            </div>
+                            <button 
+                                className="p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" 
+                                onClick={() => setShowMergeModal(false)}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-y-auto">
+                            {/* Left: Sorting list */}
+                            <div className="lg:col-span-5 flex flex-col h-full min-h-[300px]">
+                                <h4 className="font-label text-xs font-bold uppercase tracking-wider text-outline mb-3">
+                                    片段排序 ({mergeItems.length})
+                                </h4>
+                                <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin">
+                                    {mergeItems.map((item, idx) => {
+                                        const mode = resolveMode(item.draft, item.wordSet);
+                                        const mStyle = MODE_STYLE[mode];
+                                        return (
+                                            <div 
+                                                key={item.draft.id} 
+                                                className={`flex items-center gap-3 p-3 bg-surface-container-low border border-outline-variant/20 rounded-lg hover:border-primary/20 transition-all ${mStyle.leftAccent} border-l-4`}
+                                            >
+                                                {/* Index badge */}
+                                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-xs font-headline font-bold text-on-surface-variant">
+                                                    {idx + 1}
+                                                </div>
+                                                {/* Text Info */}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-headline text-sm font-semibold text-on-surface truncate">
+                                                        {item.draft.title || '未命名灵感'}
+                                                    </p>
+                                                    <div className="flex items-center gap-2 mt-1 text-[11px] font-label text-outline">
+                                                        <span>{item.draft.wordCount} 字</span>
+                                                        <span>•</span>
+                                                        <span>{new Date(item.draft.updatedAt).toLocaleDateString('zh-CN')}</span>
+                                                    </div>
+                                                </div>
+                                                {/* Control buttons */}
+                                                <div className="flex flex-col gap-1 flex-shrink-0">
+                                                    <button
+                                                        onClick={() => moveItem(idx, 'up')}
+                                                        disabled={idx === 0}
+                                                        className="p-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                                                        title="上移"
+                                                    >
+                                                        <ArrowUp size={14} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => moveItem(idx, 'down')}
+                                                        disabled={idx === mergeItems.length - 1}
+                                                        className="p-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                                                        title="下移"
+                                                    >
+                                                        <ArrowDown size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Right: Merge Preview & Title input */}
+                            <div className="lg:col-span-7 flex flex-col h-full min-h-[400px]">
+                                <h4 className="font-label text-xs font-bold uppercase tracking-wider text-outline mb-3">
+                                    新草稿设置与长文预览
+                                </h4>
+                                
+                                {/* Title input */}
+                                <div className="mb-4">
+                                    <label className="block text-xs font-label text-on-surface-variant mb-1.5 font-medium">
+                                        合成后的新草稿标题
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={mergeTitle}
+                                        onChange={e => setMergeTitle(e.target.value)}
+                                        placeholder="请输入新草稿标题"
+                                        className="w-full px-3 py-2 bg-surface-container rounded-lg border border-outline-variant/30 text-sm font-label text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                                    />
+                                </div>
+
+                                {/* Content preview block */}
+                                <div className="flex-1 flex flex-col min-h-0 bg-surface-container-low/40 border border-outline-variant/20 rounded-lg p-4">
+                                    <div className="flex items-center justify-between pb-2 border-b border-outline-variant/10 text-xs font-label text-outline mb-3 font-medium">
+                                        <span>Markdown 拼接预览</span>
+                                        <span>预估字数：{mergedPreview.replace(/\s+/g, '').length} 字</span>
+                                    </div>
+                                    <textarea
+                                        readOnly
+                                        value={mergedPreview}
+                                        className="flex-1 w-full bg-transparent border-none focus:ring-0 text-sm leading-relaxed text-on-surface/80 placeholder:text-outline font-mono resize-none focus:outline-none overflow-y-auto"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="px-5 py-4 border-t border-outline-variant/15 bg-surface-container-low/40 flex items-center justify-end gap-3">
+                            <button
+                                onClick={() => setShowMergeModal(false)}
+                                className="px-4 py-2 rounded-lg border border-outline-variant/30 text-xs font-label text-on-surface-variant hover:bg-surface-container transition-colors"
+                            >
+                                取消
+                            </button>
+                            <button
+                                onClick={handleConfirmMerge}
+                                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-xs font-label font-medium hover:bg-primary-dim transition-colors"
+                            >
+                                <Merge size={16} />
+                                <span>确认合成并开始写作</span>
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -101,6 +101,12 @@ interface AppState {
   // Cloud auth
   cloudUser: { id: string; email: string } | null;
   setCloudUser: (u: { id: string; email: string } | null) => void;
+
+  // Daily box
+  dailyBoxOpenedDate: string | null;
+  setDailyBoxOpenedDate: (d: string | null) => void;
+  dailyBoxData: any | null;
+  setDailyBoxData: (data: any | null) => void;
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -205,6 +211,11 @@ export const useStore = create<AppState>()(
 
       cloudUser: null,
       setCloudUser: (u) => set({ cloudUser: u }),
+
+      dailyBoxOpenedDate: null,
+      setDailyBoxOpenedDate: (d) => set({ dailyBoxOpenedDate: d }),
+      dailyBoxData: null,
+      setDailyBoxData: (data) => set({ dailyBoxData: data }),
     }),
     {
       name: 'writemore-store',
@@ -248,6 +259,8 @@ export const useStore = create<AppState>()(
         currentChallenge: s.currentChallenge,
         currentCharacterPrompt: s.currentCharacterPrompt,
         selectedCharacterLayer: s.selectedCharacterLayer,
+        dailyBoxOpenedDate: s.dailyBoxOpenedDate,
+        dailyBoxData: s.dailyBoxData,
       }),
     }
   )

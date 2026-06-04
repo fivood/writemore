@@ -68,6 +68,8 @@ export default function App() {
     const [isSceneFavorited, setIsSceneFavorited] = useState(false);
     const [isChallengeFavorited, setIsChallengeFavorited] = useState(false);
     const [isCharacterFavorited, setIsCharacterFavorited] = useState(false);
+    const [isFlipping, setIsFlipping] = useState(false);
+    const [isOpeningBox, setIsOpeningBox] = useState(false);
 
     const [mobilePanel, setMobilePanel] = useState(false);
     const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -511,20 +513,92 @@ export default function App() {
     }
 
     async function handleDraw() {
+        setIsFlipping(true);
         wordSessionRef.current++;
         const locked = new Map<number, Word>();
         store.lockedIndices.forEach(i => {
             if (store.currentWords[i]) locked.set(i, store.currentWords[i]);
         });
         const words = drawRandomWords(store.wordCount, store.selectedCategories, locked);
-        // New draw means a new inspiration set; break linkage to previously opened draft/word set.
+
+        // 300ms 后在卡片翻转至 90 度侧面时，静默替换词卡文字
+        setTimeout(() => {
+            // New draw means a new inspiration set; break linkage to previously opened draft/word set.
+            store.setCurrentWordSetId(null);
+            store.setCurrentDraftId(null);
+            store.setIsCurrentWordSetFavorite(false);
+            store.setCurrentWords(words);
+            store.setDrawnGenre(pickRandomGenre(store.selectedGenres));
+            store.updateStreak();
+            setAiWordHint('');
+        }, 300);
+
+        // 600ms 后动画播放完毕，恢复状态
+        setTimeout(() => {
+            setIsFlipping(false);
+        }, 600);
+    }
+
+    async function handleOpenDailyBox() {
+        if (isOpeningBox) return;
+        setIsOpeningBox(true);
+        setTimeout(() => {
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const words = drawRandomWords(3, [], new Map());
+            
+            const rand = Math.random();
+            let promptType: 'scene' | 'challenge' = 'scene';
+            let promptData: any = null;
+            if (rand > 0.5) {
+                promptData = pickRandomScene();
+                promptType = 'scene';
+            } else {
+                promptData = pickRandomChallenge();
+                promptType = 'challenge';
+            }
+            
+            const boxData = {
+                words,
+                promptType,
+                promptData
+            };
+            
+            store.setDailyBoxOpenedDate(todayStr);
+            store.setDailyBoxData(boxData);
+            setIsOpeningBox(false);
+            showToast('🎁 今日盲盒已拆开！');
+        }, 1200);
+    }
+
+    function handleStartDailyWriting() {
+        const data = store.dailyBoxData;
+        if (!data) return;
+        
+        store.setCurrentWords(data.words);
         store.setCurrentWordSetId(null);
         store.setCurrentDraftId(null);
         store.setIsCurrentWordSetFavorite(false);
-        store.setCurrentWords(words);
-        store.setDrawnGenre(pickRandomGenre(store.selectedGenres));
-        store.updateStreak();
-        setAiWordHint('');
+        store.clearLocks();
+        
+        if (data.promptType === 'scene') {
+            store.setWritingMode('scene');
+            store.setCurrentScene(data.promptData);
+            store.setCurrentChallenge(null);
+            store.setCurrentCharacterPrompt(null);
+        } else {
+            store.setWritingMode('challenge');
+            store.setCurrentChallenge(data.promptData);
+            store.setCurrentScene(null);
+            store.setCurrentCharacterPrompt(null);
+        }
+        
+        store.setEditorTitle('');
+        store.setEditorContent('');
+        clearAiTransientOutputs();
+        setWordsSubView('write');
+        wordSessionRef.current++;
+        
+        showToast('✍️ 开始今日限定挑战！');
     }
 
     async function handleToggleFavorite() {
@@ -1323,6 +1397,83 @@ export default function App() {
                             {/* Bento Grid */}
                             <div className="grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-4 auto-rows-[140px] md:auto-rows-[180px]">
 
+                                {/* 🎁 今日灵感盲盒 — fullwidth (12 cols, 1 row) */}
+                                {(() => {
+                                    const todayStr = new Date().toISOString().slice(0, 10);
+                                    const isOpened = store.dailyBoxOpenedDate === todayStr && store.dailyBoxData;
+                                    return (
+                                        <div className="col-span-2 md:col-span-12 row-span-1 bento-ring-wrapper">
+                                            <div className="w-full h-full glass-panel bg-gradient-to-r from-violet-500/5 to-fuchsia-500/5 dark:from-violet-500/10 dark:to-fuchsia-500/10 rounded-2xl border border-outline-variant/15 p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 overflow-hidden relative z-[1]">
+                                                {/* background decorations */}
+                                                <div className="absolute right-12 -top-12 w-48 h-48 bg-violet-400/5 blur-[60px] rounded-full pointer-events-none"></div>
+                                                <div className="absolute left-1/3 -bottom-12 w-48 h-48 bg-fuchsia-400/5 blur-[60px] rounded-full pointer-events-none"></div>
+
+                                                {!isOpened ? (
+                                                    // 未开启状态
+                                                    <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-between">
+                                                        <div className="flex items-center gap-3.5 text-center sm:text-left flex-col sm:flex-row">
+                                                            <span className={`p-3 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400 shrink-0 ${isOpeningBox ? 'animate-jiggle' : 'hover:animate-jiggle'}`}>
+                                                                <Sparkles size={36} className={isOpeningBox ? 'animate-jiggle' : ''} />
+                                                            </span>
+                                                            <div>
+                                                                <h2 className="font-headline text-lg font-bold text-on-surface flex items-center gap-1.5 justify-center sm:justify-start">
+                                                                    今日限定灵感盲盒 🌰
+                                                                </h2>
+                                                                <p className="text-on-surface-variant text-xs mt-1">AI 与算法联袂特调，每日专供一次限定盲盒，开启你的今日奇思妙想</p>
+                                                            </div>
+                                                        </div>
+                                                        <button 
+                                                            onClick={handleOpenDailyBox}
+                                                            disabled={isOpeningBox}
+                                                            className="px-5 py-2.5 bg-primary text-on-primary rounded-xl font-label text-xs font-bold shadow-md hover:bg-primary-dim transition-colors disabled:opacity-50 flex items-center gap-2 whitespace-nowrap"
+                                                        >
+                                                            {isOpeningBox ? (
+                                                                <>
+                                                                    <LoaderCircle size={16} className="animate-spin" />
+                                                                    <span>正在拆开盲盒…</span>
+                                                                </>
+                                                            ) : (
+                                                                <span>拆开今日盲盒</span>
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    // 已开启状态
+                                                    <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-between">
+                                                        <div className="flex-1 w-full text-center sm:text-left">
+                                                            <div className="flex items-center gap-2 mb-2 justify-center sm:justify-start">
+                                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold font-label tracking-widest uppercase bg-violet-500/15 text-violet-700 dark:text-[#a78bfa] border border-violet-400/20">
+                                                                    今日限定
+                                                                </span>
+                                                                <span className="text-xs text-on-surface-variant font-label">
+                                                                    {store.dailyBoxData.promptType === 'scene' ? '🏞️ 场景任务' : '⚔️ 挑战任务'}
+                                                                </span>
+                                                            </div>
+                                                            {/* 3个词条展示 */}
+                                                            <div className="flex flex-wrap gap-1.5 mb-2.5 justify-center sm:justify-start">
+                                                                {store.dailyBoxData.words.map((w: any) => (
+                                                                    <span key={w.id} className="px-2.5 py-1 bg-surface-container border border-outline-variant/20 rounded-lg text-xs text-on-surface font-label font-medium">
+                                                                        {w.text}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                            <p className="text-on-surface-variant text-xs line-clamp-1">
+                                                                任务：{store.dailyBoxData.promptType === 'scene' ? store.dailyBoxData.promptData.description : store.dailyBoxData.promptData.text}
+                                                            </p>
+                                                        </div>
+                                                        <button 
+                                                            onClick={handleStartDailyWriting}
+                                                            className="px-5 py-2.5 bg-violet-500 text-white rounded-xl font-label text-xs font-bold shadow-md hover:bg-violet-600 transition-colors flex items-center gap-1.5 whitespace-nowrap"
+                                                        >
+                                                            <span>以此开启写作 →</span>
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
+
                                 {/* 词汇灵感 — large (8 cols, 2 rows) */}
                                 <div className="col-span-2 md:col-span-8 row-span-2 bento-ring-wrapper">
                                 <button onClick={() => selectMode('words')}
@@ -1819,21 +1970,24 @@ export default function App() {
                                             };
                                             const cat = w.category || w.genres?.[0] || '意象';
                                             const catStyle = CATEGORY_STYLE[cat] ?? CATEGORY_STYLE['意象'];
+                                            const flipping = isFlipping && !store.lockedIndices.has(i);
                                             return (
-                                                <div key={`${w.id}_${i}`} className={`${catStyle.glow} bg-surface-container p-6 rounded-lg border border-outline-variant/10 custom-shadow dark:shadow-none relative overflow-hidden group transition-all hover:bg-surface-container-high`}>
-                                                    <div className="flex justify-between items-start mb-4 relative z-10">
-                                                        <span className={`px-2 py-1 text-[12px] font-bold font-label rounded-lg tracking-wider uppercase ${catStyle.badge}`}>
-                                                            {w.category || w.genres?.[0] || '意象'}
-                                                        </span>
-                                                        <button onClick={() => store.toggleLock(i)} className={`text-sm transition-colors ${store.lockedIndices.has(i) ? 'text-primary' : 'text-stone-300 dark:text-outline hover:text-stone-500 dark:hover:text-on-surface-variant'}`}>
-                                                            {store.lockedIndices.has(i) ? <Lock size={16} /> : <LockOpen size={16} />}
-                                                        </button>
+                                                <div key={`${w.id}_${i}`} className="card-perspective">
+                                                    <div className={`${catStyle.glow} bg-surface-container p-6 rounded-lg border border-outline-variant/10 custom-shadow dark:shadow-none relative overflow-hidden group transition-all hover:bg-surface-container-high ${flipping ? 'card-flipping' : ''}`}>
+                                                        <div className="flex justify-between items-start mb-4 relative z-10">
+                                                            <span className={`px-2 py-1 text-[12px] font-bold font-label rounded-lg tracking-wider uppercase ${catStyle.badge}`}>
+                                                                {w.category || w.genres?.[0] || '意象'}
+                                                            </span>
+                                                            <button onClick={() => store.toggleLock(i)} className={`text-sm transition-colors ${store.lockedIndices.has(i) ? 'text-primary' : 'text-stone-300 dark:text-outline hover:text-stone-500 dark:hover:text-on-surface-variant'}`}>
+                                                                {store.lockedIndices.has(i) ? <Lock size={16} /> : <LockOpen size={16} />}
+                                                            </button>
+                                                        </div>
+                                                        <h4 className="font-headline text-2xl font-bold mb-3 text-stone-900 dark:text-on-surface leading-tight relative z-10">{w.text}</h4>
+                                                        {w.explanation && (
+                                                            <p className="text-sm text-stone-700 dark:text-on-surface-variant leading-relaxed relative z-10">{w.explanation}</p>
+                                                        )}
+                                                        <div className="absolute inset-0 opacity-[0.03] dark:opacity-0 pointer-events-none paper-texture"></div>
                                                     </div>
-                                                    <h4 className="font-headline text-2xl font-bold mb-3 text-stone-900 dark:text-on-surface leading-tight relative z-10">{w.text}</h4>
-                                                    {w.explanation && (
-                                                        <p className="text-sm text-stone-700 dark:text-on-surface-variant leading-relaxed relative z-10">{w.explanation}</p>
-                                                    )}
-                                                    <div className="absolute inset-0 opacity-[0.03] dark:opacity-0 pointer-events-none paper-texture"></div>
                                                 </div>
                                             );
                                         })}
