@@ -1,4 +1,4 @@
-import { X, Sparkles, Star, RefreshCw, Dices, User, Mountain, CircleHelp, Lock, LockOpen, LoaderCircle } from 'lucide-react';
+import { X, Sparkles, Star, RefreshCw, Dices, User, Mountain, CircleHelp, Lock, LockOpen, LoaderCircle, Plus } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useStore } from '../store';
 import { CHARACTER_LAYERS, pickGenre } from '../inspire';
@@ -28,6 +28,52 @@ function Panel({ open, onClose, children }: { open: boolean; onClose: () => void
                 </div>
             </section>
         </>
+    );
+}
+
+const TONE = {
+    rose: {
+        chip: 'bg-rose-100/80 dark:bg-rose-500/10 border-rose-200/50 dark:border-rose-400/20 text-rose-600 dark:text-rose-400',
+        label: 'text-rose-600 dark:text-rose-400',
+        active: 'bg-rose-50 dark:bg-rose-500/10 border-rose-300/70 dark:border-rose-400/30 text-rose-900 dark:text-rose-200',
+    },
+    fuchsia: {
+        chip: 'bg-fuchsia-100/80 dark:bg-fuchsia-500/10 border-fuchsia-200/50 dark:border-fuchsia-400/20 text-fuchsia-600 dark:text-fuchsia-400',
+        label: 'text-fuchsia-600 dark:text-fuchsia-400',
+        active: 'bg-fuchsia-50 dark:bg-fuchsia-500/10 border-fuchsia-300/70 dark:border-fuchsia-400/30 text-fuchsia-900 dark:text-fuchsia-200',
+    },
+};
+type Tone = keyof typeof TONE;
+
+/** AI 刚出、还没进题库的题，卡片上给一个「存进题库」 */
+function SaveToBank({ onSave, tone }: { onSave: () => void; tone: Tone }) {
+    return (
+        <button onClick={onSave} className={`mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[12px] font-label hover:opacity-80 transition-opacity ${TONE[tone].chip}`}>
+            <Plus size={13} />存进题库
+        </button>
+    );
+}
+
+/** AI 一次出的几道候选：点一下换成这道来写，不会存进题库 */
+function CandidateList<T extends { id: string; text: string }>({ items, currentId, onPick, tone }: {
+    items: T[]; currentId: string; onPick: (item: T) => void; tone: Tone;
+}) {
+    if (items.length < 2) return null;
+    return (
+        <div className="space-y-1.5">
+            <p className={`text-[12px] font-label uppercase tracking-widest flex items-center gap-1 ${TONE[tone].label}`}>
+                <Sparkles size={14} />AI 出的几道，点一下换着写
+            </p>
+            {items.map(item => (
+                <button
+                    key={item.id}
+                    onClick={() => onPick(item)}
+                    className={`w-full text-left px-3 py-2 rounded-lg border text-sm leading-relaxed transition-colors ${item.id === currentId ? TONE[tone].active : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'}`}
+                >
+                    {item.text}
+                </button>
+            ))}
+        </div>
     );
 }
 
@@ -219,11 +265,14 @@ export default function PromptPanel({ ai, mobileOpen, onClose }: { ai: AiAssist;
                                     <Star size={20} className={`transition-colors ${challengeFav.on ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
                                 </button>
                             </div>
-                            {store.currentChallenge.id.startsWith('ai_') && (
-                                <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100/80 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-400/20 text-[12px] font-label text-rose-600 dark:text-rose-400">
-                                    <Sparkles size={13} />AI 出题
-                                </span>
-                            )}
+                            <div className="flex flex-wrap gap-2">
+                                {store.currentChallenge.id.startsWith('ai_') && (
+                                    <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100/80 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-400/20 text-[12px] font-label text-rose-600 dark:text-rose-400">
+                                        <Sparkles size={13} />AI 出题
+                                    </span>
+                                )}
+                                {ai.unsaved(store.currentChallenge.id) && <SaveToBank tone="rose" onSave={() => ai.saveToBank(store.currentChallenge!)} />}
+                            </div>
                             <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                         </div>
 
@@ -238,6 +287,7 @@ export default function PromptPanel({ ai, mobileOpen, onClose }: { ai: AiAssist;
                                 <span>{ai.challengeLoading ? '出题中…' : 'AI 出一道题'}</span>
                             </button>
                         )}
+                        <CandidateList tone="rose" items={ai.challengeCandidates} currentId={store.currentChallenge.id} onPick={store.setCurrentChallenge} />
                     </Panel>
             )}
 
@@ -277,6 +327,7 @@ export default function PromptPanel({ ai, mobileOpen, onClose }: { ai: AiAssist;
                                         <Star size={20} className={`transition-colors ${characterFav.on ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
                                     </button>
                                 </div>
+                                {ai.unsaved(store.currentCharacterPrompt.id) && <SaveToBank tone="fuchsia" onSave={() => ai.saveToBank(store.currentCharacterPrompt!)} />}
                                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
                             </div>
 
@@ -309,6 +360,7 @@ export default function PromptPanel({ ai, mobileOpen, onClose }: { ai: AiAssist;
                                     )}
                                 </div>
                             )}
+                            <CandidateList tone="fuchsia" items={ai.characterCandidates} currentId={store.currentCharacterPrompt.id} onPick={store.setCurrentCharacterPrompt} />
                         </Panel>
                 );
             })()}

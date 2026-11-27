@@ -8,6 +8,7 @@ import {
   buildCharacterDeepPrompt, buildCharacterGeneratePrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt,
   buildDreamInterpretationPrompt,
 } from '../inspire';
+import type { CharacterPrompt, WritingChallenge } from '../inspire';
 import { chatCompletion, chatCompletionStream } from '../services/ai';
 import { countChars } from '../lib/util';
 
@@ -31,6 +32,10 @@ export function useAiAssist() {
   const [sceneExtra, setSceneExtra] = useState<Keyed>(EMPTY);
   const [characterExtra, setCharacterExtra] = useState<Keyed>(EMPTY);
   const [dreamInterpret, setDreamInterpret] = useState('');
+  // 这一轮 AI 出的候选题（离开写作页就清空），以及其中已经存进题库的
+  const [challengeCandidates, setChallengeCandidates] = useState<WritingChallenge[]>([]);
+  const [characterCandidates, setCharacterCandidates] = useState<CharacterPrompt[]>([]);
+  const [savedIds, setSavedIds] = useState<ReadonlySet<string>>(new Set());
 
   // 同一时间只跑一个 AI 请求（用 ref 防连点）；离开写作页时取消进行中的请求
   const lockRef = useRef(false);
@@ -79,11 +84,11 @@ export function useAiAssist() {
     const msgs = buildChallengeGeneratePrompt({ pool, current: store.currentChallenge?.text, genre: store.drawnGenre });
     const lines = parsePromptLines(await ask(msgs, signal));
     if (lines.length === 0) return;
-    const picked = lines[Math.floor(Math.random() * lines.length)];
-    store.setCurrentChallenge({ id: `ai_${Date.now()}`, text: picked, source: 'user' });
-    // 同时存入本地数据库，其余两条也存入
-    await db.challenges.bulkPut(lines.map((text, i) => ({ id: `ai_${Date.now()}_${i}`, text, source: 'user' as const })));
-    showToast(`✨ AI 出了 ${lines.length} 道题并已保存到题库`);
+    // 先当候选，不进题库；看中的再点「存进题库」
+    const candidates = lines.map((text, i) => ({ id: `ai_${Date.now()}_${i}`, text, source: 'user' as const }));
+    setChallengeCandidates(candidates);
+    store.setCurrentChallenge(candidates[0]);
+    showToast(`✨ AI 出了 ${lines.length} 道题，看中的点「存进题库」`);
   });
 
   const characterDeep = () => store.currentCharacterPrompt && run('characterDeep', 'AI 生成失败', async signal => {
@@ -99,11 +104,25 @@ export function useAiAssist() {
     const pool = [...BUILTIN_CHARACTER_PROMPTS, ...await db.characterPrompts.toArray()];
     const lines = parsePromptLines(await ask(buildCharacterGeneratePrompt({ layer, genre: store.drawnGenre, pool }), signal));
     if (lines.length === 0) return;
-    const newPrompts = lines.map((text, i) => ({ id: `ai_cp_${Date.now()}_${i}`, text, layer: layer.id, source: 'user' as const }));
-    await db.characterPrompts.bulkPut(newPrompts);
-    store.setCurrentCharacterPrompt(newPrompts[0]);
-    showToast(`✨ AI 出了 ${lines.length} 道角色题并已保存到题库`);
+    const candidates = lines.map((text, i) => ({ id: `ai_cp_${Date.now()}_${i}`, text, layer: layer.id, source: 'user' as const }));
+    setCharacterCandidates(candidates);
+    store.setCurrentCharacterPrompt(candidates[0]);
+    showToast(`✨ AI 出了 ${lines.length} 道角色题，看中的点「存进题库」`);
   });
+
+  /** 候选题存进题库（之后随机抽题也会抽到它） */
+  async function saveToBank(item: WritingChallenge | CharacterPrompt) {
+    try {
+      if ('layer' in item) await db.characterPrompts.put(item);
+      else await db.challenges.put(item);
+      setSavedIds(s => new Set(s).add(item.id));
+      showToast('📥 已存进题库');
+    } catch (e) {
+      console.error('Failed to save AI prompt', e);
+      showToast('存进题库失败');
+    }
+  }
+  const isCandidate = (id: string) => [...challengeCandidates, ...characterCandidates].some(c => c.id === id);
 
   const continueWriting = () => store.editorContent.trim() && run('continue', 'AI 续写失败', async signal => {
     const base = store.editorContent;
@@ -136,9 +155,12 @@ export function useAiAssist() {
     enabled: store.aiEnabled,
     wordHint: shown(wordHint, wordsKey), wordHintLoading: busy === 'wordHint', wordHintRun,
     sceneExtra: shown(sceneExtra, sceneKey), sceneLoading: busy === 'sceneGenerate' || busy === 'sceneDeepDive', sceneGenerate, sceneDeepDive,
-    challengeLoading: busy === 'challenge', challengeGenerate,
+    challengeLoading: busy === 'challenge', challengeGenerate, challengeCandidates,
     characterExtra: shown(characterExtra, characterKey), characterLoading: busy === 'characterDeep', characterDeep,
-    characterGenLoading: busy === 'characterGenerate', characterGenerate,
+    characterGenLoading: busy === 'characterGenerate', characterGenerate, characterCandidates,
+    /** 这道题是 AI 刚出的、还没存进题库 */
+    unsaved: (id: string) => isCandidate(id) && !savedIds.has(id),
+    saveToBank,
     continueLoading: busy === 'continue', continueWriting,
     feedback: store.aiFeedback, feedbackLoading: busy === 'feedback', feedbackRun, clearFeedback: () => store.setAiFeedback(''),
     dreamInterpret, dreamLoading: busy === 'dream', dreamInterpretRun, clearDreamInterpret: () => setDreamInterpret(''),

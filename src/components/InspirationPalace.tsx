@@ -128,10 +128,9 @@ export default function InspirationPalace() {
                 if (builtin) {
                     store.setCurrentChallenge(builtin);
                 } else {
-                    db.challenges.get(cid).then(c => {
-                        if (c) store.setCurrentChallenge(c);
-                        else store.setCurrentChallenge(pickChallenge());
-                    });
+                    // 找不到（比如没存进题库的 AI 题）就不显示题目，别随机换一道顶上
+                    store.setCurrentChallenge(null);
+                    db.challenges.get(cid).then(c => { if (c) store.setCurrentChallenge(c); });
                 }
             } else {
                 store.setCurrentChallenge(pickChallenge());
@@ -144,10 +143,8 @@ export default function InspirationPalace() {
                 if (builtin) {
                     store.setCurrentCharacterPrompt(builtin);
                 } else {
-                    db.characterPrompts.get(cid).then(c => {
-                        if (c) store.setCurrentCharacterPrompt(c);
-                        else store.setCurrentCharacterPrompt(pickCharacterPrompt());
-                    });
+                    store.setCurrentCharacterPrompt(null);
+                    db.characterPrompts.get(cid).then(c => { if (c) store.setCurrentCharacterPrompt(c); });
                 }
             } else {
                 store.setCurrentCharacterPrompt(pickCharacterPrompt());
