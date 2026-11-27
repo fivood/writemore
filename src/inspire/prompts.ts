@@ -1,42 +1,76 @@
 /**
  * AI Prompt 模板 — 各写作模式的 AI 增强 prompt 构造。
  * 只拼消息，不发请求：返回 OpenAI 格式的 ChatMessage[]，接哪家模型由调用方决定。
+ * 每个函数返回的第一条都是 system（人设）；别的项目想换口吻，替换 messages[0].content 即可。
  */
 
-import type { ChatMessage, CharacterLayer, ScenePrompt, Word } from './types';
+import { sampleItems } from './types';
+import type { CharacterLayer, CharacterPrompt, ChatMessage, Rng, ScenePrompt, WritingChallenge, Word } from './types';
+import { SCENE_PROMPTS } from './scenes';
+import { BUILTIN_CHALLENGES } from './challenges';
+import { BUILTIN_CHARACTER_PROMPTS } from './characters';
 
-const SYSTEM_BASE = '你是一个中文创意写作助手，擅长文学、诗歌和小说写作。回复应简洁、有文学性、有启发性。';
+/** 默认人设：五木文风（克制的英式黑色幽默）的出题人兼责编 */
+export const WRITING_PERSONA = `你是一个中文写作练习的出题人兼责编。口吻是克制的英式黑色幽默：像见过太多闹剧的老管家，波澜不惊，略带一点得意，但不嘲笑写的人，也不拿真实的痛苦开玩笑。
+
+写的时候：
+- 具体、家常。用物件、动作、声音、时间和数字说话；比喻从食物、家务、交通、职场、动物里找，可以带一点荒诞。
+- 轻重倒置：大事轻轻带过，小事认真写。要夸张就穿上计数和测量的外衣，比如「等了十一分钟」「至少亮了两千流明」。
+- 好笑的地方来自换一个框架看事情、人物给自己找的理由，不来自段子和感叹。
+- 情绪只用低音量的说法。不煽情，不总结，不升华，不讲道理。
+- 不用排比和工整对句，不用「仿佛」「宛如」「像潮水般」这类空泛比喻，不写诗化的结尾；少用破折号，不用感叹号，不写「不是……而是……」式的铺垫。
+- 只给被要求的内容，不寒暄，不解释自己在做什么。`;
+
+/** 告诉模型别重复的旧题数量：从题库里随机抽，当前这道一定在里面 */
+const AVOID_COUNT = 10;
+/** 当作口吻范例的内置题数量 */
+const EXAMPLE_COUNT = 3;
+
+function avoidList(texts: readonly string[], current: string | undefined, rng?: Rng): string[] {
+  const rest = texts.filter(t => t !== current);
+  return current ? [current, ...sampleItems(rest, AVOID_COUNT - 1, rng)] : sampleItems(rest, AVOID_COUNT, rng);
+}
+
+const system = (content = WRITING_PERSONA): ChatMessage => ({ role: 'system', content });
 
 /**
  * 词汇灵感 — 为一组词条生成写作引导
  */
-export function buildWordInspirationPrompt(words: Pick<Word, 'text' | 'category'>[], genre: string | null): ChatMessage[] {
-  const wordList = words.map(w => `${w.text}（${w.category}）`).join('、');
+export function buildWordInspirationPrompt(words: Pick<Word, 'text' | 'category' | 'explanation'>[], genre: string | null): ChatMessage[] {
+  const wordList = words.map(w => `${w.text}（${w.category}${w.explanation ? `：${w.explanation}` : ''}）`).join('、');
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
       content: `我抽到了这些词条：${wordList}。${genre ? `写作风格倾向：${genre}。` : ''}
 
-请为这组词条生成一段简短的写作引导（50字以内），帮助我找到它们之间的联系并激发灵感。不要直接写故事，只给出一个引导方向或意象画面。`,
+请用 50 字以内给一个写作的切入点：把这几个词放进同一个具体的场面里，找到它们之间的联系。不要直接写故事。`,
     },
   ];
 }
 
 /**
- * 场景描写 — AI 生成新场景
+ * 场景描写 — AI 生成新场景。
+ * pool 是已有场景（默认内置题库），从中抽 10 个标题让模型避开；口吻范例从内置题库里抽 3 个。
  */
-export function buildSceneGeneratePrompt(existingTitles: string[]): ChatMessage[] {
+export function buildSceneGeneratePrompt(
+  { pool = SCENE_PROMPTS, current, rng }: { pool?: readonly ScenePrompt[]; current?: ScenePrompt | null; rng?: Rng } = {},
+): ChatMessage[] {
+  const examples = sampleItems(SCENE_PROMPTS, EXAMPLE_COUNT, rng);
+  const avoid = avoidList(pool.filter(s => !examples.includes(s)).map(s => s.title), current?.title, rng);
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
-      content: `请生成一个创意写作用的场景描写提示，包含以下 JSON 格式：
-{"title": "场景标题（3-6字）", "description": "场景描述（30-60字，包含感官细节提示）", "tags": ["标签1", "标签2", "标签3"]}
+      content: `请出一个场景描写练习，只返回下面格式的 JSON：
+{"title": "场景标题（十个字左右）", "description": "场景描述（30-60字）", "tags": ["标签1", "标签2"]}
+
+题库里现有的场景是这个口吻，照这个具体程度写：
+${examples.map(s => `- 「${s.title}」${s.description}`).join('\n')}
 
 要求：
-- 场景要有画面感，适合练习描写
-- 不要和以下已有场景重复：${existingTitles.slice(0, 10).join('、')}
+- 一个具体的时间和地点，两三个看得见、听得见或闻得到的细节，留一处没说破的地方让人想写下去
+- 不要和这些已有场景重复：${[...examples.map(s => s.title), ...avoid].join('、')}
 - 只返回 JSON，不要其他内容`,
     },
   ];
@@ -47,111 +81,90 @@ export function buildSceneGeneratePrompt(existingTitles: string[]): ChatMessage[
  */
 export function buildSceneDeepDivePrompt(title: string, description: string): ChatMessage[] {
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
       content: `当前场景是「${title}」：${description}
 
-请为这个场景补充具体的感官引导（30字以内），格式：
+请为这个场景补三条感官细节，每条一行、15 字以内，格式：
 - 听觉：...
 - 嗅觉：...
 - 触觉：...
 
-每条只写一个具体细节，简洁有力。`,
+每条只写一个具体的东西，不写感受。`,
     },
   ];
 }
 
 /**
- * 写作挑战 — AI 生成新挑战题（支持风格）
+ * 写作挑战 — AI 生成新挑战题。
+ * pool 是已有题目（内置 + 用户导入 + AI 出过的），从中抽 10 条让模型避开；current 是当前这道。
+ * 范例用手写的三条：内置挑战题多是技巧练习，和这里要的情境题不是一类。
  */
-export function buildChallengeGeneratePrompt(existingChallenges: string[], genre: string | null = null): ChatMessage[] {
+export function buildChallengeGeneratePrompt(
+  { pool = BUILTIN_CHALLENGES, current, genre = null, rng }:
+  { pool?: readonly WritingChallenge[]; current?: string; genre?: string | null; rng?: Rng } = {},
+): ChatMessage[] {
   const genreHint = genre && genre !== '通用'
-    ? `\n本次挑战以「${genre}」风格为主，题目要有该风格的语言质感和氛围。`
+    ? `\n本次挑战以「${genre}」风格为主，题目要有该风格的质感和氛围。`
     : '';
 
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
-      content: `请生成 3 条创意写作挑战题目，每条一行，不加序号不加符号。${genreHint}
+      content: `请生成 3 条写作挑战题目，每条一行，不加序号不加符号。${genreHint}
 
-好题目的范例（注意：有具体感官锚点，有内在悬念，驱动写作欲）：
+好题目的范例（有具体的物件或情境，有一处没说破的矛盾）：
 - 「雨停之后，她发现门缝里塞着一封没有署名的信，上面只有三个字。」
 - 「他们约好的见面地点是一家三年前关门的咖啡馆，今天，灯亮着。」
 - 「写一个人如何用'我很好'三个字装下今天发生的所有事。」
 
 要求：
 - 每条 15-35 字
-- 必须包含至少一个具体感官细节或情境锚点（地点、气味、声音、物件等），不能是纯技巧说明
-- 题目本身有内在矛盾或悬念，驱动写作欲
-- 不要和以下已有题目太相似：${existingChallenges.slice(0, 8).join('；')}
+- 至少一个具体的感官细节或情境锚点（地点、气味、声音、物件等），不能是纯技巧说明
+- 题目本身有内在矛盾或悬念，让人想写
+- 不要和这些已有题目太相似：${avoidList(pool.map(c => c.text), current, rng).join('；')}
 - 只返回题目文本，不要其他内容`,
     },
   ];
 }
 
 /**
- * 角色描写 — AI 生成新角色提示（按维度+风格）
+ * 角色描写 — AI 生成新角色提示（按维度+风格）。
+ * pool 是已有角色题（内置 + 用户导入 + AI 出过的），只看 layer 这一维：
+ * 从内置题里抽 3 条当范例，其余抽 10 条让模型避开。
  */
 export function buildCharacterGeneratePrompt(params: {
   layer: CharacterLayer;
-  genre: string | null;
-  existingTexts: string[];
+  genre?: string | null;
+  pool?: readonly CharacterPrompt[];
+  rng?: Rng;
 }): ChatMessage[] {
-  const { layer: { id: layerId, name: layerName, description: layerDescription }, genre, existingTexts } = params;
-
-  const layerExamples: Record<string, string[]> = {
-    inner: [
-      '他/她有一套关于世界的理论，支撑他/她走到今天。写那套理论第一次出现裂缝的时刻。',
-      '他/她有一件事从来不允许自己希望。写他/她某次差点希望了，然后把那个念头掐死的过程。',
-    ],
-    relationship: [
-      '双方有一个从来不说出口的规则，都在遵守，都不承认它存在。写这个规则如何在一次对话里悄悄运作。',
-      '写一个人如何在另一个人不注意的时候照顾对方——用他/她永远不会承认是"照顾"的方式。',
-    ],
-    voice: [
-      '写他/她在说谎时的语言习惯。句子在撒谎时会变短，还是会变长，还是会突然变得很精确？',
-      '他/她从不说"对不起"。写他/她用来代替道歉的那些动作或话，以及接受方是否总能看懂。',
-    ],
-    body: [
-      '写他/她在极度平静时身体里发生的事。那种表面静止、内部在燃烧的状态，从皮肤往里写。',
-      '他/她的身体记住了一件他/她的意识想忘记的事。写它在什么时候、以什么方式提醒他/她。',
-    ],
-    history: [
-      '他/她有一个非常小的习惯，没有人知道是从哪里来的。写那个习惯的来源，以及他/她现在做这件事时还不还记得为什么。',
-      '他/她人生中有一个"之前"和"之后"。写那个分界点，但不要从事件本身写，从一个细节切入。',
-    ],
-    edge: [
-      '从一个只见过他/她三次的陌生人视角，写他/她走进一个房间。',
-      '他/她的一个旧敌会怎么描述他/她？写那个描述，并让读者意识到敌人可能是对的。',
-    ],
-  };
-
-  const examples = (layerExamples[layerId] || layerExamples['inner'])
-    .map(e => `「${e}」`)
-    .join('\n');
+  const { layer, genre = null, pool = BUILTIN_CHARACTER_PROMPTS, rng } = params;
+  const inLayer = pool.filter(p => p.layer === layer.id);
+  const examples = sampleItems(inLayer.filter(p => p.source === 'builtin'), EXAMPLE_COUNT, rng);
+  const avoid = avoidList(inLayer.filter(p => !examples.includes(p)).map(p => p.text), undefined, rng);
 
   const genreHint = genre && genre !== '通用'
     ? `\n当前写作风格是「${genre}」，如适合可让题目融入该风格的设定或氛围，但不要强行贴标签。`
     : '';
 
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
-      content: `请为角色描写的「${layerName}」维度生成 3 条写作引导题目，每条一行，不加序号不加符号。
-维度说明：${layerDescription}${genreHint}
+      content: `请为角色描写的「${layer.name}」维度生成 3 条写作引导题目，每条一行，不加序号不加符号。
+维度说明：${layer.description}${genreHint}
 
-好题目的参考范例（注意深度和具体感）：
-${examples}
+题库里现有的题目是这个口吻（注意深度和具体感）：
+${examples.map(e => `「${e.text}」`).join('\n')}
 
 要求：
 - 每条 25-60 字
 - 引导作者挖掘角色内部矛盾、具体细节或反常行为，不能泛泛而谈
 - 用「他/她」指代角色，保持性别中立
-- 不要和以下已有题目太相似：${existingTexts.slice(0, 6).join('；')}
-- 只返回题目文本，不要其他内容`,
+${avoid.length > 0 ? `- 不要和这些已有题目太相似：${avoid.join('；')}\n` : ''}- 只返回题目文本，不要其他内容`,
     },
   ];
 }
@@ -161,7 +174,7 @@ ${examples}
  */
 export function buildCharacterDeepPrompt(currentPrompt: string, layerName: string): ChatMessage[] {
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
       content: `当前角色描写的维度是「${layerName}」，提示是：「${currentPrompt}」
@@ -180,7 +193,7 @@ export function buildInspirationRemixPrompt(drafts: { title: string; content: st
     .join('\n\n');
 
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
       content: `以下是我过去的几篇创作片段：
@@ -203,7 +216,7 @@ export function buildContinueWritingPrompt(title: string, content: string, mode:
     character: '（这是一篇角色描写练习）',
   };
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
       content: `这是一篇正在写作中的文章${mode && modeHint[mode] ? modeHint[mode] : ''}：
@@ -218,32 +231,34 @@ ${content.slice(-600)}
 }
 
 /**
- * AI 写后反馈 — 分析已写内容，给出建议
+ * AI 写后反馈 — 像责编一样直说最该改的地方
  */
 export function buildWritingFeedbackPrompt(title: string, content: string): ChatMessage[] {
   return [
-    { role: 'system', content: SYSTEM_BASE },
+    system(),
     {
       role: 'user',
-      content: `请为以下创意写作给出简短反馈（100 字以内）：
+      content: `请当这段习作的责编，给一段简短反馈（150 字以内）：
 
 标题：${title || '（无标题）'}
 ${content.slice(0, 800)}
 
-请选择一个亮点和一个可提升方向，面向下列维度进行选择：感官描写、节奏感、画面感、情感表达、语言新鲜度。语气以鼓励为主。`,
+要求：
+- 不夸奖，不寒暄，不打分。挑出最值得改的一到两处，引用原句（不超过 15 字），说清楚为什么，再给一个具体的改法。
+- 优先看这些毛病：情绪直给或煽情；空泛的形容和抒情比喻；大事小事一样的分量；不干活的细节；结尾在总结或升华。
+- 写得确实没毛病，就说一句「这段不用改」，再指出读者最可能记住的那一句。`,
     },
   ];
 }
 
 /**
- * 梦境记录 — AI 解梦与象征分析
+ * 梦境记录 — AI 解梦与象征分析（口吻沿用默认人设）
  */
 export function buildDreamInterpretationPrompt(title: string, content: string): ChatMessage[] {
   return [
-    {
-      role: 'system',
-      content: `你是一位融合荣格原型理论与文学隐喻分析的解梦师。你的解读不追求"预测"，而是帮助做梦者发现潜意识中的情绪、渴望与象征意义，并将其转化为创作灵感。回复语言富有诗意，简洁有力，避免神秘主义套话。`,
-    },
+    system(`${WRITING_PERSONA}
+
+这次你负责解梦：借用荣格原型理论和文学隐喻分析，不做预测，不讲神秘主义套话，帮做梦的人看见梦里的情绪，以及能拿来写的东西。`),
     {
       role: 'user',
       content: `我记录了一个梦：

@@ -3,6 +3,7 @@ import {
   BUILTIN_WORDS, BUILTIN_CHALLENGES, BUILTIN_CHARACTER_PROMPTS, SCENE_PROMPTS, CHARACTER_LAYERS,
   drawWords, pickGenre, pickScene, pickChallenge, pickCharacterPrompt, parseWordList, formatWordListMd, normalizeWord,
   parsePromptLines, parseAiScene, buildCharacterGeneratePrompt, buildInspirationRemixPrompt,
+  buildSceneGeneratePrompt, buildChallengeGeneratePrompt, WRITING_PERSONA,
 } from './index';
 import type { Word } from './index';
 
@@ -60,8 +61,26 @@ assert(parseAiScene('好的，这是场景：\n```json\n' + JSON.stringify(scene
 assert(parseAiScene('前面一句话 {"title":"甲","description":"乙"} 后面一句')?.tags.length === 0, '缺 tags 时给空数组');
 assert(parseAiScene('不是 JSON') === null && parseAiScene('{"title":"只有标题"}') === null, '解析不出要返回 null');
 
-const charMsgs = buildCharacterGeneratePrompt({ layer: CHARACTER_LAYERS[2], genre: '武侠', existingTexts: ['甲'] });
-assert(charMsgs[1].content.includes('声音层') && charMsgs[1].content.includes('武侠'), '角色出题提示要带上维度和风格');
+const voice = CHARACTER_LAYERS[2];
+const mine = { id: 'u_voice', text: '我自己加的声音层题目', layer: voice.id, source: 'user' as const };
+const charMsgs = buildCharacterGeneratePrompt({ layer: voice, genre: '武侠', pool: [...BUILTIN_CHARACTER_PROMPTS, mine], rng: seeded(3) });
+const charText = charMsgs[1].content;
+assert(charText.includes('声音层') && charText.includes('武侠'), '角色出题提示要带上维度和风格');
+assert(!charText.includes(BUILTIN_CHARACTER_PROMPTS.find(p => p.layer === 'inner')!.text), '别的维度的题不该出现');
+assert(charText.includes(mine.text), '用户自己的题要参与去重（声音层只有 10 条，应全部列出）');
+assert(charMsgs[0].content === WRITING_PERSONA, '第一条是默认人设');
+
+const current = SCENE_PROMPTS[5];
+const sceneText = buildSceneGeneratePrompt({ current, rng: seeded(4) })[1].content;
+const exampleLines = sceneText.split('\n').filter(l => l.startsWith('- 「'));
+assert(exampleLines.length === 3, `场景出题要带 3 个范例，实际 ${exampleLines.length}`);
+assert(sceneText.includes(current.title), '当前场景一定在避开清单里');
+const avoidLine = sceneText.split('\n').find(l => l.includes('不要和这些已有场景重复'))!;
+assert(avoidLine.split('、').length === 13, '避开清单 = 3 个范例 + 10 个抽样（含当前）');
+
+const chText = buildChallengeGeneratePrompt({ current: '当前这道题', rng: seeded(5) })[1].content;
+const chAvoid = chText.split('\n').find(l => l.includes('不要和这些已有题目太相似'))!;
+assert(chAvoid.includes('当前这道题') && chAvoid.split('；').length === 10, '挑战题避开清单：当前这道 + 抽 9 条');
 assert(buildInspirationRemixPrompt([{ title: '甲', content: '内容' }])[1].content.includes('《甲》：内容'), '宫殿重组只需要标题和正文');
 
 console.log('✓ inspire 自检通过');

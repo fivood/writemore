@@ -59,3 +59,11 @@ export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
 }
+
+/** 不放回地随机抽 n 个（不够就全给） */
+export function sampleItems<T>(items: readonly T[], n: number, rng: Rng = Math.random): T[] {
+  const pool = [...items];
+  const out: T[] = [];
+  while (out.length < n && pool.length > 0) out.push(pool.splice(Math.floor(rng() * pool.length), 1)[0]);
+  return out;
+}

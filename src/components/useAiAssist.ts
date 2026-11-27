@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../store';
 import { db } from '../db';
 import {
-  BUILTIN_CHARACTER_PROMPTS, CHARACTER_LAYERS, parseAiScene, parsePromptLines,
+  BUILTIN_CHALLENGES, BUILTIN_CHARACTER_PROMPTS, CHARACTER_LAYERS, parseAiScene, parsePromptLines,
   buildWordInspirationPrompt, buildSceneGeneratePrompt, buildSceneDeepDivePrompt, buildChallengeGeneratePrompt,
   buildCharacterDeepPrompt, buildCharacterGeneratePrompt, buildContinueWritingPrompt, buildWritingFeedbackPrompt,
   buildDreamInterpretationPrompt,
@@ -63,8 +63,7 @@ export function useAiAssist() {
   });
 
   const sceneGenerate = () => run('sceneGenerate', 'AI 场景生成失败', async signal => {
-    const existing = store.currentScene ? [store.currentScene.title] : [];
-    const scene = parseAiScene(await ask(buildSceneGeneratePrompt(existing), signal));
+    const scene = parseAiScene(await ask(buildSceneGeneratePrompt({ current: store.currentScene }), signal));
     if (!scene) throw new Error('AI 返回的场景格式不对');
     store.setCurrentScene({ id: `ai_${Date.now()}`, ...scene });
   });
@@ -76,8 +75,9 @@ export function useAiAssist() {
   });
 
   const challengeGenerate = () => run('challenge', 'AI 出题失败', async signal => {
-    const existing = store.currentChallenge ? [store.currentChallenge.text] : [];
-    const lines = parsePromptLines(await ask(buildChallengeGeneratePrompt(existing, store.drawnGenre), signal));
+    const pool = [...BUILTIN_CHALLENGES, ...await db.challenges.toArray()];
+    const msgs = buildChallengeGeneratePrompt({ pool, current: store.currentChallenge?.text, genre: store.drawnGenre });
+    const lines = parsePromptLines(await ask(msgs, signal));
     if (lines.length === 0) return;
     const picked = lines[Math.floor(Math.random() * lines.length)];
     store.setCurrentChallenge({ id: `ai_${Date.now()}`, text: picked, source: 'user' });
@@ -96,10 +96,8 @@ export function useAiAssist() {
   const characterGenerate = () => run('characterGenerate', 'AI 出题失败', async signal => {
     const layerId = store.currentCharacterPrompt?.layer ?? store.selectedCharacterLayer ?? 'inner';
     const layer = CHARACTER_LAYERS.find(l => l.id === layerId) || CHARACTER_LAYERS[0];
-    const existingTexts = [...BUILTIN_CHARACTER_PROMPTS, ...await db.characterPrompts.toArray()]
-      .filter(p => p.layer === layer.id)
-      .map(p => p.text);
-    const lines = parsePromptLines(await ask(buildCharacterGeneratePrompt({ layer, genre: store.drawnGenre, existingTexts }), signal));
+    const pool = [...BUILTIN_CHARACTER_PROMPTS, ...await db.characterPrompts.toArray()];
+    const lines = parsePromptLines(await ask(buildCharacterGeneratePrompt({ layer, genre: store.drawnGenre, pool }), signal));
     if (lines.length === 0) return;
     const newPrompts = lines.map((text, i) => ({ id: `ai_cp_${Date.now()}_${i}`, text, layer: layer.id, source: 'user' as const }));
     await db.characterPrompts.bulkPut(newPrompts);
