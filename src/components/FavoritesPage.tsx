@@ -175,7 +175,7 @@ export default function FavoritesPage() {
             {genreStats.length > 0 && <div className="h-3.5 w-px bg-outline-variant/50" />}
             <div className="flex flex-wrap gap-1.5">
               {genreStats.map(([genre, count]) => (
-                <span key={genre} className="px-2 py-0.5 bg-surface-container-low text-on-surface-variant font-mono text-[11px] rounded-none border border-outline-variant/50">
+                <span key={genre} className="px-2 py-0.5 bg-surface-container-low text-on-surface-variant font-mono text-[13px] rounded-none border border-outline-variant/50">
                   {genre} ×{count}
                 </span>
               ))}
@@ -280,7 +280,7 @@ export default function FavoritesPage() {
                     const ModuleIcon = meta.Icon;
                     return (
                       <div key={item.id} className="bg-surface-container/70 hover:bg-surface-container p-5 border-b border-r border-on-surface/20 flex flex-col relative transition-colors">
-                        <div className="font-mono text-[11px] text-outline mb-3 flex items-center justify-between">
+                        <div className="font-mono text-[13px] text-outline mb-3 flex items-center justify-between">
                           <span>{new Date(item.createdAt).toLocaleDateString('zh-CN')}</span>
                           <button onClick={() => void handleUnfavoritePrompt(item.id)} className="text-secondary hover:text-outline transition-colors cursor-pointer" title="取消收藏">
                             <Star size={17} fill="currentColor" />
@@ -288,11 +288,11 @@ export default function FavoritesPage() {
                         </div>
 
                         <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[11px] font-label font-medium border ${meta.color}`}>
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[13px] font-label font-medium border ${meta.color}`}>
                             <ModuleIcon size={12} />{meta.label}
                           </span>
                           {item.isAi && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none font-mono text-[10px] border bg-primary/10 border-primary/35 text-primary">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none font-mono text-[12px] border bg-primary/10 border-primary/35 text-primary">
                               <Sparkles size={11} />AI
                             </span>
                           )}
@@ -303,7 +303,7 @@ export default function FavoritesPage() {
                         {item.tags && item.tags.length > 0 && (
                           <div className="mt-3 pt-2.5 border-t border-dashed border-outline-variant/50 flex flex-wrap gap-1.5">
                             {item.tags.map(tag => (
-                              <span key={tag} className="px-2 py-0.5 rounded-none font-mono text-[10px] bg-surface-container-low text-on-surface-variant border border-outline-variant/50">
+                              <span key={tag} className="px-2 py-0.5 rounded-none font-mono text-[12px] bg-surface-container-low text-on-surface-variant border border-outline-variant/50">
                                 #{tag}
                               </span>
                             ))}
@@ -342,10 +342,10 @@ export default function FavoritesPage() {
                           </div>
                         )}
 
-                        <div className={`font-mono text-[11px] text-outline mb-3.5 flex items-center justify-between ${selectMode ? 'pl-6' : ''}`}>
+                        <div className={`font-mono text-[13px] text-outline mb-3.5 flex items-center justify-between ${selectMode ? 'pl-6' : ''}`}>
                           <span>{new Date(ws.createdAt).toLocaleDateString('zh-CN')}</span>
                           <div className="flex items-center gap-1.5">
-                            <span className="bg-surface-container-low text-on-surface-variant px-2 py-0.5 rounded-none text-[10px] border border-outline-variant/55">
+                            <span className="bg-surface-container-low text-on-surface-variant px-2 py-0.5 rounded-none text-[12px] border border-outline-variant/55">
                               {ws.genre}
                             </span>
                             {!selectMode && (
@@ -369,7 +369,7 @@ export default function FavoritesPage() {
                                 title={w.explanation || undefined}
                               >
                                 {w.text}
-                                {w.explanation && <span className="ml-1 font-mono text-outline text-[10px]">*</span>}
+                                {w.explanation && <span className="ml-1 font-mono text-outline text-[12px]">*</span>}
                               </span>
                             )) : (
                               <span className="text-on-surface-variant italic text-xs">空的词组</span>

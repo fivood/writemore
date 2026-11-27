@@ -159,7 +159,7 @@ export default function App() {
                         <span className="text-base md:text-lg font-bold text-on-surface font-headline tracking-tight">
                             灵感是橡果
                         </span>
-                        <span className="text-[11px] font-mono text-outline hidden sm:inline tracking-wider">
+                        <span className="text-[13px] font-mono text-outline hidden sm:inline tracking-wider">
                             v{APP_VERSION}
                         </span>
                     </div>
@@ -278,7 +278,7 @@ export default function App() {
                             }`}
                         >
                             <BtnIcon size={20} />
-                            <span className="text-[11px] font-label mt-0.5">{isHomeBtn ? '首页' : t.label}</span>
+                            <span className="text-[13px] font-label mt-0.5">{isHomeBtn ? '首页' : t.label}</span>
                         </button>
                     );
                 })}

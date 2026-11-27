@@ -38,7 +38,7 @@ export default function ModeSidebar({
                         >
                             <SlidersHorizontal size={13} className="text-secondary shrink-0" />
                             <span className="whitespace-nowrap">抽词设置</span>
-                            <span className="text-[11px] text-outline whitespace-nowrap">
+                            <span className="text-[13px] text-outline whitespace-nowrap">
                                 ({store.selectedCategories.length === 0 ? '全部' : `${store.selectedCategories.length}类`}·{store.wordCount}词)
                             </span>
                             <ChevronDown size={13} className={`text-outline shrink-0 transition-transform ${filtersExpanded ? 'rotate-180' : ''}`} />
@@ -46,7 +46,7 @@ export default function ModeSidebar({
 
                         <button
                             onClick={onToggleLibrary}
-                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-sm font-label text-[11px] font-medium border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-sm font-label text-[13px] font-medium border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                                 libraryOpen
                                     ? 'bg-primary text-on-primary border-primary'
                                     : 'bg-surface-container-lowest text-on-surface-variant border-outline-variant/60 hover:border-secondary hover:text-on-surface'
@@ -65,7 +65,7 @@ export default function ModeSidebar({
                                     {store.selectedCategories.length > 0 && (
                                         <button
                                             onClick={() => store.setSelectedCategories([])}
-                                            className="font-label text-[11px] text-primary hover:underline cursor-pointer"
+                                            className="font-label text-[13px] text-primary hover:underline cursor-pointer"
                                         >
                                             重置
                                         </button>
@@ -202,7 +202,7 @@ export default function ModeSidebar({
                         </label>
                         <button
                             onClick={() => setImportExpanded(v => !v)}
-                            className="font-label text-[11px] text-outline hover:text-on-surface cursor-pointer"
+                            className="font-label text-[13px] text-outline hover:text-on-surface cursor-pointer"
                         >
                             {importExpanded ? '收起' : '说明'}
                         </button>
@@ -228,7 +228,7 @@ export default function ModeSidebar({
                             store.setTimerActive(next);
                             if (!next) store.setTimerSeconds(0);
                         }}
-                        className={`font-label text-[11px] px-2 py-0.5 rounded-sm border transition-colors cursor-pointer ${
+                        className={`font-label text-[13px] px-2 py-0.5 rounded-sm border transition-colors cursor-pointer ${
                             store.timerActive
                                 ? 'bg-primary text-on-primary border-primary'
                                 : 'bg-surface-container-lowest text-on-surface-variant border-outline-variant/60 hover:border-primary/50'

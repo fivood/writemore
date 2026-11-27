@@ -315,7 +315,7 @@ export function DailyDispatchMachine({
   onStart: () => void;
 }) {
   return (
-    <div className="border border-on-surface/22 bg-surface/35 p-6 md:p-8 min-h-[250px] md:min-h-[280px] flex items-center">
+    <div className="border border-on-surface/22 bg-surface-bright p-6 md:p-8 min-h-[250px] md:min-h-[280px] flex items-center">
       <div className="w-full grid grid-cols-1 sm:grid-cols-12 gap-6 md:gap-7 items-center">
         {/* 左：全貌打字机 */}
         <div
@@ -336,10 +336,10 @@ export function DailyDispatchMachine({
         <div className="sm:col-span-6 flex flex-col justify-center text-center sm:text-left sm:border-l sm:border-dashed sm:border-on-surface/35 sm:pl-7">
           {!box ? (
             <div className="space-y-4">
-              <h2 className="font-headline text-2xl md:text-[26px] font-bold text-on-surface">
+              <h2 className="font-headline text-2xl md:text-[28px] font-bold text-on-surface">
                 今日灵感盲盒
               </h2>
-              <p className="font-body text-sm md:text-[15px] text-on-surface-variant leading-relaxed">
+              <p className="font-body text-sm md:text-[17px] text-on-surface-variant leading-relaxed">
                 每日一次，随机抽取三个词条与一道场景或挑战题。点击打字机或下方按钮开启。
               </p>
               <div className="pt-1">
@@ -380,7 +380,7 @@ export function DailyDispatchMachine({
                 ))}
               </div>
 
-              <p className="font-body text-sm md:text-[15px] text-on-surface-variant leading-relaxed text-left line-clamp-3">
+              <p className="font-body text-sm md:text-[17px] text-on-surface-variant leading-relaxed text-left line-clamp-3">
                 {box.promptType === 'scene' ? box.promptData.description : box.promptData.text}
               </p>
 

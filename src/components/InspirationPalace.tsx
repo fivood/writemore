@@ -402,7 +402,7 @@ export default function InspirationPalace() {
                 {/* AI Remix Result */}
                 {aiRemixResult && (
                     <div className="mb-6 index-card paper-grain border-l-2 border-l-secondary rounded-sm p-5">
-                        <p className="font-mono text-[11px] uppercase tracking-widest text-secondary mb-2 flex items-center gap-1.5">
+                        <p className="font-mono text-[13px] uppercase tracking-widest text-secondary mb-2 flex items-center gap-1.5">
                             <Sparkles size={13} />AI REMIX PROPOSAL · 灵感重组方案
                         </p>
                         <p className="font-body text-sm text-on-surface leading-relaxed mb-4 whitespace-pre-line">{aiRemixResult}</p>
@@ -437,7 +437,7 @@ export default function InspirationPalace() {
                                     : 'bg-surface-container text-on-surface-variant border-outline-variant/55 hover:border-secondary'
                             }`}
                         >
-                            全部 <span className="ml-1 font-mono text-[11px] opacity-80">{stats.total}</span>
+                            全部 <span className="ml-1 font-mono text-[13px] opacity-80">{stats.total}</span>
                         </button>
 
                         {WRITING_MODES.map(m => {
@@ -457,7 +457,7 @@ export default function InspirationPalace() {
                                 >
                                     <style.Icon size={13} />
                                     <span>{m.label}</span>
-                                    <span className="font-mono text-[11px] opacity-70">{count}</span>
+                                    <span className="font-mono text-[13px] opacity-70">{count}</span>
                                 </button>
                             );
                         })}
@@ -549,7 +549,7 @@ export default function InspirationPalace() {
                                 >
                                     {/* 选择模式印记 */}
                                     {selectMode && (
-                                        <div className={`absolute top-3.5 right-3.5 flex items-center gap-1 font-mono text-[10px] ${
+                                        <div className={`absolute top-3.5 right-3.5 flex items-center gap-1 font-mono text-[12px] ${
                                             isSelected ? 'text-primary font-bold' : 'text-outline'
                                         }`}>
                                             {isSelected ? <CheckSquare size={17} /> : <Square size={17} />}
@@ -569,11 +569,11 @@ export default function InspirationPalace() {
 
                                     {/* Mode stamp + date */}
                                     <div className="flex items-center justify-between mb-3 pr-7">
-                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-label font-medium border ${mStyle.badge}`}>
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[13px] font-label font-medium border ${mStyle.badge}`}>
                                             <mStyle.Icon size={12} />
                                             <span>{mLabel?.label}</span>
                                         </span>
-                                        <span className="font-mono text-[11px] text-outline">
+                                        <span className="font-mono text-[13px] text-outline">
                                             {new Date(item.draft.updatedAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </div>
@@ -605,13 +605,13 @@ export default function InspirationPalace() {
                                                 {item.wordSet.words.slice(0, 4).map((w, idx) => (
                                                     <span
                                                         key={idx}
-                                                        className="px-1.5 py-0.5 text-[11px] border border-on-surface/20 bg-surface-container-lowest text-on-surface-variant font-headline"
+                                                        className="px-1.5 py-0.5 text-[13px] border border-on-surface/20 bg-surface-container-lowest text-on-surface-variant font-headline"
                                                     >
                                                         {w.text}
                                                     </span>
                                                 ))}
                                                 {item.wordSet.words.length > 4 && (
-                                                    <span className="font-mono text-[11px] text-outline">+{item.wordSet.words.length - 4}</span>
+                                                    <span className="font-mono text-[13px] text-outline">+{item.wordSet.words.length - 4}</span>
                                                 )}
                                             </div>
                                         )}
@@ -678,7 +678,7 @@ export default function InspirationPalace() {
                     <div className="w-full max-w-4xl max-h-[90vh] manuscript-sheet paper-grain rounded-sm flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between px-6 py-3.5 border-b border-dashed border-outline-variant/65 bg-surface-container-low/50">
                             <div className="min-w-0">
-                                <p className="font-mono text-[10px] uppercase tracking-widest text-outline">MANUSCRIPT FOLIO · 手稿审阅与批改</p>
+                                <p className="font-mono text-[12px] uppercase tracking-widest text-outline">MANUSCRIPT FOLIO · 手稿审阅与批改</p>
                                 <p className="font-mono text-xs text-on-surface-variant mt-0.5">{new Date(previewItem.draft.updatedAt).toLocaleString('zh-CN')}</p>
                             </div>
                             <button className="p-1.5 rounded-sm text-outline hover:text-on-surface hover:bg-surface-container cursor-pointer" onClick={closePreview}>
@@ -737,7 +737,7 @@ export default function InspirationPalace() {
                     <div className="w-full max-w-5xl max-h-[90vh] manuscript-sheet paper-grain rounded-sm flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between px-6 py-4 border-b border-dashed border-outline-variant/65 bg-surface-container-low/50">
                             <div className="min-w-0">
-                                <p className="font-mono text-[10px] uppercase tracking-widest text-outline">BINDERY · 手稿装订台</p>
+                                <p className="font-mono text-[12px] uppercase tracking-widest text-outline">BINDERY · 手稿装订台</p>
                                 <h3 className="font-headline text-lg font-bold text-on-surface mt-0.5">
                                     多片段装订合成器
                                 </h3>
@@ -752,7 +752,7 @@ export default function InspirationPalace() {
 
                         <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-y-auto">
                             <div className="lg:col-span-5 flex flex-col h-full min-h-[280px]">
-                                <h4 className="font-mono text-[11px] font-bold uppercase tracking-widest text-outline mb-3">
+                                <h4 className="font-mono text-[13px] font-bold uppercase tracking-widest text-outline mb-3">
                                     SEQUENCE · 装订顺序 ({mergeItems.length})
                                 </h4>
                                 <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
@@ -771,7 +771,7 @@ export default function InspirationPalace() {
                                                     <p className="font-headline text-sm font-bold text-on-surface truncate">
                                                         {item.draft.title || '未命名灵感'}
                                                     </p>
-                                                    <div className="flex items-center gap-2 mt-0.5 font-mono text-[11px] text-outline">
+                                                    <div className="flex items-center gap-2 mt-0.5 font-mono text-[13px] text-outline">
                                                         <span>{item.draft.wordCount} CHARS</span>
                                                         <span>·</span>
                                                         <span>{new Date(item.draft.updatedAt).toLocaleDateString('zh-CN')}</span>
@@ -802,7 +802,7 @@ export default function InspirationPalace() {
                             </div>
 
                             <div className="lg:col-span-7 flex flex-col h-full min-h-[360px]">
-                                <h4 className="font-mono text-[11px] font-bold uppercase tracking-widest text-outline mb-3">
+                                <h4 className="font-mono text-[13px] font-bold uppercase tracking-widest text-outline mb-3">
                                     MANUSCRIPT PREVIEW · 合成长文预览
                                 </h4>
                                 <div className="mb-4">
@@ -819,7 +819,7 @@ export default function InspirationPalace() {
                                 </div>
 
                                 <div className="flex-1 flex flex-col min-h-0 bg-surface-container/60 border border-outline-variant/55 rounded-sm p-4">
-                                    <div className="flex items-center justify-between pb-2 border-b border-dashed border-outline-variant/50 font-mono text-[11px] text-outline mb-3">
+                                    <div className="flex items-center justify-between pb-2 border-b border-dashed border-outline-variant/50 font-mono text-[13px] text-outline mb-3">
                                         <span>MARKDOWN OUTPUT</span>
                                         <span>{mergedPreview.replace(/\s+/g, '').length} CHARS</span>
                                     </div>

@@ -91,7 +91,7 @@ function SaveToBank({ onSave }: { onSave: () => void }) {
     return (
         <button
             onClick={onSave}
-            className="mt-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm border border-secondary/50 bg-secondary-container/50 text-secondary text-[11px] font-label hover:opacity-85 transition-opacity cursor-pointer"
+            className="mt-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm border border-secondary/50 bg-secondary-container/50 text-secondary text-[13px] font-label hover:opacity-85 transition-opacity cursor-pointer"
         >
             <Plus size={12} />存进题库
         </button>
@@ -333,7 +333,7 @@ export default function PromptPanel({
                                         } ${flipping ? 'card-flipping' : ''}`}
                                     >
                                         <div className="flex justify-between items-center mb-2">
-                                            <span className={`px-1.5 py-0.5 text-[11px] font-label border ${catStyle.badge}`}>
+                                            <span className={`px-1.5 py-0.5 text-[13px] font-label border ${catStyle.badge}`}>
                                                 {cat}
                                             </span>
                                             <button
@@ -406,7 +406,7 @@ export default function PromptPanel({
                             {store.currentScene.tags.map(tag => (
                                 <span
                                     key={tag}
-                                    className="px-2 py-0.5 bg-surface-container-low text-on-surface-variant font-label text-[11px] rounded-none border border-outline-variant/50"
+                                    className="px-2 py-0.5 bg-surface-container-low text-on-surface-variant font-label text-[13px] rounded-none border border-outline-variant/50"
                                 >
                                     {tag}
                                 </span>
@@ -482,7 +482,7 @@ export default function PromptPanel({
 
                         <div className="flex flex-wrap gap-2">
                             {store.currentChallenge.id.startsWith('ai_') && (
-                                <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-primary/10 border border-primary/35 font-label text-[11px] text-primary">
+                                <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-primary/10 border border-primary/35 font-label text-[13px] text-primary">
                                     <Sparkles size={11} />AI 出题
                                 </span>
                             )}

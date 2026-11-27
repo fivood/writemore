@@ -26,7 +26,7 @@ function EditorialPlate({
         <div className={`relative overflow-hidden select-none ${boxClass}`}>
             {!failed ? (
                 <img
-                    src={`${publicAsset(`editorial/${name}.png`)}?v=3`}
+                    src={`${publicAsset(`editorial/${name}.png`)}?v=4`}
                     alt=""
                     draggable={false}
                     onError={() => setFailed(true)}
@@ -116,7 +116,7 @@ export default function HomeModes() {
 
                 {/* ── 2. 简洁居中报头（无两侧装饰小字） ── */}
                 <header className="text-center py-1.5 mb-5">
-                    <h1 className="font-headline font-bold text-3xl sm:text-4xl md:text-[44px] text-on-surface tracking-tight leading-none">
+                    <h1 className="font-headline font-bold text-3xl sm:text-4xl md:text-[48px] text-on-surface tracking-tight leading-none">
                         What to write today?
                     </h1>
                     <p className="font-body text-on-surface-variant text-xs sm:text-sm mt-2.5 tracking-wide">
@@ -144,7 +144,7 @@ export default function HomeModes() {
                         <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 flex-1">
 
                             {/* 左下折角窄栏（轻边框 + 右下折角）：自由发挥 + 梦境记录 */}
-                            <div className="sm:col-span-5 relative border border-on-surface/22 bg-surface/30 flex flex-col">
+                            <div className="sm:col-span-5 relative border border-on-surface/22 bg-surface-bright flex flex-col">
                                 {/* 顶部折纸鸟插图（放大裁去多余留白，紧凑醒目） */}
                                 <div className="px-3 pt-3">
                                     <EditorialPlate
@@ -199,7 +199,7 @@ export default function HomeModes() {
                             >
                                 <div>
                                     <div className="flex items-center justify-between gap-2 pb-2">
-                                        <h2 className="font-headline font-bold text-2xl md:text-[28px] text-on-surface group-hover:text-primary transition-colors">
+                                        <h2 className="font-headline font-bold text-2xl md:text-[30px] text-on-surface group-hover:text-primary transition-colors">
                                             词汇灵感
                                         </h2>
                                         <span className="px-2.5 py-1 bg-primary text-on-primary font-label text-xs group-hover:bg-primary-dim transition-colors">
@@ -244,7 +244,7 @@ export default function HomeModes() {
                     </div>
 
                     {/* ════ 右侧八角切角通高专栏 (4 cols，左图右文并列排布，空间零浪费) ════ */}
-                    <div className="md:col-span-4 relative border border-on-surface/22 bg-surface/30 px-4 py-5 flex flex-col justify-between">
+                    <div className="md:col-span-4 relative border border-on-surface/22 bg-surface-bright px-4 py-5 flex flex-col justify-between">
                         {/* 四个 45° 斜切角细线 */}
                         <svg className="absolute -top-[1px] -left-[1px] w-3.5 h-3.5 text-on-surface pointer-events-none" viewBox="0 0 14 14">
                             <polygon points="0,0 14,0 0,14" fill="var(--color-background)" />

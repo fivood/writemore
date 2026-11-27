@@ -161,13 +161,13 @@ function ImportPreviewModal({
                 {/* Status */}
                 <div className="shrink-0 w-16 flex items-center space-x-1">
                   {statusIcon(item.status)}
-                  <span className={`text-[12px] font-label font-medium ${
+                  <span className={`text-[14px] font-label font-medium ${
                     item.status === 'new' ? 'text-green-600' : item.status === 'duplicate' ? 'text-amber-600' : 'text-red-600'
                   }`}>{statusLabel(item.status)}</span>
                 </div>
 
                 {/* Category tag */}
-                <span className={`shrink-0 px-1.5 py-0.5 text-[14px] font-label font-bold rounded border tracking-wider ${
+                <span className={`shrink-0 px-1.5 py-0.5 text-[16px] font-label font-bold rounded border tracking-wider ${
                   CATEGORY_COLORS[item.resolvedCategory] || 'bg-purple-100 text-purple-700 border-purple-200'
                 }`}>
                   {(() => { const CatIcon = CATEGORY_ICONS[item.resolvedCategory]; return CatIcon ? <CatIcon size={14} className="inline-block align-middle mr-0.5" /> : <Tag size={14} className="inline-block align-middle mr-0.5" />; })()}{item.resolvedCategory}
@@ -178,20 +178,20 @@ function ImportPreviewModal({
 
                 {/* Explanation */}
                 {item.parsed.explanation && (
-                  <span className="text-[13px] text-stone-400 dark:text-on-surface-variant truncate min-w-0 flex-1">{item.parsed.explanation}</span>
+                  <span className="text-[15px] text-stone-400 dark:text-on-surface-variant truncate min-w-0 flex-1">{item.parsed.explanation}</span>
                 )}
 
                 {/* Conflict info */}
                 {item.status === 'conflict' && item.existingWord && (
                   <div className="shrink-0 flex items-center space-x-1">
-                    <span className="text-[12px] text-stone-400 font-label">现有:</span>
-                    <span className={`px-1.5 py-0.5 text-[14px] font-label font-bold rounded border tracking-wider ${CATEGORY_COLORS[item.existingWord.category] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>{item.existingWord.category}</span>
-                    <span className="text-[12px] text-stone-400 font-label">→</span>
+                    <span className="text-[14px] text-stone-400 font-label">现有:</span>
+                    <span className={`px-1.5 py-0.5 text-[16px] font-label font-bold rounded border tracking-wider ${CATEGORY_COLORS[item.existingWord.category] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>{item.existingWord.category}</span>
+                    <span className="text-[14px] text-stone-400 font-label">→</span>
                     {/* Let user pick which category to use */}
                     <select
                       value={item.resolvedCategory}
                       onChange={(e) => updateCategory(idx, e.target.value)}
-                      className="text-[12px] font-label border border-stone-200 dark:border-outline-variant/30 rounded px-1 py-0.5 bg-white dark:bg-surface-container-high text-on-surface focus:outline-none"
+                      className="text-[14px] font-label border border-stone-200 dark:border-outline-variant/30 rounded px-1 py-0.5 bg-white dark:bg-surface-container-high text-on-surface focus:outline-none"
                       onClick={e => e.stopPropagation()}
                     >
                       <option value={item.parsed.category}>{item.parsed.category} (导入)</option>
@@ -201,7 +201,7 @@ function ImportPreviewModal({
                 )}
 
                 {item.status === 'duplicate' && (
-                  <span className="text-[12px] text-on-surface-variant font-label shrink-0 italic">已存在 · 同分类</span>
+                  <span className="text-[14px] text-on-surface-variant font-label shrink-0 italic">已存在 · 同分类</span>
                 )}
               </div>
             ))}
@@ -583,14 +583,14 @@ export default function LibraryPage() {
                   onClick={handleExport}
                   className="w-full text-left px-3.5 py-2 text-xs font-label text-on-surface-variant hover:bg-surface-container-high flex items-center space-x-2 transition-colors cursor-pointer"
                 >
-                  <span className="font-mono text-[10px] font-bold text-secondary bg-secondary-container/70 px-1.5 py-0.5 rounded-none">JSON</span>
+                  <span className="font-mono text-[12px] font-bold text-secondary bg-secondary-container/70 px-1.5 py-0.5 rounded-none">JSON</span>
                   <span>导出 .json</span>
                 </button>
                 <button
                   onClick={handleExportMd}
                   className="w-full text-left px-3.5 py-2 text-xs font-label text-on-surface-variant hover:bg-surface-container-high flex items-center space-x-2 border-t border-outline-variant/40 transition-colors cursor-pointer"
                 >
-                  <span className="font-mono text-[10px] font-bold text-primary bg-primary-container/70 px-1.5 py-0.5 rounded-none">MD</span>
+                  <span className="font-mono text-[12px] font-bold text-primary bg-primary-container/70 px-1.5 py-0.5 rounded-none">MD</span>
                   <span>导出 .md</span>
                 </button>
               </div>
@@ -680,7 +680,7 @@ export default function LibraryPage() {
                 {c !== 'all' && (() => { const CatIcon = getCategoryIcon(c); return <CatIcon size={13} />; })()}
                 <span>{c === 'all' ? '全部类型' : c}</span>
                 {c !== 'all' && (
-                  <span className="font-mono text-[10px] opacity-75">({stats.categoryCounts.get(c) || 0})</span>
+                  <span className="font-mono text-[12px] opacity-75">({stats.categoryCounts.get(c) || 0})</span>
                 )}
               </button>
             );
@@ -776,7 +776,7 @@ export default function LibraryPage() {
                 </div>
 
                 {/* Category badge */}
-                <span className={`inline-block px-1.5 py-0.5 text-[11px] font-label font-semibold rounded-none border mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['all']}`}>
+                <span className={`inline-block px-1.5 py-0.5 text-[13px] font-label font-semibold rounded-none border mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['all']}`}>
                   {(() => { const CatIcon = getCategoryIcon(w.category); return <CatIcon size={11} className="inline-block align-middle mr-0.5" />; })()}{w.category}
                 </span>
 
@@ -791,7 +791,7 @@ export default function LibraryPage() {
                 {/* Source badge */}
                 {w.source === 'user' && (
                   <div className="mt-2">
-                    <span className="font-mono text-[10px] font-bold text-tertiary bg-tertiary-container/60 px-1.5 py-0.5 rounded-none border border-tertiary/30 uppercase tracking-wider">CUSTOM</span>
+                    <span className="font-mono text-[12px] font-bold text-tertiary bg-tertiary-container/60 px-1.5 py-0.5 rounded-none border border-tertiary/30 uppercase tracking-wider">CUSTOM</span>
                   </div>
                 )}
               </div>
@@ -937,7 +937,7 @@ export default function LibraryPage() {
                   maxLength={MAX_CATEGORY_NAME_LENGTH}
                   className="w-full px-4 py-2.5 bg-surface-container-low rounded-lg border border-outline-variant/30 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 />
-                <p className="mt-1 text-[12px] font-label text-on-surface-variant">最多 {MAX_CATEGORY_NAME_LENGTH} 个字</p>
+                <p className="mt-1 text-[14px] font-label text-on-surface-variant">最多 {MAX_CATEGORY_NAME_LENGTH} 个字</p>
               </div>
 
               <div>
@@ -1022,7 +1022,7 @@ export default function LibraryPage() {
               </div>
             )}
 
-            <p className="mt-3 text-[12px] font-label text-on-surface-variant">分类名称最多 {MAX_CATEGORY_NAME_LENGTH} 个字。删除分类会把该分类下自定义词条移动到“意象”。</p>
+            <p className="mt-3 text-[14px] font-label text-on-surface-variant">分类名称最多 {MAX_CATEGORY_NAME_LENGTH} 个字。删除分类会把该分类下自定义词条移动到“意象”。</p>
 
             <div className="flex justify-end space-x-3 mt-7">
               <button

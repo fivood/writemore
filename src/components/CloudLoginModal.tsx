@@ -104,7 +104,7 @@ export default function CloudLoginModal({
                         <div>
                             <p className="font-headline font-bold text-base text-on-surface mb-1">云同步未启用</p>
                             <p className="text-xs font-body text-on-surface-variant leading-relaxed">
-                                当前构建未配置 Supabase 凭据，所有手稿均安全保存在本地浏览器数据库中。<br />如需跨端同步，请在 <code className="bg-surface-container px-1.5 py-0.5 font-mono text-[11px]">.env.local</code> 中填入凭据后重新构建。
+                                当前构建未配置 Supabase 凭据，所有手稿均安全保存在本地浏览器数据库中。<br />如需跨端同步，请在 <code className="bg-surface-container px-1.5 py-0.5 font-mono text-[13px]">.env.local</code> 中填入凭据后重新构建。
                             </p>
                         </div>
                         <button
@@ -142,7 +142,7 @@ export default function CloudLoginModal({
                             {cloudAuthLoading ? '登录中…' : '登录并同步'}
                         </button>
 
-                        <div className="flex items-center justify-center gap-1.5 text-[11px] text-outline font-label">
+                        <div className="flex items-center justify-center gap-1.5 text-[13px] text-outline font-label">
                             <Lock size={12} />
                             <span>行级安全隔离，手稿仅你本人可读</span>
                         </div>

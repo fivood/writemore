@@ -58,7 +58,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
 
                     {/* Preset */}
                     <div>
-                        <label className="font-mono text-[11px] font-bold text-outline uppercase tracking-widest mb-2 block">
+                        <label className="font-mono text-[13px] font-bold text-outline uppercase tracking-widest mb-2 block">
                             PROVIDER PRESETS · 服务商预设
                         </label>
                         <div className="flex gap-1.5 flex-wrap">
@@ -83,7 +83,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
 
                     {/* API Base */}
                     <div>
-                        <label className="font-mono text-[11px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
+                        <label className="font-mono text-[13px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
                             API ENDPOINT · 接口地址
                         </label>
                         <input
@@ -97,7 +97,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
 
                     {/* API Key */}
                     <div>
-                        <label className="font-mono text-[11px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
+                        <label className="font-mono text-[13px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
                             API KEY · 密钥
                         </label>
                         <input
@@ -112,7 +112,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
 
                     {/* Model */}
                     <div>
-                        <label className="font-mono text-[11px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
+                        <label className="font-mono text-[13px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
                             MODEL · 模型型号
                         </label>
                         <div className="flex flex-col sm:flex-row gap-2 mb-2">
@@ -146,7 +146,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                     <button
                                         key={m}
                                         onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
-                                        className={`px-2 py-0.5 rounded-none font-mono text-[11px] border transition-colors cursor-pointer ${
+                                        className={`px-2 py-0.5 rounded-none font-mono text-[13px] border transition-colors cursor-pointer ${
                                             store.aiConfig.model === m
                                                 ? 'bg-primary text-on-primary border-primary'
                                                 : 'border-outline-variant/50 text-on-surface-variant hover:border-secondary'
@@ -190,7 +190,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                     <AlertCircle size={16} />连接失败
                                 </span>
                                 {aiTestError && (
-                                    <span className="text-[11px] text-error/85 font-mono break-all max-w-xs">{aiTestError}</span>
+                                    <span className="text-[13px] text-error/85 font-mono break-all max-w-xs">{aiTestError}</span>
                                 )}
                             </div>
                         )}

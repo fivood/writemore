@@ -88,7 +88,7 @@ function CalendarHeatmap({ items }: { items: HistoryItem[] }) {
             {monthLabels.map((m, i) => (
               <span
                 key={i}
-                className="font-mono text-[10px] text-outline"
+                className="font-mono text-[12px] text-outline"
                 style={{ marginLeft: m.col === 0 ? 0 : `${(m.col - (i > 0 ? monthLabels[i - 1].col : 0)) * 14 - 22}px` }}
               >
                 {m.label}
@@ -100,7 +100,7 @@ function CalendarHeatmap({ items }: { items: HistoryItem[] }) {
             <div className="flex flex-col gap-[3px] mr-1">
               {dayLabels.map((label, i) => (
                 <div key={i} className="w-4 h-[11px] flex items-center justify-end">
-                  <span className="text-[10px] font-label text-outline">{label}</span>
+                  <span className="text-[12px] font-label text-outline">{label}</span>
                 </div>
               ))}
             </div>
@@ -548,7 +548,7 @@ export default function HistoryPage() {
                   {item.wordSet && item.wordSet.words.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 pt-3 border-t border-dashed border-outline-variant/55">
                       {item.wordSet.words.map((w, idx) => (
-                        <span key={idx} className="px-2 py-0.5 bg-surface-container-lowest text-on-surface-variant text-[11px] rounded-none border border-outline-variant/55 font-headline">
+                        <span key={idx} className="px-2 py-0.5 bg-surface-container-lowest text-on-surface-variant text-[13px] rounded-none border border-outline-variant/55 font-headline">
                           {w.text}
                         </span>
                       ))}
@@ -566,7 +566,7 @@ export default function HistoryPage() {
           <div className="w-full max-w-4xl max-h-[90vh] manuscript-sheet paper-grain rounded-sm flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-3.5 border-b border-dashed border-outline-variant/65 bg-surface-container-low/50">
               <div className="min-w-0">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-outline">MANUSCRIPT ARCHIVE · 审阅与批改</p>
+                <p className="font-mono text-[12px] uppercase tracking-widest text-outline">MANUSCRIPT ARCHIVE · 审阅与批改</p>
                 <p className="font-mono text-xs text-on-surface-variant mt-0.5">{new Date(previewItem.draft.updatedAt).toLocaleString('zh-CN')}</p>
               </div>
               <button className="p-1.5 rounded-sm text-outline hover:text-on-surface hover:bg-surface-container cursor-pointer" onClick={closePreview}>

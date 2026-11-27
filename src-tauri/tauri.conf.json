@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "WriteMore",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "identifier": "com.writemore.desktop",
   "build": {
     "frontendDist": "../dist",
@@ -27,6 +27,7 @@
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "targets": "all",
     "icon": [
       "icons/32x32.png",

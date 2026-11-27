@@ -14,13 +14,13 @@
 @theme {
   /* ── 浅色主题：复古旧报牛皮纸 × 浓焙咖啡棕墨（全站单色系统一，靠版式与图形区分模块） ── */
   --color-background: #e9e0d2;
-  --color-surface: #efe7da;
-  --color-surface-bright: #f6f0e6;
+  --color-surface: #f4eee4;
+  --color-surface-bright: #f8f4ec;
   --color-surface-dim: #d6cab8;
-  --color-surface-container-lowest: #f5efe4;
-  --color-surface-container-low: #e3d8c7;
-  --color-surface-container: #eee5d6;
-  --color-surface-container-high: #dfd3c0;
+  --color-surface-container-lowest: #faf7f1;
+  --color-surface-container-low: #efe8dc;
+  --color-surface-container: #f3ede2;
+  --color-surface-container-high: #e4dacb;
   --color-surface-container-highest: #d4c6b0;
   --color-surface-variant: #dfd4c3;
 
@@ -81,14 +81,14 @@
   --font-mono: "Courier Prime", "汇文仿宋", "Huiwen-Fangsong", ui-monospace, monospace;
 
   /* 克制、干练的刊物级字号比例 */
-  --text-xs: 0.75rem;     /* 12px */
-  --text-sm: 0.875rem;    /* 14px */
-  --text-base: 1rem;      /* 16px */
-  --text-lg: 1.125rem;    /* 18px */
-  --text-xl: 1.25rem;     /* 20px */
-  --text-2xl: 1.5rem;     /* 24px */
-  --text-3xl: 1.875rem;   /* 30px */
-  --text-4xl: 2.25rem;    /* 36px */
+  --text-xs: 0.875rem;    /* 14px */
+  --text-sm: 1rem;        /* 16px */
+  --text-base: 1.125rem;  /* 18px */
+  --text-lg: 1.25rem;     /* 20px */
+  --text-xl: 1.375rem;    /* 22px */
+  --text-2xl: 1.625rem;   /* 26px */
+  --text-3xl: 2rem;       /* 32px */
+  --text-4xl: 2.5rem;     /* 40px */
 
   /* 全站彻底零圆角：利落裁切报刊版面 */
   --radius-xs: 0px;
@@ -104,24 +104,24 @@
 /* ── 深色主题：深焙胡桃木 × 柔和奶褐 × 苔灰绿 ── */
 .dark {
   --color-background: #141210;
-  --color-surface: #171512;
-  --color-surface-bright: #26231e;
+  --color-surface: #1e1b17;
+  --color-surface-bright: #2a2621;
   --color-surface-dim: #0f0e0c;
   --color-surface-container-lowest: #0e0d0b;
-  --color-surface-container-low: #1b1815;
-  --color-surface-container: #211e1a;
-  --color-surface-container-high: #2b2722;
-  --color-surface-container-highest: #36312a;
+  --color-surface-container-low: #211e1a;
+  --color-surface-container: #26231e;
+  --color-surface-container-high: #302c26;
+  --color-surface-container-highest: #3b362f;
   --color-surface-variant: #2d2923;
 
-  --color-on-background: #e8e1d5;
-  --color-on-surface: #e8e1d5;
-  --color-on-surface-variant: #a69c8e;
-  --color-outline: #7d7468;
-  --color-outline-variant: #3d3730;
+  --color-on-background: #f4eee4;
+  --color-on-surface: #f4eee4;
+  --color-on-surface-variant: #cfc5b7;
+  --color-outline: #a39a8d;
+  --color-outline-variant: #4d463e;
 
-  --color-primary: #c7a682;
-  --color-primary-dim: #b08e69;
+  --color-primary: #dcbf9b;
+  --color-primary-dim: #c7a682;
   --color-on-primary: #21180e;
   --color-primary-container: #3b2e20;
   --color-on-primary-container: #f0dfc8;
@@ -216,7 +216,7 @@ body {
     box-shadow: none;
   }
   .dark .manuscript-sheet {
-    background-color: #191715;
+    background-color: #1f1c18;
     border-color: color-mix(in srgb, var(--color-outline-variant) 90%, transparent);
     border-top: 2px solid color-mix(in srgb, var(--color-primary) 65%, transparent);
     box-shadow: none;
@@ -372,7 +372,7 @@ body {
 .w-md-editor-text-pre,
 .w-md-editor-text-pre > code {
   font-family: "汇文仿宋", "Huiwen-Fangsong", "汇文明朝体", "Huiwen-mincho", serif !important;
-  font-size: 19px !important;
+  font-size: 20px !important;
   line-height: 1.95 !important;
   letter-spacing: 0.02em !important;
 }
