@@ -187,7 +187,7 @@ export const useStore = create<AppState>()(
       selectedCharacterLayer: null,
       setSelectedCharacterLayer: (l) => set({ selectedCharacterLayer: l }),
 
-      aiConfig: { apiKey: '', apiBase: 'https://api.openai.com/v1', model: 'gpt-4o-mini' },
+      aiConfig: { apiKey: '', apiBase: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-3.5-flash-lite' },
       setAiConfig: (c) => set(s => ({ aiConfig: { ...s.aiConfig, ...c } })),
       aiEnabled: false,
       setAiEnabled: (e) => set({ aiEnabled: e }),

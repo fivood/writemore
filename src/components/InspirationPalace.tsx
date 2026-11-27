@@ -330,7 +330,7 @@ export default function InspirationPalace() {
             const shuffled = [...source].sort(() => Math.random() - 0.5);
             const picked = shuffled.slice(0, Math.min(5, shuffled.length)).map(it => it.draft);
             const msgs = buildInspirationRemixPrompt(picked);
-            const result = await chatCompletion(store.aiConfig, msgs, { maxTokens: 300 });
+            const result = await chatCompletion(store.aiConfig, msgs);
             setAiRemixResult(result);
         } catch {
             setAiRemixResult('AI 生成失败，请检查 AI 设置');

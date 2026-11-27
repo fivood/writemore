@@ -1,25 +1,39 @@
 /**
- * AI 服务层 — 统一封装 OpenAI 兼容 API 调用
- * 支持 OpenAI / DeepSeek / Ollama 等兼容接口
+ * AI 服务层：同一套调用，按接口地址分两条路
+ * - api.anthropic.com → Anthropic 官方 SDK（Claude）
+ * - 其他 → OpenAI 兼容的 /chat/completions（Gemini、DeepSeek，以及手填的 OpenAI、Ollama 等）
  */
+import Anthropic from '@anthropic-ai/sdk';
 import type { ChatMessage } from '../inspire';
 
 export interface AIConfig {
   apiKey: string;
-  apiBase: string;   // e.g. "https://api.openai.com/v1"
-  model: string;     // e.g. "gpt-4o-mini"
+  apiBase: string;   // e.g. "https://generativelanguage.googleapis.com/v1beta/openai"
+  model: string;     // e.g. "gemini-3.5-flash-lite"
 }
 
-interface ChatCompletionChoice {
-  message: { content: string };
+interface CallOptions {
+  /** 输出上限。思考也算在里面，别给太小；长度由提示词控制 */
+  maxTokens?: number;
+  temperature?: number;
+  signal?: AbortSignal;
+  timeoutMs?: number;
 }
 
-interface ChatCompletionResponse {
-  choices: ChatCompletionChoice[];
-}
-
+const DEFAULT_MAX_TOKENS = 4096;
 /** 默认超时时间（毫秒） */
 const DEFAULT_TIMEOUT_MS = 30_000;
+
+/** 预设的 API 供应商：只给地址和一个默认型号，其余型号在设置里用「可用模型」现查 */
+export const API_PRESETS: { label: string; base: string; model: string }[] = [
+  { label: 'Gemini', base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-3.5-flash-lite' },
+  { label: 'DeepSeek', base: 'https://api.deepseek.com', model: 'deepseek-flash' },
+  { label: 'Claude', base: 'https://api.anthropic.com', model: 'claude-haiku-5-5' },
+];
+
+const trimBase = (base: string) => base.replace(/\/+$/, '');
+const isClaude = (config: AIConfig) => /(^|[/.])anthropic\.com/.test(config.apiBase);
+const isDeepSeek = (config: AIConfig) => /(^|[/.])deepseek\.com/.test(config.apiBase);
 
 /**
  * 创建带超时的 AbortSignal。
@@ -51,45 +65,61 @@ function createTimeoutSignal(
   return { signal: controller.signal, cleanup };
 }
 
-/**
- * 调用 AI 聊天补全接口
- */
-export async function chatCompletion(
-  config: AIConfig,
-  messages: ChatMessage[],
-  options?: { temperature?: number; maxTokens?: number; signal?: AbortSignal; timeoutMs?: number },
-): Promise<string> {
-  const base = config.apiBase.replace(/\/+$/, '');
-  const url = `${base}/chat/completions`;
-  const { signal, cleanup } = createTimeoutSignal(options?.signal, options?.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+// ── Claude（Anthropic 官方 SDK） ─────────────────────────────
 
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
-      },
-      body: JSON.stringify({
-        model: config.model,
-        messages,
-        max_tokens: options?.maxTokens ?? 1024,
-        ...(options?.temperature !== undefined ? { temperature: options.temperature } : {}),
-      }),
-      signal,
-    });
+function claudeClient(config: AIConfig) {
+  return new Anthropic({
+    apiKey: config.apiKey,
+    // SDK 自己会拼 /v1/messages，地址里带了 /v1 就去掉
+    baseURL: trimBase(config.apiBase).replace(/\/v1$/, ''),
+    // Key 只存在用户自己的浏览器里，请求直接发给 Anthropic
+    dangerouslyAllowBrowser: true,
+  });
+}
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      throw new Error(`AI 请求失败 (${res.status}): ${text.slice(0, 200)}`);
-    }
+/** system 消息放到顶层 system 字段，其余作为对话；思考交给模型自适应，力度最低档 */
+function claudeParams(config: AIConfig, messages: ChatMessage[], maxTokens: number) {
+  const system = messages.filter(m => m.role === 'system').map(m => m.content).join('\n\n');
+  return {
+    model: config.model,
+    max_tokens: maxTokens,
+    ...(system ? { system } : {}),
+    messages: messages
+      .filter(m => m.role !== 'system')
+      .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })),
+    output_config: { effort: 'low' as const },
+  };
+}
 
-    const data: ChatCompletionResponse = await res.json();
-    const content = data.choices?.[0]?.message?.content;
-    if (!content) throw new Error('AI 返回内容为空');
-    return content.trim();
-  } finally {
-    cleanup();
+function checkClaudeStop(stopReason: Anthropic.StopReason | null) {
+  if (stopReason === 'refusal') throw new Error('Claude 拒绝回答这个请求');
+}
+
+// ── OpenAI 兼容 ──────────────────────────────────────────
+
+function openAiRequest(config: AIConfig, messages: ChatMessage[], options: CallOptions, stream: boolean): RequestInit {
+  return {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
+    },
+    body: JSON.stringify({
+      model: config.model,
+      messages,
+      max_tokens: options.maxTokens ?? DEFAULT_MAX_TOKENS,
+      ...(stream ? { stream: true } : {}),
+      ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+      // DeepSeek 默认开深度思考（high），写几十字的引导用不着
+      ...(isDeepSeek(config) ? { thinking: { type: 'disabled' } } : {}),
+    }),
+  };
+}
+
+async function ensureOk(res: Response) {
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`AI 请求失败 (${res.status}): ${text.slice(0, 200)}`);
   }
 }
 
@@ -109,126 +139,120 @@ function processSSELine(line: string): string | null {
   }
 }
 
+// ── 对外 ─────────────────────────────────────────────────
+
 /**
- * 流式调用 AI（SSE），逐 token 回调
+ * 调用 AI 聊天补全接口
  */
-export async function chatCompletionStream(
-  config: AIConfig,
-  messages: ChatMessage[],
-  onChunk: (text: string) => void,
-  options?: { temperature?: number; maxTokens?: number; signal?: AbortSignal; timeoutMs?: number },
-): Promise<string> {
-  const base = config.apiBase.replace(/\/+$/, '');
-  const url = `${base}/chat/completions`;
-  // 流式请求通常更慢，给更长的超时（默认 60s）
-  const { signal, cleanup } = createTimeoutSignal(options?.signal, options?.timeoutMs ?? 60_000);
-
+export async function chatCompletion(config: AIConfig, messages: ChatMessage[], options: CallOptions = {}): Promise<string> {
+  const { signal, cleanup } = createTimeoutSignal(options.signal, options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
-      },
-      body: JSON.stringify({
-        model: config.model,
-        messages,
-        max_tokens: options?.maxTokens ?? 1024,
-        stream: true,
-        ...(options?.temperature !== undefined ? { temperature: options.temperature } : {}),
-      }),
-      signal,
-    });
-
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      throw new Error(`AI 请求失败 (${res.status}): ${text.slice(0, 200)}`);
+    let content: string | undefined;
+    if (isClaude(config)) {
+      const res = await claudeClient(config).messages.create(
+        claudeParams(config, messages, options.maxTokens ?? DEFAULT_MAX_TOKENS), { signal });
+      checkClaudeStop(res.stop_reason);
+      content = res.content.map(b => (b.type === 'text' ? b.text : '')).join('');
+    } else {
+      const res = await fetch(`${trimBase(config.apiBase)}/chat/completions`, { ...openAiRequest(config, messages, options, false), signal });
+      await ensureOk(res);
+      const data: { choices?: { message?: { content?: string } }[] } = await res.json();
+      content = data.choices?.[0]?.message?.content;
     }
-
-    const reader = res.body?.getReader();
-    if (!reader) throw new Error('无法读取响应流');
-
-    const decoder = new TextDecoder();
-    let full = '';
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        const delta = processSSELine(line);
-        if (delta) {
-          full += delta;
-          onChunk(delta);
-        }
-      }
-    }
-
-    // 处理 buffer 中残留的最后一行数据（服务端未以 \n 结尾时）
-    if (buffer.trim()) {
-      const delta = processSSELine(buffer);
-      if (delta) {
-        full += delta;
-        onChunk(delta);
-      }
-    }
-
-    return full;
+    if (!content?.trim()) throw new Error('AI 返回内容为空');
+    return content.trim();
   } finally {
     cleanup();
   }
 }
 
 /**
+ * 流式调用 AI，逐段回调
+ */
+export async function chatCompletionStream(
+  config: AIConfig,
+  messages: ChatMessage[],
+  onChunk: (text: string) => void,
+  options: CallOptions = {},
+): Promise<string> {
+  // 流式请求通常更慢，给更长的超时（默认 60s）
+  const { signal, cleanup } = createTimeoutSignal(options.signal, options.timeoutMs ?? 60_000);
+  let full = '';
+  const emit = (delta: string | null) => {
+    if (!delta) return;
+    full += delta;
+    onChunk(delta);
+  };
+
+  try {
+    if (isClaude(config)) {
+      const stream = claudeClient(config).messages.stream(
+        claudeParams(config, messages, options.maxTokens ?? DEFAULT_MAX_TOKENS), { signal });
+      for await (const event of stream) {
+        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') emit(event.delta.text);
+      }
+      checkClaudeStop((await stream.finalMessage()).stop_reason);
+      return full;
+    }
+
+    const res = await fetch(`${trimBase(config.apiBase)}/chat/completions`, { ...openAiRequest(config, messages, options, true), signal });
+    await ensureOk(res);
+    const reader = res.body?.getReader();
+    if (!reader) throw new Error('无法读取响应流');
+
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      lines.forEach(line => emit(processSSELine(line)));
+    }
+    // 处理 buffer 中残留的最后一行数据（服务端未以 \n 结尾时）
+    if (buffer.trim()) emit(processSSELine(buffer));
+    return full;
+  } finally {
+    cleanup();
+  }
+}
+
+/** 列出这个 Key 能用的模型（设置里的「可用模型」按钮） */
+export async function listModels(config: AIConfig): Promise<string[]> {
+  if (isClaude(config)) {
+    const ids: string[] = [];
+    for await (const m of claudeClient(config).models.list()) ids.push(m.id);
+    return ids;
+  }
+  const res = await fetch(`${trimBase(config.apiBase)}/models`, {
+    headers: config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : undefined,
+  });
+  await ensureOk(res);
+  const data = await res.json();
+  return ((data.data ?? data.models ?? []) as Record<string, string>[])
+    .map(m => m.id ?? m.name?.replace('models/', '') ?? '')
+    .filter(Boolean);
+}
+
+/**
  * 测试 API 连接是否正常，成功返回 null，失败返回错误信息字符串。
- * 优先使用轻量的 /models 端点（不消耗 token），失败后 fallback 到 chat 补全。
+ * 优先列模型（不消耗 token），失败后再用一次最小的对话验证。
  */
 export async function testConnection(config: AIConfig): Promise<string | null> {
-  const base = config.apiBase.replace(/\/+$/, '');
-
-  // 1. 先尝试 GET /models（轻量，不消耗 token）
   try {
-    const res = await fetch(`${base}/models`, {
-      method: 'GET',
-      headers: {
-        ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
-      },
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (res.ok) return null;
-    // 4xx/5xx 可能是端点不支持，继续 fallback
-    if (res.status === 401 || res.status === 403) {
-      return `认证失败 (${res.status})：请检查 API Key`;
-    }
+    await listModels(config);
+    return null;
   } catch (e) {
-    // 网络错误或超时，继续 fallback
-    if (e instanceof TypeError) {
-      return `无法连接到 ${base}，请检查 API 地址`;
-    }
+    if (e instanceof Anthropic.AuthenticationError) return '认证失败 (401)：请检查 API Key';
+    if (e instanceof Error && /\((401|403)\)/.test(e.message)) return `认证失败：请检查 API Key`;
+    if (e instanceof TypeError) return `无法连接到 ${trimBase(config.apiBase)}，请检查 API 地址`;
+    // 有的服务不支持列模型，继续用对话验证
   }
-
-  // 2. Fallback: 用最小化的 chat 补全验证
   try {
-    const result = await chatCompletion(config, [
-      { role: 'user', content: '回复"ok"两个字母。' },
-    ], { maxTokens: 10, timeoutMs: 15_000 });
-    return result.length > 0 ? null : '返回内容为空';
+    await chatCompletion(config, [{ role: 'user', content: '回复"ok"两个字母。' }], { timeoutMs: 15_000 });
+    return null;
   } catch (e) {
     return e instanceof Error ? e.message : String(e);
   }
 }
-
-/** 预设的 API 供应商 */
-export const API_PRESETS: { label: string; base: string; models: string[] }[] = [
-  { label: 'OpenAI',        base: 'https://api.openai.com/v1',  models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1-nano'] },
-  { label: 'Gemini',        base: 'https://generativelanguage.googleapis.com/v1beta/openai', models: ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash', 'gemini-1.5-pro'] },
-  { label: 'Kimi (月之暗面)', base: 'https://api.moonshot.cn/v1', models: ['moonshot-v1-8k', 'moonshot-v1-32k', 'moonshot-v1-128k'] },
-  { label: 'DeepSeek',      base: 'https://api.deepseek.com/v1', models: ['deepseek-chat'] },
-  { label: '智谱 GLM',       base: 'https://open.bigmodel.cn/api/paas/v4', models: ['glm-4-flash', 'glm-4-air', 'glm-4'] },
-  { label: 'Ollama (本地)',  base: 'http://localhost:11434/v1', models: ['qwen2.5', 'llama3', 'mistral'] },
-];

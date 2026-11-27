@@ -54,18 +54,17 @@ export function useAiAssist() {
     }
   }
 
-  const ask = (msgs: Parameters<typeof chatCompletion>[1], maxTokens: number, signal: AbortSignal) =>
-    chatCompletion(aiConfig, msgs, { maxTokens, signal });
+  const ask = (msgs: Parameters<typeof chatCompletion>[1], signal: AbortSignal) => chatCompletion(aiConfig, msgs, { signal });
 
   const wordHintRun = () => store.currentWords.length > 0 && run('wordHint', 'AI 生成失败，请检查设置', async signal => {
     setWordHint(EMPTY);
     const key = wordsKey;
-    setWordHint({ key, text: await ask(buildWordInspirationPrompt(store.currentWords, store.drawnGenre), 200, signal) });
+    setWordHint({ key, text: await ask(buildWordInspirationPrompt(store.currentWords, store.drawnGenre), signal) });
   });
 
   const sceneGenerate = () => run('sceneGenerate', 'AI 场景生成失败', async signal => {
     const existing = store.currentScene ? [store.currentScene.title] : [];
-    const scene = parseAiScene(await ask(buildSceneGeneratePrompt(existing), 300, signal));
+    const scene = parseAiScene(await ask(buildSceneGeneratePrompt(existing), signal));
     if (!scene) throw new Error('AI 返回的场景格式不对');
     store.setCurrentScene({ id: `ai_${Date.now()}`, ...scene });
   });
@@ -73,12 +72,12 @@ export function useAiAssist() {
   const sceneDeepDive = () => store.currentScene && run('sceneDeepDive', 'AI 生成失败', async signal => {
     const scene = store.currentScene!;
     setSceneExtra(EMPTY);
-    setSceneExtra({ key: scene.id, text: await ask(buildSceneDeepDivePrompt(scene.title, scene.description), 200, signal) });
+    setSceneExtra({ key: scene.id, text: await ask(buildSceneDeepDivePrompt(scene.title, scene.description), signal) });
   });
 
   const challengeGenerate = () => run('challenge', 'AI 出题失败', async signal => {
     const existing = store.currentChallenge ? [store.currentChallenge.text] : [];
-    const lines = parsePromptLines(await ask(buildChallengeGeneratePrompt(existing, store.drawnGenre), 300, signal));
+    const lines = parsePromptLines(await ask(buildChallengeGeneratePrompt(existing, store.drawnGenre), signal));
     if (lines.length === 0) return;
     const picked = lines[Math.floor(Math.random() * lines.length)];
     store.setCurrentChallenge({ id: `ai_${Date.now()}`, text: picked, source: 'user' });
@@ -91,7 +90,7 @@ export function useAiAssist() {
     const prompt = store.currentCharacterPrompt!;
     setCharacterExtra(EMPTY);
     const layerName = CHARACTER_LAYERS.find(l => l.id === prompt.layer)?.name || '';
-    setCharacterExtra({ key: prompt.id, text: await ask(buildCharacterDeepPrompt(prompt.text, layerName), 200, signal) });
+    setCharacterExtra({ key: prompt.id, text: await ask(buildCharacterDeepPrompt(prompt.text, layerName), signal) });
   });
 
   const characterGenerate = () => run('characterGenerate', 'AI 出题失败', async signal => {
@@ -100,7 +99,7 @@ export function useAiAssist() {
     const existingTexts = [...BUILTIN_CHARACTER_PROMPTS, ...await db.characterPrompts.toArray()]
       .filter(p => p.layer === layer.id)
       .map(p => p.text);
-    const lines = parsePromptLines(await ask(buildCharacterGeneratePrompt({ layer, genre: store.drawnGenre, existingTexts }), 400, signal));
+    const lines = parsePromptLines(await ask(buildCharacterGeneratePrompt({ layer, genre: store.drawnGenre, existingTexts }), signal));
     if (lines.length === 0) return;
     const newPrompts = lines.map((text, i) => ({ id: `ai_cp_${Date.now()}_${i}`, text, layer: layer.id, source: 'user' as const }));
     await db.characterPrompts.bulkPut(newPrompts);
@@ -119,7 +118,7 @@ export function useAiAssist() {
       text += chunk;
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => store.setEditorContent(base + prefix + text));
-    }, { maxTokens: 400, signal });
+    }, { signal });
     cancelAnimationFrame(rafId);
     store.setEditorContent(base + prefix + text);
   });
@@ -127,12 +126,12 @@ export function useAiAssist() {
   const feedbackRun = () => store.editorContent.trim() && run('feedback', 'AI 反馈失败', async signal => {
     store.setAiFeedback('');
     if (countChars(store.editorContent) > 800) showToast('📝 AI 仅分析前 800 字');
-    store.setAiFeedback(await ask(buildWritingFeedbackPrompt(store.editorTitle, store.editorContent), 300, signal));
+    store.setAiFeedback(await ask(buildWritingFeedbackPrompt(store.editorTitle, store.editorContent), signal));
   });
 
   const dreamInterpretRun = () => store.editorContent.trim() && run('dream', 'AI 解梦失败', async signal => {
     setDreamInterpret('');
-    setDreamInterpret(await ask(buildDreamInterpretationPrompt(store.editorTitle, store.editorContent), 500, signal));
+    setDreamInterpret(await ask(buildDreamInterpretationPrompt(store.editorTitle, store.editorContent), signal));
   });
 
   return {
