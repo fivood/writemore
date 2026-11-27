@@ -4,7 +4,7 @@ import { useStore } from './store';
 import { db } from './db';
 import { supabase, SUPABASE_ENABLED } from './services/supabase';
 import { backToHome, exitWriting, saveDraft } from './lib/session';
-import { migrateLegacyDrafts } from './lib/drafts';
+import { migrateLegacyData } from './lib/drafts';
 import { syncWithCloud } from './lib/cloudSync';
 import { APP_VERSION, useUpdater } from './lib/updater';
 import { countChars, dayKey, hasMeaningfulContent } from './lib/util';
@@ -51,7 +51,7 @@ export default function App() {
     useEffect(() => {
         const s = useStore.getState();
         s.updateStreak();
-        void migrateLegacyDrafts();
+        void migrateLegacyData();
         // 打开时总在首页（见 store 的 onRehydrateStorage）。上次没存的内容先存进宫殿，
         // 免得下次进模式时被清掉。
         if (hasMeaningfulContent(s.editorContent)) {

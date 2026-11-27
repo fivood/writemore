@@ -9,3 +9,4 @@ export * from './words';
 export * from './scenes';
 export * from './challenges';
 export * from './characters';
+export * from './prompts';

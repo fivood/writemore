@@ -1,5 +1,6 @@
 import { db } from '../db';
-import type { Word } from '../inspire';
+import { SCENE_PROMPTS } from '../inspire';
+import type { ScenePrompt, Word } from '../inspire';
 import type { WordSet, Draft, WritingMode, PromptFavorite, PromptFavoriteModule } from '../types';
 import { countChars, hasMeaningfulContent } from './util';
 
@@ -8,8 +9,13 @@ export function isGhostDreamDraft(draft: Pick<Draft, 'writingMode' | 'content' |
   return draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0;
 }
 
-/** 一次性迁移：老版本没有 writingMode 的稿子，按有没有挂词条补成 words / free */
-export async function migrateLegacyDrafts() {
+/**
+ * 启动时修旧数据：
+ * - 老版本没有 writingMode 的稿子，按有没有挂词条补成 words / free
+ * - v0.1.13–0.1.14 把 AI 生成的场景以 `scene_ai_…` 的 id 写进了收藏表，和收藏按钮用的 `pf_scene_…` 对不上，
+ *   改成正规 id（当作已收藏，不删，免得丢了看中的场景）
+ */
+export async function migrateLegacyData() {
   try {
     const legacy = (await db.drafts.toArray()).filter(d => !d.writingMode);
     for (const d of legacy) {
@@ -17,9 +23,23 @@ export async function migrateLegacyDrafts() {
       await db.drafts.update(d.id, { writingMode: wordSet && wordSet.words.length > 0 ? 'words' : 'free' });
     }
     if (legacy.length > 0) console.log(`✨ 成功迁移了 ${legacy.length} 篇老版本草稿数据`);
+
+    const strayScenes = await db.promptFavorites.filter(f => f.id.startsWith('scene_')).toArray();
+    for (const f of strayScenes) {
+      await db.promptFavorites.put({ ...f, id: `pf_scene_${f.itemId}` });
+      await db.promptFavorites.delete(f.id);
+    }
   } catch (e) {
-    console.error('Legacy drafts migration failed', e);
+    console.error('Legacy data migration failed', e);
   }
+}
+
+/** 按 id 找场景：内置的直接给，AI 生成的只有收藏过才找得回来 */
+export async function findScene(id: string): Promise<ScenePrompt | null> {
+  const builtin = SCENE_PROMPTS.find(s => s.id === id);
+  if (builtin) return builtin;
+  const fav = await db.promptFavorites.get(`pf_scene_${id}`);
+  return fav ? { id, title: fav.title, description: fav.description ?? '', tags: fav.tags ?? [] } : null;
 }
 
 export interface SaveDraftInput {

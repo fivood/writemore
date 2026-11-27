@@ -53,3 +53,9 @@ export type Rng = () => number;
 export function pickOne<T>(items: readonly T[], rng: Rng = Math.random): T | undefined {
   return items[Math.floor(rng() * items.length)];
 }
+
+/** OpenAI 格式的对话消息，prompts.ts 的 build*Prompt 都返回这个 */
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}

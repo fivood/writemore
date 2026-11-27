@@ -2,16 +2,12 @@
  * AI 服务层 — 统一封装 OpenAI 兼容 API 调用
  * 支持 OpenAI / DeepSeek / Ollama 等兼容接口
  */
+import type { ChatMessage } from '../inspire';
 
 export interface AIConfig {
   apiKey: string;
   apiBase: string;   // e.g. "https://api.openai.com/v1"
   model: string;     // e.g. "gpt-4o-mini"
-}
-
-export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
 }
 
 interface ChatCompletionChoice {

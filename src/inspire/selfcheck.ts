@@ -2,6 +2,7 @@
 import {
   BUILTIN_WORDS, BUILTIN_CHALLENGES, BUILTIN_CHARACTER_PROMPTS, SCENE_PROMPTS, CHARACTER_LAYERS,
   drawWords, pickGenre, pickScene, pickChallenge, pickCharacterPrompt, parseWordList, formatWordListMd, normalizeWord,
+  parsePromptLines, parseAiScene, buildCharacterGeneratePrompt, buildInspirationRemixPrompt,
 } from './index';
 import type { Word } from './index';
 
@@ -47,5 +48,20 @@ assert(md[2].category === '人物' && md[2].text === '侦探', 'md 空格格式'
 assert(md[3].category === '通用', '单词行归「通用」');
 assert(JSON.stringify(parseWordList(formatWordListMd(md.slice(0, 3)), 'md')) === JSON.stringify(md.slice(0, 3)), '导出再导入应一致');
 assert(parseWordList('[{"text":"甲","genre":"武侠"},{"nope":1}]', 'json')[0].category === '武侠', 'json 旧 genre 字段当分类');
+
+const lines = parsePromptLines('1. 雨停之后\n2、他们约好\n（3）写一个人\n① 门缝里的信\n- 灯亮着\n• 第三杯咖啡\n\n一封信没有署名\n一、开头\n3 天后她回来\n1.5 倍速的人生');
+assert(JSON.stringify(lines) === JSON.stringify(
+  ['雨停之后', '他们约好', '写一个人', '门缝里的信', '灯亮着', '第三杯咖啡', '一封信没有署名', '开头', '3 天后她回来', '1.5 倍速的人生'],
+), `parsePromptLines 结果不对：${JSON.stringify(lines)}`);
+
+const scene = { title: '凌晨的车站', description: '最后一班车开走了', tags: ['夜晚'] };
+assert(JSON.stringify(parseAiScene(JSON.stringify(scene))) === JSON.stringify(scene), '裸 JSON 场景');
+assert(parseAiScene('好的，这是场景：\n```json\n' + JSON.stringify(scene) + '\n```\n希望喜欢')?.title === '凌晨的车站', '代码块包着的场景');
+assert(parseAiScene('前面一句话 {"title":"甲","description":"乙"} 后面一句')?.tags.length === 0, '缺 tags 时给空数组');
+assert(parseAiScene('不是 JSON') === null && parseAiScene('{"title":"只有标题"}') === null, '解析不出要返回 null');
+
+const charMsgs = buildCharacterGeneratePrompt({ layer: CHARACTER_LAYERS[2], genre: '武侠', existingTexts: ['甲'] });
+assert(charMsgs[1].content.includes('声音层') && charMsgs[1].content.includes('武侠'), '角色出题提示要带上维度和风格');
+assert(buildInspirationRemixPrompt([{ title: '甲', content: '内容' }])[1].content.includes('《甲》：内容'), '宫殿重组只需要标题和正文');
 
 console.log('✓ inspire 自检通过');

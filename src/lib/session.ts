@@ -76,6 +76,8 @@ function resetEditor() {
 
 function clearPrompts() {
   const s = st();
+  // 风格是词汇模式抽的，别的模式看不到它，也就别让它混进 AI 出题
+  s.setDrawnGenre(null);
   s.setCurrentWords([]);
   s.setCurrentScene(null);
   s.setCurrentChallenge(null);

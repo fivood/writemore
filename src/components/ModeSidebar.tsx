@@ -2,16 +2,11 @@ import { Sparkles, BookOpen, Bot, RefreshCw, ArrowLeft, Download, Shuffle, Chevr
 import { useEffect, useState } from 'react';
 import { useStore } from '../store';
 import { db } from '../db';
-import { WORD_CATEGORIES, CHARACTER_LAYERS, pickScene } from '../inspire';
+import { WORD_CATEGORIES, CHARACTER_LAYERS, pickScene, parsePromptLines } from '../inspire';
 import { backToHome, pickNextChallenge, pickNextCharacterPrompt } from '../lib/session';
 import { loadCustomCategories, onCustomCategoriesChange } from '../lib/customCategories';
 import { categoryIcon, CHARACTER_LAYER_STYLE } from '../ui/meta';
 import type { AiAssist } from './useAiAssist';
-
-/** 导入的提示文件：每行一条，空行忽略，去掉开头的 ● • - * */
-function parseImportLines(text: string) {
-    return text.split('\n').map(l => l.trim()).filter(l => l.length > 0).map(l => l.replace(/^[\u25cf\u2022\-*]\s*/, ''));
-}
 
 function useCustomIconKeys() {
     const read = () => Object.fromEntries(loadCustomCategories().map(c => [c.name, c.iconKey]));
@@ -184,7 +179,7 @@ export default function ModeSidebar({ ai, libraryOpen, onToggleLibrary }: { ai: 
                             <input type="file" accept=".md,.txt" className="hidden" onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 if (!file) return;
-                                const lines = parseImportLines(await file.text());
+                                const lines = parsePromptLines(await file.text());
                                 if (lines.length === 0) return;
                                 const newChallenges = lines.map((t, i) => ({
                                     id: `user_${Date.now()}_${i}`,
@@ -254,7 +249,7 @@ export default function ModeSidebar({ ai, libraryOpen, onToggleLibrary }: { ai: 
                                 <input type="file" accept=".md,.txt" className="hidden" onChange={async (e) => {
                                     const file = e.target.files?.[0];
                                     if (!file) return;
-                                    const lines = parseImportLines(await file.text());
+                                    const lines = parsePromptLines(await file.text());
                                     if (lines.length === 0) return;
                                     const layer = store.selectedCharacterLayer || 'inner';
                                     const newPrompts = lines.map((t, i) => ({

@@ -1,13 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { db } from '../db';
 import { useStore } from '../store';
-import { SCENE_PROMPTS, BUILTIN_CHALLENGES, BUILTIN_CHARACTER_PROMPTS, pickChallenge, pickCharacterPrompt } from '../inspire';
+import { SCENE_PROMPTS, BUILTIN_CHALLENGES, BUILTIN_CHARACTER_PROMPTS, pickChallenge, pickCharacterPrompt, buildInspirationRemixPrompt } from '../inspire';
 import type { Draft, WordSet, WritingMode } from '../types';
 import { WRITING_MODES } from '../ui/meta';
-import { isGhostDreamDraft } from '../lib/drafts';
+import { findScene, isGhostDreamDraft } from '../lib/drafts';
 import { dayKey, downloadText } from '../lib/util';
 import { chatCompletion } from '../services/ai';
-import { buildInspirationRemixPrompt } from '../services/prompts';
 import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX, Trash2, X, Save, ArrowUpRight, CheckSquare, Square, ListChecks, Merge, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface PalaceItem {
@@ -117,9 +116,10 @@ export default function InspirationPalace() {
         if (item.wordSet) store.setCurrentWords(item.wordSet.words);
         const mode = resolveMode(item.draft, item.wordSet);
         store.setWritingMode(mode);
-        if (mode === 'scene' && item.draft.sceneId) {
-            const scene = SCENE_PROMPTS.find(s => s.id === item.draft.sceneId);
-            if (scene) store.setCurrentScene(scene);
+        if (mode === 'scene') {
+            // 找不到就不显示题目，别留着上一篇的场景
+            store.setCurrentScene(null);
+            if (item.draft.sceneId) findScene(item.draft.sceneId).then(store.setCurrentScene);
         }
         if (mode === 'challenge') {
             const cid = item.draft.challengeId;

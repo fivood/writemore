@@ -1,17 +1,16 @@
 /**
- * AI Prompt 模板 — 各写作模式的 AI 增强 prompt 构造
+ * AI Prompt 模板 — 各写作模式的 AI 增强 prompt 构造。
+ * 只拼消息，不发请求：返回 OpenAI 格式的 ChatMessage[]，接哪家模型由调用方决定。
  */
 
-import type { ChatMessage } from './ai';
-import type { Word } from '../inspire';
-import type { Draft } from '../types';
+import type { ChatMessage, CharacterLayer, ScenePrompt, Word } from './types';
 
 const SYSTEM_BASE = '你是一个中文创意写作助手，擅长文学、诗歌和小说写作。回复应简洁、有文学性、有启发性。';
 
 /**
  * 词汇灵感 — 为一组词条生成写作引导
  */
-export function buildWordInspirationPrompt(words: Word[], genre: string | null): ChatMessage[] {
+export function buildWordInspirationPrompt(words: Pick<Word, 'text' | 'category'>[], genre: string | null): ChatMessage[] {
   const wordList = words.map(w => `${w.text}（${w.category}）`).join('、');
   return [
     { role: 'system', content: SYSTEM_BASE },
@@ -96,13 +95,11 @@ export function buildChallengeGeneratePrompt(existingChallenges: string[], genre
  * 角色描写 — AI 生成新角色提示（按维度+风格）
  */
 export function buildCharacterGeneratePrompt(params: {
-  layerId: string;
-  layerName: string;
-  layerDescription: string;
+  layer: CharacterLayer;
   genre: string | null;
   existingTexts: string[];
 }): ChatMessage[] {
-  const { layerId, layerName, layerDescription, genre, existingTexts } = params;
+  const { layer: { id: layerId, name: layerName, description: layerDescription }, genre, existingTexts } = params;
 
   const layerExamples: Record<string, string[]> = {
     inner: [
@@ -177,7 +174,7 @@ export function buildCharacterDeepPrompt(currentPrompt: string, layerName: strin
 /**
  * 灵感宫殿 — 从已有草稿中重新组合生成新灵感
  */
-export function buildInspirationRemixPrompt(drafts: Draft[]): ChatMessage[] {
+export function buildInspirationRemixPrompt(drafts: { title: string; content: string }[]): ChatMessage[] {
   const excerpts = drafts
     .map(d => `《${d.title}》：${d.content.slice(0, 150)}`)
     .join('\n\n');
@@ -264,4 +261,35 @@ ${content.slice(0, 1000)}
 用第二人称"你"直接对我说话。`,
     },
   ];
+}
+
+// ── 解析回复 ──
+
+const NUMBERING = /^(?:[（(]\s*(?:\d+|[一二三四五六七八九十]+)\s*[)）]|(?:\d+|[一二三四五六七八九十]+)\s*[.．、:：)）](?!\d)|[①-⑳])\s*/;
+const BULLET = /^[-•*●·]\s*/;
+
+/**
+ * 多行文本拆成一条条提示：去掉空行和开头的序号、项目符号
+ * （「1. 」「2、」「（3）」「①」「一、」「- 」「• 」「● 」）。
+ * 序号后面必须跟标点，所以「一封信……」「3 天后……」不会被误删。
+ * 用来解析 AI 出的题（buildChallengeGeneratePrompt / buildCharacterGeneratePrompt 的回复）和用户导入的题。
+ */
+export function parsePromptLines(text: string): string[] {
+  return text
+    .split(/\r?\n/)
+    .map(l => l.trim().replace(BULLET, '').replace(NUMBERING, '').trim())
+    .filter(l => l.length > 0);
+}
+
+/** 解析 buildSceneGeneratePrompt 的回复，兼容 ```json 代码块和前后多余的话；解析不出返回 null */
+export function parseAiScene(text: string): Pick<ScenePrompt, 'title' | 'description' | 'tags'> | null {
+  const json = text.match(/```(?:json)?\s*([\s\S]*?)```/)?.[1] ?? text.match(/\{[\s\S]*\}/)?.[0] ?? text;
+  try {
+    const o = JSON.parse(json.trim());
+    if (!o || typeof o.title !== 'string' || typeof o.description !== 'string' || !o.title || !o.description) return null;
+    const tags: unknown[] = Array.isArray(o.tags) ? o.tags : [];
+    return { title: o.title, description: o.description, tags: tags.filter((t): t is string => typeof t === 'string') };
+  } catch {
+    return null;
+  }
 }
