@@ -1,9 +1,9 @@
-﻿import { useEffect, useState, useMemo, type ComponentType, type MouseEvent } from 'react';
+import { useEffect, useState, useMemo, type ComponentType, type MouseEvent } from 'react';
 import { Star, X, ListChecks, Library, Search, Clock, LayoutGrid, Sparkles, SearchX, Check, Pencil, Mountain, CircleHelp, User } from 'lucide-react';
 import { db } from '../db';
 import { useStore } from '../store';
 import type { PromptFavorite, WordSet } from '../types';
-import { toggleFavoriteWordSet } from '../data/draftEngine';
+import { toggleFavoriteWordSet } from '../lib/drafts';
 
 type SortMode = 'date' | 'module';
 
@@ -128,7 +128,7 @@ export default function FavoritesPage() {
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
   };

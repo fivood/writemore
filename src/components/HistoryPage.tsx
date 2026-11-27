@@ -1,16 +1,14 @@
-﻿import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Calendar, History, LayoutGrid, Download, X, ListChecks, FileText, PencilLine, Timer, CalendarCheck, Search, Clock, ArrowUpDown, Trash2, BookOpen, SearchX, Check, Tag, Save, ArrowUpRight } from 'lucide-react';
 import { db } from '../db';
 import { useStore } from '../store';
 import type { Draft, WordSet } from '../types';
+import { isGhostDreamDraft } from '../lib/drafts';
+import { dayKey, downloadText } from '../lib/util';
 
 interface HistoryItem {
   draft: Draft;
   wordSet?: WordSet;
-}
-
-function hasMeaningfulContent(content: string) {
-  return content.replace(/[\s\u200B-\u200D\uFEFF]/g, '').length > 0;
 }
 
 type SortMode = 'date' | 'words';
@@ -21,13 +19,13 @@ function CalendarHeatmap({ items }: { items: HistoryItem[] }) {
   const today = new Date();
   const totalWeeks = 26; // ~6 months
   const startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - (totalWeeks * 7 - 1) - startDate.getDay());
+  startDate.setDate(startDate.getDate() - (totalWeeks - 1) * 7 - startDate.getDay()); // 从 26 周前的周日排到本周六
 
   // Build day -> word count map
   const dayMap = useMemo(() => {
     const map = new Map<string, { count: number; totalWords: number }>();
     items.forEach(({ draft }) => {
-      const key = new Date(draft.updatedAt).toISOString().slice(0, 10);
+      const key = dayKey(draft.updatedAt);
       const prev = map.get(key) || { count: 0, totalWords: 0 };
       map.set(key, { count: prev.count + 1, totalWords: prev.totalWords + draft.wordCount });
     });
@@ -100,8 +98,8 @@ function CalendarHeatmap({ items }: { items: HistoryItem[] }) {
             {weeks.map((week, wi) => (
               <div key={wi} className="flex flex-col gap-0.5">
                 {week.map((day, di) => {
-                  const key = day.toISOString().slice(0, 10);
-                  const todayKey = today.toISOString().slice(0, 10);
+                  const key = dayKey(day);
+                  const todayKey = dayKey(today);
                   const data = dayMap.get(key);
                   const isFuture = day > today;
                   return (
@@ -160,7 +158,7 @@ export default function HistoryPage() {
       const drafts = await db.drafts.orderBy('updatedAt').reverse().toArray();
       const items: HistoryItem[] = [];
       for (const draft of drafts) {
-        if (draft.writingMode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0) continue;
+        if (isGhostDreamDraft(draft)) continue;
         const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
         items.push({ draft, wordSet });
       }
@@ -178,7 +176,7 @@ export default function HistoryPage() {
     const totalWords = history.reduce((sum, h) => sum + h.draft.wordCount, 0);
     const avgWords = totalDrafts > 0 ? Math.round(totalWords / totalDrafts) : 0;
     // Unique writing days
-    const days = new Set(history.map(h => new Date(h.draft.updatedAt).toISOString().slice(0, 10)));
+    const days = new Set(history.map(h => dayKey(h.draft.updatedAt)));
     return { totalDrafts, totalWords, avgWords, writingDays: days.size };
   }, [history]);
 
@@ -285,7 +283,7 @@ export default function HistoryPage() {
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
   };
@@ -310,19 +308,13 @@ export default function HistoryPage() {
         ? `> 灵感词条：${item.wordSet.words.map(w => w.text).join(' · ')}\n\n`
         : '';
       const content = `# ${title}\n\n${wordsLine}${item.draft.content}`;
-      const blob = new Blob([content], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${title}.md`;
-      a.click();
-      URL.revokeObjectURL(url);
+      downloadText(`${title}.md`, content);
     });
   };
 
   function handleExportAll() {
     if (history.length === 0) return;
-    const lines: string[] = [`# WriteMore 写作历史导出`, `导出时间：${new Date().toLocaleString('zh-CN')}`, `共 ${history.length} 篇草稿　｜　累计 ${stats.totalWords.toLocaleString()} 字`, '', '---', ''];
+    const lines: string[] = [`# WriteMore 写作历史导出`, `导出时间：${new Date().toLocaleString('zh-CN')}`, `共 ${history.length} 篇草稿\u3000｜\u3000累计 ${stats.totalWords.toLocaleString()} 字`, '', '---', ''];
     history.forEach((item, i) => {
       const title = item.draft.title || '未命名灵感';
       const date = new Date(item.draft.updatedAt).toLocaleString('zh-CN');
@@ -332,19 +324,13 @@ export default function HistoryPage() {
         : '';
       lines.push(`## ${i + 1}. ${title}`);
       lines.push(``);
-      lines.push(`> 模式：${mode}　｜　更新：${date}　｜　字数：${item.draft.wordCount}`);
+      lines.push(`> 模式：${mode}\u3000｜\u3000更新：${date}\u3000｜\u3000字数：${item.draft.wordCount}`);
       lines.push(``);
       if (wordsLine) lines.push(wordsLine);
       lines.push(item.draft.content || '（无内容）');
       lines.push('', '---', '');
     });
-    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `writemore_history_${new Date().toISOString().slice(0, 10)}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadText(`writemore_history_${dayKey()}.md`, lines.join('\n'));
   }
 
   return (
@@ -566,7 +552,7 @@ export default function HistoryPage() {
 
                 {/* Preview */}
                 <p className="text-on-surface-variant text-sm line-clamp-3 mb-4 min-h-[54px] leading-relaxed flex-1">
-                  {item.draft.content ? item.draft.content.replace(/[#*>_`\[\]]/g, '').slice(0, 150) : '没有任何内容...'}
+                  {item.draft.content ? item.draft.content.replace(/[#*>_`[\]]/g, '').slice(0, 150) : '没有任何内容...'}
                 </p>
 
                 {/* Word chips */}

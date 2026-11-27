@@ -1,70 +1,15 @@
-﻿import { useState, useMemo, useRef } from 'react';
-import { getAllWords, addUserWord, updateUserWord, deleteUserWord, toggleWordEnabled } from '../data/wordEngine';
-import type { Word, Genre, WordCategory } from '../types';
-import { WORD_CATEGORIES, CATEGORY_META } from '../types';
-import { PlusCircle, Copy, AlertTriangle, Download, Tag, Check, Info, Upload, ChevronDown, Plus, BookOpen, Package, User, EyeOff, Eye, Search, X, ChevronLeft, ChevronRight, SearchX, Pencil, Trash2, Sparkles, Zap, Layers, Map as MapIcon, ScrollText, Brain } from 'lucide-react';
+import { useState, useMemo, useRef } from 'react';
+import { getAllWords, addUserWord, updateUserWord, deleteUserWord, toggleWordEnabled } from '../lib/wordLibrary';
+import { WORD_CATEGORIES, parseWordList, formatWordListMd } from '../inspire';
+import type { Word, Genre, WordCategory, ParsedWord } from '../inspire';
+import { loadCustomCategories, saveCustomCategories, type CustomCategoryDef } from '../lib/customCategories';
+import { CATEGORY_COLORS, CATEGORY_ICONS, CUSTOM_ICON_POOL, categoryIcon } from '../ui/meta';
+import { dayKey, downloadText } from '../lib/util';
+import { PlusCircle, Copy, AlertTriangle, Download, Tag, Check, Info, Upload, ChevronDown, Plus, BookOpen, Package, User, EyeOff, Eye, Search, X, ChevronLeft, ChevronRight, SearchX, Pencil, Trash2 } from 'lucide-react';
 
-const CUSTOM_CATEGORY_STORAGE_KEY = 'writemore_custom_categories_v1';
 const MAX_CATEGORY_NAME_LENGTH = 8;
 
-interface CustomCategoryDef {
-  name: string;
-  iconKey: string;
-}
-
-const CUSTOM_ICON_POOL: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  tag: Tag,
-  sparkles: Sparkles,
-  package: Package,
-  zap: Zap,
-  layers: Layers,
-  eye: Eye,
-  brain: Brain,
-  user: User,
-  map: MapIcon,
-  scroll: ScrollText,
-  book: BookOpen,
-  pencil: Pencil,
-};
-
-function loadCustomCategories(): CustomCategoryDef[] {
-  try {
-    const raw = localStorage.getItem(CUSTOM_CATEGORY_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed
-      .filter((item: any) => item && typeof item.name === 'string' && typeof item.iconKey === 'string')
-      .map((item: any) => ({ name: item.name.trim(), iconKey: item.iconKey.trim() }))
-      .filter((item: CustomCategoryDef) => item.name.length > 0);
-  } catch {
-    return [];
-  }
-}
-
-function saveCustomCategories(list: CustomCategoryDef[]) {
-  localStorage.setItem(CUSTOM_CATEGORY_STORAGE_KEY, JSON.stringify(list));
-  window.dispatchEvent(new Event('writemore:custom-categories-updated'));
-}
-
-const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  '意象': Sparkles,
-  '实物': Package,
-  '动作': Zap,
-  '状态': Layers,
-  '感官': Eye,
-  '抽象': Brain,
-  '人物': User,
-  '地名': MapIcon,
-  '典故': ScrollText,
-};
-
 type ViewFilter = 'all' | 'builtin' | 'user';
-
-const CATEGORY_COLORS: Record<string, string> = Object.fromEntries(
-  WORD_CATEGORIES.map(c => [c, CATEGORY_META[c]?.color ?? 'bg-stone-100 text-stone-600 border-stone-200'])
-);
-CATEGORY_COLORS['all'] = 'bg-stone-100 text-stone-600 border-stone-200';
 
 interface EditingWord {
   id?: string;
@@ -74,79 +19,14 @@ interface EditingWord {
   genres: Genre[];
 }
 
-// ── Import types ──
-interface ParsedImportItem {
-  text: string;
-  explanation: string;
-  category: string;        // raw string from file, may be a new category
-}
-
 type ImportItemStatus = 'new' | 'duplicate' | 'conflict';
 
 interface ImportPreviewItem {
-  parsed: ParsedImportItem;
+  parsed: ParsedWord;
   status: ImportItemStatus;
   existingWord?: Word;     // the matching existing word if duplicate/conflict
   selected: boolean;       // user can toggle
   resolvedCategory: string; // final category to use (may be overridden)
-}
-
-// ── MD parser ──
-// Format: [分类]（词语）：（释义）  OR  [分类](词语):(释义)  OR  [分类] 词语：释义
-// Also tolerates missing brackets on explanation and half/full-width punctuation
-function parseMdImport(content: string): ParsedImportItem[] {
-  const items: ParsedImportItem[] = [];
-  const lines = content.split(/\r?\n/);
-
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!line || line.startsWith('#') || line.startsWith('//') || line.startsWith('---')) continue;
-
-    // Try multiple patterns from most specific to most lenient
-
-    // Pattern 1: [分类]（词语）：（释义）  (full-width parens & colon)
-    // Pattern 2: [分类](词语):(释义)       (half-width)
-    // Pattern 3: [分类]（词语）:（释义）    (mixed)
-    const regexes = [
-      /^\[([^\]]+)\][（(]([^）)]+)[）)][：:][（(]([^）)]*)[）)]$/,   // full brackets
-      /^\[([^\]]+)\][（(]([^）)]+)[）)][：:](.*)$/,                  // bracket word, plain explanation
-      /^\[([^\]]+)\]\s*([^\s：:]+)\s*[：:]\s*(.*)$/,                 // [分类] 词语：释义
-    ];
-
-    let matched = false;
-    for (const re of regexes) {
-      const m = line.match(re);
-      if (m) {
-        const genre = m[1].trim();
-        const text = m[2].trim();
-        const explanation = (m[3] || '').trim();
-        if (text) {
-          items.push({ text, explanation, category: genre });
-          matched = true;
-          break;
-        }
-      }
-    }
-
-    // Fallback: treat as plain word with no genre/explanation
-    if (!matched && line.length > 0 && line.length <= 20 && !line.includes(' ')) {
-      items.push({ text: line, explanation: '', category: '通用' });
-    }
-  }
-
-  return items;
-}
-
-function parseJsonImport(content: string): ParsedImportItem[] {
-  const data = JSON.parse(content);
-  if (!Array.isArray(data)) throw new Error('Invalid JSON format');
-  return data
-    .filter((item: Record<string, unknown>) => item.text && typeof item.text === 'string')
-    .map((item: Record<string, unknown>) => ({
-      text: (item.text as string).trim(),
-      explanation: ((item.explanation as string) || '').trim(),
-      category: ((item.category as string) || (item.genre as string) || '意象').trim(),
-    }));
 }
 
 // ── Import Preview Modal ──
@@ -290,7 +170,7 @@ function ImportPreviewModal({
                 <span className={`shrink-0 px-1.5 py-0.5 text-[14px] font-label font-bold rounded border tracking-wider ${
                   CATEGORY_COLORS[item.resolvedCategory] || 'bg-purple-100 text-purple-700 border-purple-200'
                 }`}>
-                  {(() => { const CatIcon = CATEGORY_ICON_MAP[item.resolvedCategory]; return CatIcon ? <CatIcon size={14} className="inline-block align-middle mr-0.5" /> : <Tag size={14} className="inline-block align-middle mr-0.5" />; })()}{item.resolvedCategory}
+                  {(() => { const CatIcon = CATEGORY_ICONS[item.resolvedCategory]; return CatIcon ? <CatIcon size={14} className="inline-block align-middle mr-0.5" /> : <Tag size={14} className="inline-block align-middle mr-0.5" />; })()}{item.resolvedCategory}
                 </span>
 
                 {/* Word text */}
@@ -359,7 +239,7 @@ function ImportPreviewModal({
 
 // ── Main component ──
 export default function LibraryPage() {
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [, setRefreshKey] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<WordCategory | 'all'>('all');
   const [sourceFilter, setSourceFilter] = useState<ViewFilter>('all');
@@ -377,7 +257,8 @@ export default function LibraryPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const PAGE_SIZE = 60;
 
-  const allWords = useMemo(() => getAllWords(), [refreshKey]);
+  // 词库每次改动都会换新数组，refresh() 只是让组件重新读一次
+  const allWords = getAllWords();
 
   const customCategoryIconMap = useMemo(() => {
     return Object.fromEntries(customCategories.map(c => [c.name, c.iconKey]));
@@ -395,12 +276,7 @@ export default function LibraryPage() {
     [categoryOptions]
   );
 
-  const getCategoryIcon = (category: string) => {
-    const builtIn = CATEGORY_ICON_MAP[category];
-    if (builtIn) return builtIn;
-    const key = customCategoryIconMap[category];
-    return (key && CUSTOM_ICON_POOL[key]) || Tag;
-  };
+  const getCategoryIcon = (category: string) => categoryIcon(category, customCategoryIconMap);
 
   // Stats
   const stats = useMemo(() => {
@@ -572,14 +448,7 @@ export default function LibraryPage() {
     reader.onload = (ev) => {
       try {
         const content = ev.target?.result as string;
-        let parsed: ParsedImportItem[];
-
-        if (file.name.endsWith('.json')) {
-          parsed = parseJsonImport(content);
-        } else {
-          // .md or .txt — use MD parser
-          parsed = parseMdImport(content);
-        }
+        const parsed = parseWordList(content, file.name.endsWith('.json') ? 'json' : 'md');
 
         if (parsed.length === 0) {
           alert('未能从文件中解析出任何词条。\n\n支持的格式：\n[分类]（词语）：（释义）\n[分类](词语):(释义)\n[分类] 词语：释义\n\n每行一条。');
@@ -671,29 +540,13 @@ export default function LibraryPage() {
   const handleExport = () => {
     const userWords = allWords.filter(w => w.source === 'user');
     if (userWords.length === 0) { alert('没有自定义词条可导出'); return; }
-    const data = JSON.stringify(userWords, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `writemore_custom_words_${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadText(`writemore_custom_words_${dayKey()}.json`, JSON.stringify(userWords, null, 2), 'application/json');
   };
 
   const handleExportMd = () => {
     const userWords = allWords.filter(w => w.source === 'user');
     if (userWords.length === 0) { alert('没有自定义词条可导出'); return; }
-    const lines = userWords.map(w =>
-      `[${w.category}]（${w.text}）${w.explanation ? `：（${w.explanation}）` : ''}`
-    );
-    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `writemore_custom_words_${new Date().toISOString().slice(0, 10)}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadText(`writemore_custom_words_${dayKey()}.md`, formatWordListMd(userWords));
   };
 
   return (

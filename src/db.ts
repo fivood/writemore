@@ -1,7 +1,6 @@
 import Dexie, { type Table } from 'dexie';
-import type { Word, WordSet, Draft, PromptFavorite } from './types';
-import type { WritingChallenge } from './data/challenges';
-import type { CharacterPrompt } from './data/characterPrompts';
+import type { Word, WritingChallenge, CharacterPrompt } from './inspire';
+import type { WordSet, Draft, PromptFavorite } from './types';
 
 export class WriteMoreDB extends Dexie {
   words!: Table<Word>;

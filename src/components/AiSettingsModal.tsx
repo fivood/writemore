@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Bot, X, LoaderCircle, Wifi, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useStore } from '../store';
-import { API_PRESETS, testConnection } from '../services/ai';
+import { API_PRESETS, listModels, testConnection } from '../services/ai';
 
 interface AiSettingsModalProps {
     isOpen: boolean;
@@ -17,10 +17,8 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
 
     if (!isOpen) return null;
 
-    const aiBaseNormalized = store.aiConfig.apiBase.replace(/\/+$/, '').toLowerCase();
-    const canFetchModels = !!store.aiConfig.apiKey || 
-        aiBaseNormalized.includes('localhost:11434') || 
-        aiBaseNormalized.includes('127.0.0.1:11434');
+    // 本地服务（如 Ollama）不用 Key 也能列模型
+    const canFetchModels = !!store.aiConfig.apiKey || /\/\/(localhost|127\.0\.0\.1)[:/]/.test(store.aiConfig.apiBase);
 
     return (
         <div 
@@ -67,7 +65,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                 <button
                                     key={p.label}
                                     onClick={() => {
-                                        store.setAiConfig({ apiBase: p.base, model: p.models[0] });
+                                        store.switchAiProvider(p.base, p.model);
                                         setAiTestStatus('idle');
                                     }}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-label border transition-colors ${store.aiConfig.apiBase === p.base
@@ -88,7 +86,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                             type="url"
                             value={store.aiConfig.apiBase}
                             onChange={e => { store.setAiConfig({ apiBase: e.target.value }); setAiTestStatus('idle'); }}
-                            placeholder="https://api.openai.com/v1"
+                            placeholder="https://generativelanguage.googleapis.com/v1beta/openai"
                             className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                         />
                     </div>
@@ -100,10 +98,10 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                             type="password"
                             value={store.aiConfig.apiKey}
                             onChange={e => { store.setAiConfig({ apiKey: e.target.value }); setAiTestStatus('idle'); }}
-                            placeholder="sk-..."
+                            placeholder="粘贴 API Key"
                             className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                         />
-                        <p className="text-[13px] text-on-surface-variant mt-1">密钥仅存储在浏览器本地，不会上传到任何服务器</p>
+                        <p className="text-[13px] text-on-surface-variant mt-1">密钥只存在这台设备的浏览器里，只会发给上面这个服务商</p>
                     </div>
 
                     {/* Model */}
@@ -114,7 +112,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                 type="text"
                                 value={store.aiConfig.model}
                                 onChange={e => { store.setAiConfig({ model: e.target.value }); setAiTestStatus('idle'); }}
-                                placeholder="gemini-1.5-flash"
+                                placeholder="gemini-4-hydrogen"
                                 className="flex-1 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                             />
                             {canFetchModels && (
@@ -123,13 +121,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                         setAiModelsLoading(true);
                                         setAiAvailModels([]);
                                         try {
-                                            const base = store.aiConfig.apiBase.replace(/\/+$/, '');
-                                            const res = await fetch(`${base}/models`, {
-                                                headers: store.aiConfig.apiKey ? { Authorization: `Bearer ${store.aiConfig.apiKey}` } : undefined,
-                                            });
-                                            const data = await res.json();
-                                            const ids: string[] = (data.data ?? data.models ?? []).map((m: Record<string, string>) => m.id ?? m.name?.replace('models/', '') ?? '').filter(Boolean);
-                                            setAiAvailModels(ids);
+                                            setAiAvailModels(await listModels(store.aiConfig));
                                         } catch { setAiAvailModels([]); }
                                         finally { setAiModelsLoading(false); }
                                     }}
@@ -157,32 +149,6 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                 ))}
                             </div>
                         )}
-                        {/* Quick model buttons for current preset */}
-                        {aiAvailModels.length === 0 && (() => {
-                            try {
-                                const urlObj = new URL(store.aiConfig.apiBase);
-                                const preset = API_PRESETS.find(p => p.base.includes(urlObj.host));
-                                if (!preset || preset.models.length <= 1) return null;
-                                return (
-                                    <div className="flex gap-1 flex-wrap">
-                                        {preset.models.map(m => (
-                                            <button
-                                                key={m}
-                                                onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
-                                                className={`px-2 py-1 rounded text-[13px] font-label border transition-colors ${store.aiConfig.model === m
-                                                        ? 'bg-primary/10 border-primary/30 text-primary'
-                                                        : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'
-                                                    }`}
-                                            >
-                                                {m}
-                                            </button>
-                                        ))}
-                                    </div>
-                                );
-                            } catch {
-                                return null;
-                            }
-                        })()}
                     </div>
 
                     {/* Test connection */}

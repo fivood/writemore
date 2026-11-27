@@ -1,8 +1,5 @@
-export interface WritingChallenge {
-  id: string;
-  text: string;
-  source: 'builtin' | 'user';
-}
+import { pickOne } from './types';
+import type { Rng, WritingChallenge } from './types';
 
 export const BUILTIN_CHALLENGES: WritingChallenge[] = [
   // 展示不叙述
@@ -57,11 +54,9 @@ export const BUILTIN_CHALLENGES: WritingChallenge[] = [
 
 ];
 
-export function pickRandomChallenge(
-  excludeId?: string,
-  extra: WritingChallenge[] = [],
+/** 从内置题和 extra（用户导入、AI 出的）里随机一道 */
+export function pickChallenge(
+  { extra = [], exclude, rng }: { extra?: readonly WritingChallenge[]; exclude?: string; rng?: Rng } = {},
 ): WritingChallenge | null {
-  const pool = [...BUILTIN_CHALLENGES, ...extra].filter(c => c.id !== excludeId);
-  if (pool.length === 0) return null;
-  return pool[Math.floor(Math.random() * pool.length)];
+  return pickOne([...BUILTIN_CHALLENGES, ...extra].filter(c => c.id !== exclude), rng) ?? null;
 }
