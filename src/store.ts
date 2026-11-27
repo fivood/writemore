@@ -84,6 +84,10 @@ interface AppState {
   // AI settings
   aiConfig: AIConfig;
   setAiConfig: (c: Partial<AIConfig>) => void;
+  /** 各服务商上次用的 Key 和型号，按接口地址存 */
+  aiProfiles: Record<string, { apiKey: string; model: string }>;
+  /** 切到另一个接口地址：先记下当前这家，再取出那家上次的（没用过就是空 Key + 默认型号） */
+  switchAiProvider: (apiBase: string, defaultModel: string) => void;
   aiEnabled: boolean;
   setAiEnabled: (e: boolean) => void;
 
@@ -189,6 +193,13 @@ export const useStore = create<AppState>()(
 
       aiConfig: { apiKey: '', apiBase: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-4-hydrogen' },
       setAiConfig: (c) => set(s => ({ aiConfig: { ...s.aiConfig, ...c } })),
+      aiProfiles: {},
+      switchAiProvider: (apiBase, defaultModel) => set(s => {
+        const { apiKey, model } = s.aiConfig;
+        const aiProfiles = { ...s.aiProfiles, [s.aiConfig.apiBase]: { apiKey, model } };
+        const saved = aiProfiles[apiBase];
+        return { aiProfiles, aiConfig: { apiBase, apiKey: saved?.apiKey ?? '', model: saved?.model ?? defaultModel } };
+      }),
       aiEnabled: false,
       setAiEnabled: (e) => set({ aiEnabled: e }),
 
@@ -237,6 +248,7 @@ export const useStore = create<AppState>()(
         streak: s.streak,
         lastActiveDate: s.lastActiveDate,
         aiConfig: s.aiConfig,
+        aiProfiles: s.aiProfiles,
         aiEnabled: s.aiEnabled,
         cloudUser: s.cloudUser,
         editorTitle: s.editorTitle,

@@ -65,7 +65,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                 <button
                                     key={p.label}
                                     onClick={() => {
-                                        store.setAiConfig({ apiBase: p.base, model: p.model });
+                                        store.switchAiProvider(p.base, p.model);
                                         setAiTestStatus('idle');
                                     }}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-label border transition-colors ${store.aiConfig.apiBase === p.base
