@@ -7,14 +7,17 @@ import { WRITING_MODES } from '../ui/meta';
 import { findScene, isGhostDreamDraft } from '../lib/drafts';
 import { dayKey, downloadText } from '../lib/util';
 import { chatCompletion } from '../services/ai';
-import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX, Trash2, X, Save, ArrowUpRight, CheckSquare, Square, ListChecks, Merge, ArrowUp, ArrowDown } from 'lucide-react';
+import {
+    Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users,
+    LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX,
+    Trash2, X, Save, ArrowUpRight, CheckSquare, Square, ListChecks, Merge, ArrowUp, ArrowDown, Landmark,
+} from 'lucide-react';
 
 interface PalaceItem {
     draft: Draft;
     wordSet?: WordSet;
 }
 
-/** 推断旧稿件（无 writingMode）的真实模式：有实际词条 → words，否则 → free */
 function resolveMode(draft: Draft, wordSet?: WordSet): WritingMode {
     if (draft.writingMode) return draft.writingMode;
     return (wordSet && wordSet.words.length > 0) ? 'words' : 'free';
@@ -22,16 +25,16 @@ function resolveMode(draft: Draft, wordSet?: WordSet): WritingMode {
 
 const MODE_STYLE: Record<WritingMode, {
     Icon: React.ComponentType<{ size?: number; className?: string }>;
-    bg: string; border: string; text: string;
-    // 卡片样式增强
-    cardFrom: string; leftAccent: string; hoverBorder: string; chipBg: string;
+    badge: string;
+    cardTone: string;
+    leftAccent: string;
 }> = {
-    words:     { Icon: Dices,      bg: 'bg-amber-50   dark:bg-amber-500/10',   border: 'border-amber-200   dark:border-amber-400/20',   text: 'text-amber-800   dark:text-amber-300',   cardFrom: 'from-amber-50/50   dark:from-amber-500/8',   leftAccent: 'border-l-amber-400   dark:border-l-amber-400/60',   hoverBorder: 'hover:border-amber-300/60   dark:hover:border-amber-400/35',   chipBg: 'bg-amber-50   dark:bg-amber-500/15 text-amber-700   dark:text-amber-300 border-amber-200/60   dark:border-amber-400/20'   },
-    free:      { Icon: PencilLine, bg: 'bg-emerald-50  dark:bg-emerald-500/10', border: 'border-emerald-200  dark:border-emerald-400/20', text: 'text-emerald-800  dark:text-emerald-300', cardFrom: 'from-emerald-50/50 dark:from-emerald-500/8', leftAccent: 'border-l-emerald-400 dark:border-l-emerald-400/60', hoverBorder: 'hover:border-emerald-300/60 dark:hover:border-emerald-400/35', chipBg: 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-400/20' },
-    scene:     { Icon: Mountain,   bg: 'bg-blue-50     dark:bg-blue-500/10',    border: 'border-blue-200     dark:border-blue-400/20',    text: 'text-blue-800     dark:text-blue-300',    cardFrom: 'from-blue-50/50     dark:from-blue-500/8',   leftAccent: 'border-l-blue-400     dark:border-l-blue-400/60',   hoverBorder: 'hover:border-blue-300/60     dark:hover:border-blue-400/35',   chipBg: 'bg-blue-50     dark:bg-blue-500/15 text-blue-700     dark:text-blue-300 border-blue-200/60     dark:border-blue-400/20'     },
-    dream:     { Icon: MoonStar,   bg: 'bg-violet-50   dark:bg-violet-500/10',  border: 'border-violet-200   dark:border-violet-400/20',  text: 'text-violet-800   dark:text-violet-300',  cardFrom: 'from-violet-50/50   dark:from-violet-500/8', leftAccent: 'border-l-violet-500   dark:border-l-violet-400/60', hoverBorder: 'hover:border-violet-300/60   dark:hover:border-violet-400/35', chipBg: 'bg-violet-50   dark:bg-violet-500/15 text-violet-700   dark:text-violet-300 border-violet-200/60   dark:border-violet-400/20'   },
-    challenge: { Icon: CircleHelp, bg: 'bg-rose-50     dark:bg-rose-500/10',    border: 'border-rose-200     dark:border-rose-400/20',    text: 'text-rose-800     dark:text-rose-300',    cardFrom: 'from-rose-50/50     dark:from-rose-500/8',   leftAccent: 'border-l-rose-400     dark:border-l-rose-400/60',   hoverBorder: 'hover:border-rose-300/60     dark:hover:border-rose-400/35',   chipBg: 'bg-rose-50     dark:bg-rose-500/15 text-rose-700     dark:text-rose-300 border-rose-200/60     dark:border-rose-400/20'     },
-    character: { Icon: Users,      bg: 'bg-fuchsia-50  dark:bg-fuchsia-500/10', border: 'border-fuchsia-200  dark:border-fuchsia-400/20', text: 'text-fuchsia-800  dark:text-fuchsia-300', cardFrom: 'from-fuchsia-50/50 dark:from-fuchsia-500/8', leftAccent: 'border-l-fuchsia-400 dark:border-l-fuchsia-400/60', hoverBorder: 'hover:border-fuchsia-300/60 dark:hover:border-fuchsia-400/35', chipBg: 'bg-fuchsia-50 dark:bg-fuchsia-500/15 text-fuchsia-700 dark:text-fuchsia-300 border-fuchsia-200/60 dark:border-fuchsia-400/20' },
+    words:     { Icon: Dices,      badge: 'bg-[#f4ead7] dark:bg-[#33291c] border-[#d6c09e] dark:border-[#4d3e2a] text-[#785834] dark:text-[#d9ba91]', cardTone: 'washi-words',     leftAccent: 'border-l-[#a68358] dark:border-l-[#c7a682]' },
+    free:      { Icon: PencilLine, badge: 'bg-[#e6ecdf] dark:bg-[#232c1e] border-[#c5d1b8] dark:border-[#374530] text-[#4c5e3f] dark:text-[#abc09c]', cardTone: 'washi-free',      leftAccent: 'border-l-[#7c8f6c] dark:border-l-[#96a68a]' },
+    scene:     { Icon: Mountain,   badge: 'bg-[#e3ebe5] dark:bg-[#202b25] border-[#c1d1c6] dark:border-[#33443b] text-[#445c4e] dark:text-[#9eb8a9]', cardTone: 'washi-scene',     leftAccent: 'border-l-[#6e8778] dark:border-l-[#8aa696]' },
+    dream:     { Icon: MoonStar,   badge: 'bg-[#eee7e2] dark:bg-[#2e2623] border-[#d1c3ba] dark:border-[#473b36] text-[#69554b] dark:text-[#c7b2a7]', cardTone: 'washi-dream',     leftAccent: 'border-l-[#948077] dark:border-l-[#b5a096]' },
+    challenge: { Icon: CircleHelp, badge: 'bg-[#f3e5d7] dark:bg-[#34261a] border-[#d9bfa6] dark:border-[#4f3927] text-[#7d5636] dark:text-[#d9b08c]', cardTone: 'washi-challenge', leftAccent: 'border-l-[#a87d59] dark:border-l-[#cca17c]' },
+    character: { Icon: Users,      badge: 'bg-[#f2e6da] dark:bg-[#33261c] border-[#d8c1ac] dark:border-[#4d392a] text-[#7a573b] dark:text-[#d6b294]', cardTone: 'washi-character', leftAccent: 'border-l-[#9e795b] dark:border-l-[#c49e7e]' },
 };
 
 export default function InspirationPalace() {
@@ -42,7 +45,6 @@ export default function InspirationPalace() {
     const [searchQuery, setSearchQuery] = useState('');
     const [aiRemixResult, setAiRemixResult] = useState('');
     const [aiRemixLoading, setAiRemixLoading] = useState(false);
-    // 选择模式
     const [selectMode, setSelectMode] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [previewItem, setPreviewItem] = useState<PalaceItem | null>(null);
@@ -50,17 +52,16 @@ export default function InspirationPalace() {
     const [previewContent, setPreviewContent] = useState('');
     const [previewSaving, setPreviewSaving] = useState(false);
     const [previewSavedHint, setPreviewSavedHint] = useState(false);
-    // 合并模式
     const [showMergeModal, setShowMergeModal] = useState(false);
     const [mergeTitle, setMergeTitle] = useState('');
     const [mergeItems, setMergeItems] = useState<PalaceItem[]>([]);
-    // 无多选
+
     const hasPreviewChanges = !!previewItem && (
         previewTitle !== (previewItem.draft.title || '') ||
         previewContent !== (previewItem.draft.content || '')
     );
 
-    useEffect(() => { fetchItems(); }, []);
+    useEffect(() => { void fetchItems(); }, []);
 
     async function fetchItems() {
         try {
@@ -70,7 +71,6 @@ export default function InspirationPalace() {
                 if (draft.deletedFromPalace) continue;
                 const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
                 const mode = draft.writingMode || resolveMode(draft, wordSet);
-                // dream 空稿过滤
                 if (isGhostDreamDraft({ ...draft, writingMode: mode })) continue;
                 result.push({ draft, wordSet });
             }
@@ -117,9 +117,8 @@ export default function InspirationPalace() {
         const mode = resolveMode(item.draft, item.wordSet);
         store.setWritingMode(mode);
         if (mode === 'scene') {
-            // 找不到就不显示题目，别留着上一篇的场景
             store.setCurrentScene(null);
-            if (item.draft.sceneId) findScene(item.draft.sceneId).then(store.setCurrentScene);
+            if (item.draft.sceneId) void findScene(item.draft.sceneId).then(store.setCurrentScene);
         }
         if (mode === 'challenge') {
             const cid = item.draft.challengeId;
@@ -128,9 +127,8 @@ export default function InspirationPalace() {
                 if (builtin) {
                     store.setCurrentChallenge(builtin);
                 } else {
-                    // 找不到（比如没存进题库的 AI 题）就不显示题目，别随机换一道顶上
                     store.setCurrentChallenge(null);
-                    db.challenges.get(cid).then(c => { if (c) store.setCurrentChallenge(c); });
+                    void db.challenges.get(cid).then(c => { if (c) store.setCurrentChallenge(c); });
                 }
             } else {
                 store.setCurrentChallenge(pickChallenge());
@@ -144,7 +142,7 @@ export default function InspirationPalace() {
                     store.setCurrentCharacterPrompt(builtin);
                 } else {
                     store.setCurrentCharacterPrompt(null);
-                    db.characterPrompts.get(cid).then(c => { if (c) store.setCurrentCharacterPrompt(c); });
+                    void db.characterPrompts.get(cid).then(c => { if (c) store.setCurrentCharacterPrompt(c); });
                 }
             } else {
                 store.setCurrentCharacterPrompt(pickCharacterPrompt());
@@ -216,7 +214,6 @@ export default function InspirationPalace() {
         if (confirm('确定要删除这条灵感记录吗？')) {
             await db.drafts.update(id, { deletedFromPalace: true });
             setItems(prev => prev.filter(it => it.draft.id !== id));
-            // 如果删除的正是当前编辑器里打开的稿件，解除关联，下次保存时会创建新条目
             if (store.currentDraftId === id) {
                 store.setCurrentDraftId(null);
                 store.setCurrentWordSetId(null);
@@ -239,7 +236,7 @@ export default function InspirationPalace() {
         if (selected.length < 2) return;
         setMergeItems(selected);
         const todayStr = new Date().toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }).replace('/', '-');
-        setMergeTitle(`合并草稿 ${todayStr}`);
+        setMergeTitle(`合并手稿 ${todayStr}`);
         setShowMergeModal(true);
     };
 
@@ -263,7 +260,7 @@ export default function InspirationPalace() {
 
     async function handleConfirmMerge() {
         if (mergeItems.length < 2) return;
-        const title = mergeTitle.trim() || '未命名合并草稿';
+        const title = mergeTitle.trim() || '未命名合并手稿';
         const content = mergedPreview;
         const wordCount = content.replace(/\s+/g, '').length;
         const now = new Date();
@@ -293,18 +290,13 @@ export default function InspirationPalace() {
                 deletedFromPalace: false,
             };
             await db.drafts.put(newDraft);
-
             await fetchItems();
 
             setSelectMode(false);
             setSelectedIds(new Set());
             setShowMergeModal(false);
 
-            const item: PalaceItem = {
-                draft: newDraft,
-                wordSet,
-            };
-            loadDraftToEditor(item);
+            loadDraftToEditor({ draft: newDraft, wordSet });
         } catch (e) {
             console.error('Failed to merge drafts', e);
             alert('合并草稿失败，请重试');
@@ -313,7 +305,6 @@ export default function InspirationPalace() {
 
     async function handleAiRemix() {
         if (!store.aiEnabled) return;
-        // 选择模式下用已选卡片；否则用当前筛选结果（原逻辑）
         let source: PalaceItem[];
         if (selectMode && selectedIds.size > 0) {
             source = items.filter(it => selectedIds.has(it.draft.id));
@@ -351,14 +342,14 @@ export default function InspirationPalace() {
         items.forEach((item, i) => {
             const title = item.draft.title || '未命名灵感';
             const date = new Date(item.draft.updatedAt).toLocaleString('zh-CN');
-            const mode = item.draft.writingMode || 'words';  // already resolved in fetchItems
+            const mode = item.draft.writingMode || 'words';
             const wordsLine = item.wordSet?.words.length
                 ? `**灵感词条**：${item.wordSet.words.map(w => w.text).join(' · ')}\n\n`
                 : '';
             lines.push(`## ${i + 1}. ${title}`);
-            lines.push(``);
+            lines.push('');
             lines.push(`> 模式：${mode} | 更新：${date} | 字数：${item.draft.wordCount}`);
-            lines.push(``);
+            lines.push('');
             if (wordsLine) lines.push(wordsLine);
             lines.push(item.draft.content || '（无内容）');
             lines.push('', '---', '');
@@ -367,39 +358,42 @@ export default function InspirationPalace() {
     }
 
     return (
-        <main className="flex-1 bg-surface relative overflow-y-auto p-4 md:p-8 lg:p-12">
-            <div className="max-w-6xl mx-auto pb-20">
-                {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <main className="flex-1 relative overflow-y-auto p-4 md:p-8 lg:p-12">
+            <div className="max-w-6xl mx-auto pb-24">
+                {/* 报刊版头 */}
+                <div className="broadsheet-masthead-rule py-4 mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                     <div>
-                        <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
-                            <span className="text-[34px]">🏛</span>
+                        <h2 className="font-headline text-2xl md:text-3xl font-bold text-on-surface flex items-center gap-2.5">
+                            <Landmark size={24} className="text-primary" />
                             <span>灵感宫殿</span>
                         </h2>
-                        <p className="text-on-surface-variant font-label text-sm mt-1">所有写作灵感汇聚于此</p>
+                        <p className="text-on-surface-variant font-body text-sm mt-1">
+                            所有写作草稿与灵感片段汇聚于此。
+                        </p>
                     </div>
+
                     {items.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-3 text-sm font-label text-on-surface-variant">
-                            <span><strong className="text-on-surface">{stats.total}</strong> 条灵感</span>
-                            <span className="text-outline-variant hidden sm:inline">|</span>
+                        <div className="flex flex-wrap items-center gap-3 text-xs font-label text-on-surface-variant">
+                            <span>共 <strong className="text-on-surface">{stats.total}</strong> 篇</span>
+                            <span className="text-outline-variant">|</span>
                             <span><strong className="text-on-surface">{stats.totalWords.toLocaleString()}</strong> 字</span>
                             {store.aiEnabled && items.length >= 2 && (
                                 <button
                                     onClick={handleAiRemix}
                                     disabled={aiRemixLoading}
-                                    className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-violet-50/60 dark:bg-violet-100/60 border border-violet-400/40 dark:border-violet-400/10 rounded-lg text-xs font-label text-violet-700 dark:text-violet-800 hover:bg-violet-100/60 dark:hover:bg-violet-500/10 transition-colors disabled:opacity-50"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container border border-secondary/55 rounded-sm font-label text-xs text-secondary hover:bg-secondary-container/40 transition-colors disabled:opacity-50 cursor-pointer"
                                 >
-                                    {aiRemixLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                                    <span>{aiRemixLoading ? '生成中…' : 'AI 再创作'}</span>
+                                    {aiRemixLoading ? <LoaderCircle size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                                    <span>{aiRemixLoading ? '生成中…' : 'AI 灵感重组'}</span>
                                 </button>
                             )}
                             <button
                                 onClick={handleExportAll}
                                 title="导出全部为 Markdown"
-                                className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-surface-container border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container border border-outline-variant/65 rounded-sm font-label text-xs text-on-surface-variant hover:border-secondary hover:text-on-surface transition-colors cursor-pointer"
                             >
-                                <Download size={16} />
-                                <span>导出全部</span>
+                                <Download size={14} />
+                                <span>导出全集</span>
                             </button>
                         </div>
                     )}
@@ -407,66 +401,68 @@ export default function InspirationPalace() {
 
                 {/* AI Remix Result */}
                 {aiRemixResult && (
-                    <div className="mb-6 bg-violet-50/60 dark:bg-violet-200/20 border border-violet-200/40 dark:border-violet-400/10 rounded-lg p-4">
-                        <p className="text-[12px] font-label uppercase tracking-widest text-violet-600 dark:text-violet-600 mb-2 flex items-center gap-1">
-                            <Sparkles size={14} />AI 灵感再创作
+                    <div className="mb-6 index-card paper-grain border-l-2 border-l-secondary rounded-sm p-5">
+                        <p className="font-mono text-[13px] uppercase tracking-widest text-secondary mb-2 flex items-center gap-1.5">
+                            <Sparkles size={13} />AI REMIX PROPOSAL · 灵感重组方案
                         </p>
-                        <p className="text-sm text-violet-900 dark:text-violet-700/70 leading-relaxed mb-3">{aiRemixResult}</p>
+                        <p className="font-body text-sm text-on-surface leading-relaxed mb-4 whitespace-pre-line">{aiRemixResult}</p>
                         <div className="flex gap-2">
                             <button
                                 onClick={handleStartFromRemix}
-                                className="flex items-center gap-1 px-3 py-1.5 bg-violet-400 text-white rounded-lg text-xs font-label hover:bg-violet-600 transition-colors"
+                                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-primary text-on-primary rounded-sm text-xs font-label font-medium hover:bg-primary-dim transition-colors cursor-pointer"
                             >
-                                <Pencil size={16} />
+                                <Pencil size={13} />
                                 <span>以此开始写作</span>
                             </button>
                             <button
                                 onClick={handleAiRemix}
                                 disabled={aiRemixLoading}
-                                className="flex items-center gap-1 px-3 py-1.5 border border-violet-300 dark:border-violet-700/20 rounded-lg text-xs font-label text-violet-700 dark:text-violet-600 hover:bg-violet-100/20 dark:hover:bg-violet-300/10 transition-colors disabled:opacity-50"
+                                className="flex items-center gap-1.5 px-3.5 py-1.5 border border-outline-variant/65 rounded-sm text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors disabled:opacity-50 cursor-pointer"
                             >
-                                <RefreshCw size={16} />
-                                <span>再来一个</span>
+                                <RefreshCw size={13} />
+                                <span>换一个构想</span>
                             </button>
                         </div>
                     </div>
                 )}
 
-                {/* Filter tabs */}
+                {/* Filter tabs & Search */}
                 {items.length > 0 && (
                     <div className="flex items-center gap-2 mb-6 flex-wrap">
                         <button
                             onClick={() => setFilterMode('all')}
-                            className={`px-4 py-2 rounded-full text-xs font-label font-medium transition-all ${filterMode === 'all'
-                                    ? 'bg-surface-container-high border border-outline-variant/30 text-on-surface'
-                                    : 'bg-surface-container text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high'
-                                }`}
+                            className={`px-3 py-1.5 rounded-sm text-xs font-label font-medium border transition-colors cursor-pointer ${
+                                filterMode === 'all'
+                                    ? 'bg-primary text-on-primary border-primary'
+                                    : 'bg-surface-container text-on-surface-variant border-outline-variant/55 hover:border-secondary'
+                            }`}
                         >
-                            全部 <span className="ml-1 opacity-60">{stats.total}</span>
+                            全部 <span className="ml-1 font-mono text-[13px] opacity-80">{stats.total}</span>
                         </button>
+
                         {WRITING_MODES.map(m => {
                             const count = stats.byMode[m.mode] || 0;
                             if (count === 0) return null;
                             const style = MODE_STYLE[m.mode];
+                            const active = filterMode === m.mode;
                             return (
                                 <button
                                     key={m.mode}
                                     onClick={() => setFilterMode(m.mode)}
-                                    className={`px-4 py-2 rounded-full text-xs font-label font-medium transition-all flex items-center space-x-1.5 ${filterMode === m.mode
-                                            ? `${style.bg} ${style.text} ${style.border} border`
-                                            : 'bg-surface-container text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high'
-                                        }`}
+                                    className={`px-3 py-1.5 rounded-sm text-xs font-label font-medium border transition-colors flex items-center gap-1.5 cursor-pointer ${
+                                        active
+                                            ? `${style.badge} font-semibold`
+                                            : 'bg-surface-container text-on-surface-variant border-outline-variant/55 hover:border-secondary'
+                                    }`}
                                 >
-                                    <style.Icon size={16} />
+                                    <style.Icon size={13} />
                                     <span>{m.label}</span>
-                                    <span className="opacity-60">{count}</span>
+                                    <span className="font-mono text-[13px] opacity-70">{count}</span>
                                 </button>
                             );
                         })}
 
-                        {/* Search */}
-                        <div className="ml-auto flex items-center gap-2">
-                            {/* 选择模式开关 */}
+                        <div className="ml-auto flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                             {items.length >= 2 && (
                                 <button
                                     onClick={() => {
@@ -474,24 +470,25 @@ export default function InspirationPalace() {
                                         setSelectedIds(new Set());
                                         setAiRemixResult('');
                                     }}
-                                    title={selectMode ? '退出选择' : '选择卡片进行合并或 AI 再创作'}
-                                    className={`p-2 rounded-full border transition-colors text-xs font-label flex items-center gap-1 ${
+                                    title={selectMode ? '退出装订多选' : '勾选多张手稿进行合并装订或 AI 重组'}
+                                    className={`px-3 py-1.5 rounded-sm border transition-colors text-xs font-label flex items-center gap-1.5 cursor-pointer ${
                                         selectMode
-                                            ? 'bg-violet-100 dark:bg-violet-500/20 border-violet-300 dark:border-violet-400/30 text-violet-700 dark:text-violet-300'
-                                            : 'bg-surface-container border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high'
+                                            ? 'bg-primary text-on-primary border-primary font-medium'
+                                            : 'bg-surface-container border-outline-variant/60 text-on-surface-variant hover:border-secondary'
                                     }`}
                                 >
-                                    <ListChecks size={16} />
+                                    <ListChecks size={14} />
+                                    <span>{selectMode ? '退出装订' : '多选装订'}</span>
                                 </button>
                             )}
-                            <div className="relative">
-                                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
+                            <div className="relative flex-1 sm:flex-initial">
+                                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
                                 <input
                                     type="text"
-                                    placeholder="搜索灵感..."
+                                    placeholder="检索手稿标题或正文…"
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
-                                    className="pl-9 pr-4 py-2 bg-surface-container rounded-full border border-outline-variant/30 text-xs font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all w-48"
+                                    className="w-full sm:w-52 pl-8 pr-3 py-1.5 bg-surface-container rounded-sm border border-outline-variant/60 text-xs font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-primary transition-colors"
                                 />
                             </div>
                         </div>
@@ -501,30 +498,30 @@ export default function InspirationPalace() {
                 {/* Content */}
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24">
-                        <div className="w-8 h-8 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
-                        <p className="mt-4 text-on-surface-variant text-sm font-label">加载中...</p>
+                        <div className="w-7 h-7 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                        <p className="mt-4 text-on-surface-variant text-xs font-mono uppercase tracking-widest">LOADING ARCHIVE…</p>
                     </div>
                 ) : items.length === 0 ? (
-                    <div className="text-center py-24 bg-surface-container-low/50 rounded-lg border border-dashed border-outline-variant/30">
-                        <span className="text-5xl mb-4 block">🏛</span>
-                        <p className="text-on-surface-variant font-label text-lg mb-1">灵感宫殿还是空的</p>
-                        <p className="text-on-surface-variant text-sm mt-2 max-w-sm mx-auto leading-relaxed">
-                            选择一种灵感模式，写下你的第一条灵感吧！
+                    <div className="text-center py-24 index-card paper-grain rounded-sm border-dashed">
+                        <Landmark size={38} className="text-outline mx-auto mb-4" />
+                        <p className="text-on-surface font-headline text-lg font-bold mb-1">档案柜尚无手稿</p>
+                        <p className="text-on-surface-variant font-body text-sm mt-1 max-w-sm mx-auto leading-relaxed">
+                            挑选一张灵感索引卡，敲下你的第一段文字吧。
                         </p>
                         <button
-                            className="mt-8 px-8 py-3 bg-primary text-white hover:bg-[#7c442d] transition-colors rounded-lg font-label text-sm font-medium custom-shadow"
+                            className="mt-6 px-6 py-2.5 bg-primary text-on-primary hover:bg-primary-dim transition-colors rounded-sm font-label text-xs font-semibold uppercase tracking-wider cursor-pointer"
                             onClick={() => store.setActiveTab('inspire')}
                         >
-                            开始创作
+                            前往灵感案头 →
                         </button>
                     </div>
                 ) : displayed.length === 0 ? (
                     <div className="text-center py-16">
-                        <SearchX size={40} className="text-outline mb-4" />
-                        <p className="text-on-surface-variant font-label">没有找到匹配的灵感记录</p>
+                        <SearchX size={36} className="text-outline mx-auto mb-3" />
+                        <p className="text-on-surface-variant font-label text-sm">没有找到匹配的手稿记录</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    <div className="broadsheet-frame grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                         {displayed.map(item => {
                             const mode = resolveMode(item.draft, item.wordSet);
                             const mLabel = getModeLabel(mode);
@@ -532,112 +529,93 @@ export default function InspirationPalace() {
                             const sceneTitle = getSceneTitle(item.draft.sceneId);
                             const isSelected = selectedIds.has(item.draft.id);
                             return (
-                                // 选中时外层包裹旋转彩色渐变边框
                                 <div
                                     key={item.draft.id}
-                                    className={isSelected ? 'p-[2px] rounded-[10px] palace-selected-ring shadow-lg -translate-y-0.5 transition-transform duration-200 flex flex-col' : 'rounded-lg transition-transform duration-200 flex flex-col'}
-                                >
-                                <div
                                     onClick={() => {
                                         if (selectMode) {
                                             setSelectedIds(prev => {
                                                 const next = new Set(prev);
-                                                if (next.has(item.draft.id)) {
-                                                    next.delete(item.draft.id);
-                                                } else {
-                                                    next.add(item.draft.id);
-                                                }
+                                                if (next.has(item.draft.id)) next.delete(item.draft.id);
+                                                else next.add(item.draft.id);
                                                 return next;
                                             });
                                         } else {
                                             handleOpen(item);
                                         }
                                     }}
-                                    className={`bg-surface-container bg-gradient-to-br ${mStyle.cardFrom} to-surface-container overflow-hidden p-5 rounded-lg border-l-4 ${mStyle.leftAccent} cursor-pointer group transition-all duration-200 relative flex flex-col h-full ${
-                                        selectMode
-                                            ? isSelected
-                                                ? 'border-none'
-                                                : 'border border-outline-variant/20 hover:border-violet-300/50'
-                                            : `border border-outline-variant/20 ${mStyle.hoverBorder} hover:-translate-y-1 hover:shadow-lg`
+                                    className={`${mStyle.cardTone} p-5 border-b border-r border-on-surface/20 cursor-pointer group relative flex flex-col h-full transition-colors ${
+                                        isSelected ? 'palace-selected-frame z-10' : ''
                                     }`}
                                 >
-                                    {/* 水印图标 — 右上角小尺寸装饰，hover 时让删除按钟接管该位置 */}
-                                    <div className={`absolute top-2.5 right-2.5 transition-opacity duration-200 pointer-events-none select-none ${
-                                        selectMode
-                                            ? 'opacity-0'
-                                            : 'opacity-[0.08] group-hover:opacity-0'
-                                    }`} aria-hidden="true">
-                                        <mStyle.Icon size={28} />
-                                    </div>
-
-                                    {/* 选择模式 checkbox */}
+                                    {/* 选择模式印记 */}
                                     {selectMode && (
-                                        <div className={`absolute top-3 right-3 transition-colors ${
-                                            isSelected ? 'text-violet-500' : 'text-outline'
+                                        <div className={`absolute top-3.5 right-3.5 flex items-center gap-1 font-mono text-[12px] ${
+                                            isSelected ? 'text-primary font-bold' : 'text-outline'
                                         }`}>
-                                            {isSelected ? <CheckSquare size={20} /> : <Square size={20} />}
+                                            {isSelected ? <CheckSquare size={17} /> : <Square size={17} />}
                                         </div>
                                     )}
 
-                                    {/* Delete — 选择模式下隐藏 */}
+                                    {/* 删除按钮 */}
                                     {!selectMode && (
                                         <button
-                                            onClick={e => handleDelete(e, item.draft.id)}
-                                            className="absolute top-3 right-3 text-outline hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 z-10"
-                                            title="删除"
+                                            onClick={e => void handleDelete(e, item.draft.id)}
+                                            className="absolute top-3.5 right-3.5 text-outline hover:text-error opacity-0 group-hover:opacity-100 transition-opacity p-1 z-10 cursor-pointer"
+                                            title="移除手稿"
                                         >
-                                            <Trash2 size={20} />
+                                            <Trash2 size={16} />
                                         </button>
                                     )}
 
-                                    {/* Mode badge + date */}
-                                    <div className="relative flex items-center justify-between mb-3 pr-8">
-                                        <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[12px] font-label font-medium border ${mStyle.bg} ${mStyle.border} ${mStyle.text}`}>
-                                            <mStyle.Icon size={14} />
+                                    {/* Mode stamp + date */}
+                                    <div className="flex items-center justify-between mb-3 pr-7">
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[13px] font-label font-medium border ${mStyle.badge}`}>
+                                            <mStyle.Icon size={12} />
                                             <span>{mLabel?.label}</span>
                                         </span>
-                                        <span className="text-xs font-label text-outline">
-                                            {new Date(item.draft.updatedAt).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                        <span className="font-mono text-[13px] text-outline">
+                                            {new Date(item.draft.updatedAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </div>
 
                                     {/* Title */}
-                                    <h3 className="relative font-headline text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors truncate">
+                                    <h3 className="font-headline text-lg font-bold text-on-surface mb-2 group-hover:text-primary transition-colors truncate">
                                         {item.draft.title || '未命名灵感'}
                                     </h3>
 
-                                    {/* Scene subtitle */}
                                     {sceneTitle && (
-                                        <p className="relative text-xs text-blue-500 font-label mb-2 flex items-center space-x-1">
-                                            <Mountain size={14} />
+                                        <p className="text-xs text-secondary font-label mb-2 flex items-center gap-1">
+                                            <Mountain size={12} />
                                             <span>{sceneTitle}</span>
                                         </p>
                                     )}
 
                                     {/* Preview */}
-                                    <p className="relative text-on-surface-variant text-sm line-clamp-3 mb-4 min-h-[54px] leading-relaxed flex-1">
-                                        {item.draft.content ? item.draft.content.replace(/[#*>_`[\]]/g, '').slice(0, 150) : '没有任何内容...'}
+                                    <p className="font-body text-on-surface-variant text-sm line-clamp-3 mb-4 min-h-[54px] leading-relaxed flex-1">
+                                        {item.draft.content ? item.draft.content.replace(/[#*>_`[\]]/g, '').slice(0, 150) : '空白手稿…'}
                                     </p>
 
-                                    {/* Bottom: word count + word chips */}
-                                    <div className="relative flex items-center justify-between pt-3 border-t border-outline-variant/10">
-                                        <span className="text-[12px] tracking-wider uppercase bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-label font-medium">
+                                    {/* Bottom perforated ledger */}
+                                    <div className="flex items-center justify-between pt-3 border-t border-dashed border-outline-variant/55">
+                                        <span className="font-label text-xs text-outline">
                                             {item.draft.wordCount} 字
                                         </span>
                                         {item.wordSet && item.wordSet.words.length > 0 && (
-                                            <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
+                                            <div className="flex flex-wrap gap-1 justify-end max-w-[65%]">
                                                 {item.wordSet.words.slice(0, 4).map((w, idx) => (
-                                                    <span key={idx} className={`px-1.5 py-0.5 text-[12px] rounded border font-label ${mStyle.chipBg}`}>
+                                                    <span
+                                                        key={idx}
+                                                        className="px-1.5 py-0.5 text-[13px] border border-on-surface/20 bg-surface-container-lowest text-on-surface-variant font-headline"
+                                                    >
                                                         {w.text}
                                                     </span>
                                                 ))}
                                                 {item.wordSet.words.length > 4 && (
-                                                    <span className="text-[12px] text-outline font-label">+{item.wordSet.words.length - 4}</span>
+                                                    <span className="font-mono text-[13px] text-outline">+{item.wordSet.words.length - 4}</span>
                                                 )}
                                             </div>
                                         )}
                                     </div>
-                                </div>
                                 </div>
                             );
                         })}
@@ -645,104 +623,107 @@ export default function InspirationPalace() {
                 )}
             </div>
 
-            {/* 底部浮动多选操作栏 */}
+            {/* 底部浮动多选装订台 */}
             {selectMode && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 bg-surface/95 dark:bg-[#1a1715]/95 backdrop-blur border border-outline-variant/20 rounded-lg shadow-xl text-sm font-label transition-all">
-                    <span className="text-on-surface-variant whitespace-nowrap">
-                        已选 <strong className="text-on-surface">{selectedIds.size}</strong> 张
+                <div className="fixed bottom-16 md:bottom-12 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 bg-surface-container border border-outline-variant/80 rounded-sm shadow-2xl text-xs font-label">
+                    <span className="font-mono text-on-surface-variant whitespace-nowrap">
+                        SELECTED <strong className="text-primary">{selectedIds.size}</strong>
                     </span>
-                    <div className="w-px h-4 bg-outline-variant/30" />
+                    <div className="w-px h-4 bg-outline-variant/50" />
                     <button
                         onClick={() => setSelectedIds(new Set(displayed.map(it => it.draft.id)))}
-                        className="text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap"
+                        className="text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap cursor-pointer"
                     >
-                        全选当前视图
+                        全选当前
                     </button>
                     <button
                         onClick={() => setSelectedIds(new Set())}
                         disabled={selectedIds.size === 0}
-                        className="text-on-surface-variant hover:text-on-surface transition-colors disabled:opacity-30 whitespace-nowrap"
+                        className="text-on-surface-variant hover:text-on-surface transition-colors disabled:opacity-30 whitespace-nowrap cursor-pointer"
                     >
                         清空
                     </button>
-                    <div className="w-px h-4 bg-outline-variant/30" />
+                    <div className="w-px h-4 bg-outline-variant/50" />
                     <button
                         onClick={handleOpenMerge}
                         disabled={selectedIds.size < 2}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded-lg hover:bg-primary-dim transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded-sm hover:bg-primary-dim transition-colors disabled:opacity-40 whitespace-nowrap font-medium cursor-pointer"
                     >
-                        <Merge size={15} />
-                        <span>灵感合成 ({selectedIds.size})</span>
+                        <Merge size={14} />
+                        <span>装订合成 ({selectedIds.size})</span>
                     </button>
-                    <button
-                        onClick={handleAiRemix}
-                        disabled={selectedIds.size < 2 || aiRemixLoading}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
-                    >
-                        {aiRemixLoading ? <LoaderCircle size={15} className="animate-spin" /> : <Sparkles size={15} />}
-                        <span>{aiRemixLoading ? '生成中…' : `AI 再创作 (${selectedIds.size})`}</span>
-                    </button>
+                    {store.aiEnabled && (
+                        <button
+                            onClick={handleAiRemix}
+                            disabled={selectedIds.size < 2 || aiRemixLoading}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-on-secondary rounded-sm hover:bg-secondary-dim transition-colors disabled:opacity-40 whitespace-nowrap font-medium cursor-pointer"
+                        >
+                            {aiRemixLoading ? <LoaderCircle size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                            <span>{aiRemixLoading ? '生成中…' : `AI 重组 (${selectedIds.size})`}</span>
+                        </button>
+                    )}
                     <button
                         onClick={() => { setSelectMode(false); setSelectedIds(new Set()); }}
-                        className="p-1.5 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors"
+                        className="p-1 rounded-sm text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
                         title="退出选择"
                     >
-                        <X size={18} />
+                        <X size={16} />
                     </button>
                 </div>
             )}
 
+            {/* 全文查看与编辑弹窗 */}
             {previewItem && (
-                <div className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={closePreview}>
-                    <div className="w-full max-w-4xl max-h-[90vh] bg-surface border border-outline-variant/20 rounded-lg shadow-2xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15 bg-surface-container-low/60">
+                <div className="fixed inset-0 z-[120] bg-black/55 backdrop-blur-[2px] flex items-center justify-center p-4" onClick={closePreview}>
+                    <div className="w-full max-w-4xl max-h-[90vh] manuscript-sheet paper-grain rounded-sm flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between px-6 py-3.5 border-b border-dashed border-outline-variant/65 bg-surface-container-low/50">
                             <div className="min-w-0">
-                                <p className="text-[12px] font-label uppercase tracking-widest text-outline">全文查看与编辑</p>
-                                <p className="text-xs font-label text-on-surface-variant mt-1">{new Date(previewItem.draft.updatedAt).toLocaleString('zh-CN')}</p>
+                                <p className="font-mono text-[12px] uppercase tracking-widest text-outline">MANUSCRIPT FOLIO · 手稿审阅与批改</p>
+                                <p className="font-mono text-xs text-on-surface-variant mt-0.5">{new Date(previewItem.draft.updatedAt).toLocaleString('zh-CN')}</p>
                             </div>
-                            <button className="p-2 rounded-full text-on-surface-variant hover:bg-surface-container" onClick={closePreview}>
-                                <X size={20} />
+                            <button className="p-1.5 rounded-sm text-outline hover:text-on-surface hover:bg-surface-container cursor-pointer" onClick={closePreview}>
+                                <X size={18} />
                             </button>
                         </div>
 
-                        <div className="p-5 md:p-6 overflow-y-auto flex-1 space-y-4">
+                        <div className="p-6 md:p-8 overflow-y-auto flex-1 space-y-4">
                             <input
                                 value={previewTitle}
                                 onChange={e => setPreviewTitle(e.target.value)}
-                                placeholder="标题"
-                                className="w-full bg-transparent border-none focus:ring-0 font-headline text-2xl md:text-3xl font-black text-on-surface placeholder:text-surface-dim outline-none"
+                                placeholder="手稿标题"
+                                className="w-full bg-transparent border-none focus:ring-0 font-headline text-2xl md:text-3xl font-bold text-on-surface placeholder:text-outline/50 outline-none"
                             />
                             <textarea
                                 value={previewContent}
                                 onChange={e => setPreviewContent(e.target.value)}
-                                placeholder="正文内容..."
-                                className="w-full min-h-[48vh] bg-surface-container-low/40 border border-outline-variant/20 rounded-lg p-4 text-sm md:text-base leading-relaxed text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
+                                placeholder="手稿正文…"
+                                className="w-full min-h-[48vh] bg-surface-container/60 border border-outline-variant/50 rounded-sm p-4 font-body text-base leading-[1.9] text-on-surface placeholder:text-outline focus:outline-none focus:border-primary/60"
                             />
                         </div>
 
-                        <div className="px-5 py-4 border-t border-outline-variant/15 bg-surface-container-low/40 flex flex-wrap items-center justify-between gap-3">
-                            <span className="text-xs font-label text-on-surface-variant">
-                                字数：{previewContent.replace(/\s+/g, '').length}
-                                {previewSavedHint && <span className="ml-2 text-emerald-600 dark:text-emerald-400">已保存</span>}
+                        <div className="px-6 py-3.5 border-t border-dashed border-outline-variant/65 bg-surface-container-low/40 flex flex-wrap items-center justify-between gap-3">
+                            <span className="font-mono text-xs text-on-surface-variant">
+                                CHARS: {previewContent.replace(/\s+/g, '').length}
+                                {previewSavedHint && <span className="ml-2 text-tertiary font-label font-semibold">· 已保存</span>}
                             </span>
                             <div className="flex items-center gap-2">
                                 <button
-                                    onClick={handleSavePreview}
+                                    onClick={() => void handleSavePreview()}
                                     disabled={previewSaving || !hasPreviewChanges}
-                                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-xs font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
+                                    className="flex items-center gap-1.5 px-4 py-2 rounded-sm bg-primary text-on-primary text-xs font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50 cursor-pointer"
                                 >
-                                    <Save size={16} />
-                                    <span>{previewSaving ? '保存中…' : '保存'}</span>
+                                    <Save size={14} />
+                                    <span>{previewSaving ? '保存中…' : '保存修改'}</span>
                                 </button>
                                 <button
                                     onClick={() => {
                                         loadDraftToEditor(previewItem, previewTitle.trim() || '未命名灵感', previewContent);
                                         setPreviewItem(null);
                                     }}
-                                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-outline-variant/30 text-xs font-label text-on-surface-variant hover:bg-surface-container transition-colors"
+                                    className="flex items-center gap-1.5 px-4 py-2 rounded-sm border border-outline-variant/65 text-xs font-label text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
                                 >
-                                    <ArrowUpRight size={16} />
-                                    <span>在编辑器中继续</span>
+                                    <ArrowUpRight size={14} />
+                                    <span>铺入打字机继续写</span>
                                 </button>
                             </div>
                         </div>
@@ -750,76 +731,68 @@ export default function InspirationPalace() {
                 </div>
             )}
 
+            {/* 多选装订合成台弹窗 */}
             {showMergeModal && (
-                <div className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowMergeModal(false)}>
-                    <div className="w-full max-w-5xl max-h-[90vh] bg-surface border border-outline-variant/20 rounded-lg shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-                        {/* Header */}
-                        <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/15 bg-surface-container-low/60">
+                <div className="fixed inset-0 z-[120] bg-black/55 backdrop-blur-[2px] flex items-center justify-center p-4" onClick={() => setShowMergeModal(false)}>
+                    <div className="w-full max-w-5xl max-h-[90vh] manuscript-sheet paper-grain rounded-sm flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-dashed border-outline-variant/65 bg-surface-container-low/50">
                             <div className="min-w-0">
-                                <h3 className="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
-                                    <span className="text-xl">🧩</span>
-                                    <span>灵感拼图合成器</span>
+                                <p className="font-mono text-[12px] uppercase tracking-widest text-outline">BINDERY · 手稿装订台</p>
+                                <h3 className="font-headline text-lg font-bold text-on-surface mt-0.5">
+                                    多片段装订合成器
                                 </h3>
-                                <p className="text-xs font-label text-on-surface-variant mt-1">
-                                    调整片段顺序，它们将按序合并拼接为一篇全新长文
-                                </p>
                             </div>
-                            <button 
-                                className="p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" 
+                            <button
+                                className="p-1.5 rounded-sm text-outline hover:text-on-surface hover:bg-surface-container cursor-pointer"
                                 onClick={() => setShowMergeModal(false)}
                             >
-                                <X size={20} />
+                                <X size={18} />
                             </button>
                         </div>
 
-                        {/* Body */}
                         <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-y-auto">
-                            {/* Left: Sorting list */}
-                            <div className="lg:col-span-5 flex flex-col h-full min-h-[300px]">
-                                <h4 className="font-label text-xs font-bold uppercase tracking-wider text-outline mb-3">
-                                    片段排序 ({mergeItems.length})
+                            <div className="lg:col-span-5 flex flex-col h-full min-h-[280px]">
+                                <h4 className="font-mono text-[13px] font-bold uppercase tracking-widest text-outline mb-3">
+                                    SEQUENCE · 装订顺序 ({mergeItems.length})
                                 </h4>
-                                <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin">
+                                <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
                                     {mergeItems.map((item, idx) => {
                                         const mode = resolveMode(item.draft, item.wordSet);
                                         const mStyle = MODE_STYLE[mode];
                                         return (
-                                            <div 
-                                                key={item.draft.id} 
-                                                className={`flex items-center gap-3 p-3 bg-surface-container-low border border-outline-variant/20 rounded-lg hover:border-primary/20 transition-all ${mStyle.leftAccent} border-l-4`}
+                                            <div
+                                                key={item.draft.id}
+                                                className={`flex items-center gap-3 p-3 bg-surface-container border border-outline-variant/55 rounded-sm ${mStyle.leftAccent} border-l-[3px]`}
                                             >
-                                                {/* Index badge */}
-                                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-xs font-headline font-bold text-on-surface-variant">
-                                                    {idx + 1}
+                                                <div className="shrink-0 w-6 h-6 rounded-sm bg-surface-container-high flex items-center justify-center font-mono text-xs font-bold text-on-surface">
+                                                    {String(idx + 1).padStart(2, '0')}
                                                 </div>
-                                                {/* Text Info */}
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="font-headline text-sm font-semibold text-on-surface truncate">
+                                                    <p className="font-headline text-sm font-bold text-on-surface truncate">
                                                         {item.draft.title || '未命名灵感'}
                                                     </p>
-                                                    <div className="flex items-center gap-2 mt-1 text-[11px] font-label text-outline">
-                                                        <span>{item.draft.wordCount} 字</span>
-                                                        <span>•</span>
+                                                    <div className="flex items-center gap-2 mt-0.5 font-mono text-[13px] text-outline">
+                                                        <span>{item.draft.wordCount} CHARS</span>
+                                                        <span>·</span>
                                                         <span>{new Date(item.draft.updatedAt).toLocaleDateString('zh-CN')}</span>
                                                     </div>
                                                 </div>
-                                                {/* Control buttons */}
-                                                <div className="flex flex-col gap-1 flex-shrink-0">
+                                                <div className="flex flex-col gap-1 shrink-0">
                                                     <button
                                                         onClick={() => moveItem(idx, 'up')}
                                                         disabled={idx === 0}
-                                                        className="p-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                                                        className="p-1 rounded-sm bg-surface-container-lowest border border-outline-variant/50 hover:border-secondary text-on-surface-variant disabled:opacity-30 cursor-pointer"
                                                         title="上移"
                                                     >
-                                                        <ArrowUp size={14} />
+                                                        <ArrowUp size={12} />
                                                     </button>
                                                     <button
                                                         onClick={() => moveItem(idx, 'down')}
                                                         disabled={idx === mergeItems.length - 1}
-                                                        className="p-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                                                        className="p-1 rounded-sm bg-surface-container-lowest border border-outline-variant/50 hover:border-secondary text-on-surface-variant disabled:opacity-30 cursor-pointer"
                                                         title="下移"
                                                     >
-                                                        <ArrowDown size={14} />
+                                                        <ArrowDown size={12} />
                                                     </button>
                                                 </div>
                                             </div>
@@ -828,55 +801,50 @@ export default function InspirationPalace() {
                                 </div>
                             </div>
 
-                            {/* Right: Merge Preview & Title input */}
-                            <div className="lg:col-span-7 flex flex-col h-full min-h-[400px]">
-                                <h4 className="font-label text-xs font-bold uppercase tracking-wider text-outline mb-3">
-                                    新草稿设置与长文预览
+                            <div className="lg:col-span-7 flex flex-col h-full min-h-[360px]">
+                                <h4 className="font-mono text-[13px] font-bold uppercase tracking-widest text-outline mb-3">
+                                    MANUSCRIPT PREVIEW · 合成长文预览
                                 </h4>
-                                
-                                {/* Title input */}
                                 <div className="mb-4">
-                                    <label className="block text-xs font-label text-on-surface-variant mb-1.5 font-medium">
-                                        合成后的新草稿标题
+                                    <label className="block text-xs font-label text-on-surface-variant mb-1.5">
+                                        新装订手稿标题
                                     </label>
                                     <input
                                         type="text"
                                         value={mergeTitle}
                                         onChange={e => setMergeTitle(e.target.value)}
-                                        placeholder="请输入新草稿标题"
-                                        className="w-full px-3 py-2 bg-surface-container rounded-lg border border-outline-variant/30 text-sm font-label text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                                        placeholder="输入合成后的新标题"
+                                        className="w-full px-3 py-2 bg-surface-container rounded-sm border border-outline-variant/60 text-sm font-headline font-bold text-on-surface focus:outline-none focus:border-primary transition-colors"
                                     />
                                 </div>
 
-                                {/* Content preview block */}
-                                <div className="flex-1 flex flex-col min-h-0 bg-surface-container-low/40 border border-outline-variant/20 rounded-lg p-4">
-                                    <div className="flex items-center justify-between pb-2 border-b border-outline-variant/10 text-xs font-label text-outline mb-3 font-medium">
-                                        <span>Markdown 拼接预览</span>
-                                        <span>预估字数：{mergedPreview.replace(/\s+/g, '').length} 字</span>
+                                <div className="flex-1 flex flex-col min-h-0 bg-surface-container/60 border border-outline-variant/55 rounded-sm p-4">
+                                    <div className="flex items-center justify-between pb-2 border-b border-dashed border-outline-variant/50 font-mono text-[13px] text-outline mb-3">
+                                        <span>MARKDOWN OUTPUT</span>
+                                        <span>{mergedPreview.replace(/\s+/g, '').length} CHARS</span>
                                     </div>
                                     <textarea
                                         readOnly
                                         value={mergedPreview}
-                                        className="flex-1 w-full bg-transparent border-none focus:ring-0 text-sm leading-relaxed text-on-surface/80 placeholder:text-outline font-mono resize-none focus:outline-none overflow-y-auto"
+                                        className="flex-1 w-full bg-transparent border-none focus:ring-0 text-sm leading-relaxed text-on-surface font-body resize-none focus:outline-none overflow-y-auto"
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Footer */}
-                        <div className="px-5 py-4 border-t border-outline-variant/15 bg-surface-container-low/40 flex items-center justify-end gap-3">
+                        <div className="px-6 py-4 border-t border-dashed border-outline-variant/65 bg-surface-container-low/40 flex items-center justify-end gap-3">
                             <button
                                 onClick={() => setShowMergeModal(false)}
-                                className="px-4 py-2 rounded-lg border border-outline-variant/30 text-xs font-label text-on-surface-variant hover:bg-surface-container transition-colors"
+                                className="px-4 py-2 rounded-sm border border-outline-variant/65 text-xs font-label text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
                             >
                                 取消
                             </button>
                             <button
-                                onClick={handleConfirmMerge}
-                                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-xs font-label font-medium hover:bg-primary-dim transition-colors"
+                                onClick={() => void handleConfirmMerge()}
+                                className="flex items-center gap-1.5 px-4 py-2 rounded-sm bg-primary text-on-primary text-xs font-label font-medium hover:bg-primary-dim transition-colors cursor-pointer"
                             >
-                                <Merge size={16} />
-                                <span>确认合成并开始写作</span>
+                                <Merge size={14} />
+                                <span>确认装订并铺入打字机</span>
                             </button>
                         </div>
                     </div>

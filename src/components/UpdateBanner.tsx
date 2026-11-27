@@ -5,7 +5,7 @@ import type { Updater } from '../lib/updater';
 export default function UpdateBanner({ u }: { u: Updater }) {
     if (!u.info) return null;
     return (
-        <div className="fixed left-0 right-0 z-40 bg-primary text-on-primary text-xs font-label" style={{ top: 'calc(64px + env(safe-area-inset-top, 0px))' }}>
+        <div className="fixed left-0 right-0 z-40 bg-primary text-on-primary text-xs font-label border-b border-primary-dim" style={{ top: 'calc(56px + env(safe-area-inset-top, 0px))' }}>
             {/* 进度条（下载中时显示） */}
             {u.downloading && (
                 <div className="h-0.5 bg-on-primary/20">

@@ -17,10 +17,6 @@ export const supabase = SUPABASE_ENABLED
 
 // ── 认证 ──────────────────────────────────────────────────
 
-export async function signUp(email: string, password: string) {
-  return supabase.auth.signUp({ email, password });
-}
-
 export async function signIn(email: string, password: string) {
   return supabase.auth.signInWithPassword({ email, password });
 }
