@@ -9,7 +9,7 @@ import type { ChatMessage } from '../inspire';
 export interface AIConfig {
   apiKey: string;
   apiBase: string;   // e.g. "https://generativelanguage.googleapis.com/v1beta/openai"
-  model: string;     // e.g. "gemini-3.5-flash-lite"
+  model: string;     // e.g. "gemini-4-hydrogen"
 }
 
 interface CallOptions {
@@ -26,7 +26,8 @@ const DEFAULT_TIMEOUT_MS = 30_000;
 
 /** 预设的 API 供应商：只给地址和一个默认型号，其余型号在设置里用「可用模型」现查 */
 export const API_PRESETS: { label: string; base: string; model: string }[] = [
-  { label: 'Gemini', base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-3.5-flash-lite' },
+  // 最新一代里有免费档的；更强的 gemini-4-neon 没有免费档
+  { label: 'Gemini', base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-4-hydrogen' },
   { label: 'DeepSeek', base: 'https://api.deepseek.com', model: 'deepseek-flash' },
   { label: 'Claude', base: 'https://api.anthropic.com', model: 'claude-haiku-5-5' },
 ];
@@ -34,6 +35,9 @@ export const API_PRESETS: { label: string; base: string; model: string }[] = [
 const trimBase = (base: string) => base.replace(/\/+$/, '');
 const isClaude = (config: AIConfig) => /(^|[/.])anthropic\.com/.test(config.apiBase);
 const isDeepSeek = (config: AIConfig) => /(^|[/.])deepseek\.com/.test(config.apiBase);
+/** Gemini 3 及以上：思考关不掉，默认档位偏高（Gemini 4 是 high），压到 low；这几代都支持 low */
+const isThinkingGemini = (config: AIConfig) =>
+  /generativelanguage\.googleapis\.com/.test(config.apiBase) && /gemini-(?:[3-9]|\d{2})/.test(config.model);
 
 /**
  * 创建带超时的 AbortSignal。
@@ -112,6 +116,7 @@ function openAiRequest(config: AIConfig, messages: ChatMessage[], options: CallO
       ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
       // DeepSeek 默认开深度思考（high），写几十字的引导用不着
       ...(isDeepSeek(config) ? { thinking: { type: 'disabled' } } : {}),
+      ...(isThinkingGemini(config) ? { reasoning_effort: 'low' } : {}),
     }),
   };
 }
@@ -218,21 +223,27 @@ export async function chatCompletionStream(
   }
 }
 
-/** 列出这个 Key 能用的模型（设置里的「可用模型」按钮） */
+// 列表里混着语音、图像、音乐、向量、实时语音、机器人等不能拿来对话的型号
+const NON_CHAT = /embed|tts|image|imagen|banana|audio|live|transcri|translate|robotics|computer-use|lyria|veo|aqa|genie|whisper|dall-e|moderation|deep-research|antigravity|decision|omni|customtools/i;
+const versionOf = (id: string) => Number(id.match(/\d+(?:\.\d+)?/)?.[0] ?? -1);
+
+/** 列出这个 Key 能用的对话模型（设置里的「可用模型」按钮），版本新的排前面 */
 export async function listModels(config: AIConfig): Promise<string[]> {
+  let ids: string[] = [];
   if (isClaude(config)) {
-    const ids: string[] = [];
     for await (const m of claudeClient(config).models.list()) ids.push(m.id);
-    return ids;
+  } else {
+    const res = await fetch(`${trimBase(config.apiBase)}/models`, {
+      headers: config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : undefined,
+    });
+    await ensureOk(res);
+    const data = await res.json();
+    ids = ((data.data ?? data.models ?? []) as Record<string, string>[]).map(m => m.id ?? m.name ?? '');
   }
-  const res = await fetch(`${trimBase(config.apiBase)}/models`, {
-    headers: config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : undefined,
-  });
-  await ensureOk(res);
-  const data = await res.json();
-  return ((data.data ?? data.models ?? []) as Record<string, string>[])
-    .map(m => m.id ?? m.name?.replace('models/', '') ?? '')
-    .filter(Boolean);
+  return ids
+    .map(id => id.replace(/^models\//, ''))
+    .filter(id => id && !NON_CHAT.test(id))
+    .sort((a, b) => versionOf(b) - versionOf(a) || a.localeCompare(b));
 }
 
 /**

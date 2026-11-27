@@ -112,7 +112,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                 type="text"
                                 value={store.aiConfig.model}
                                 onChange={e => { store.setAiConfig({ model: e.target.value }); setAiTestStatus('idle'); }}
-                                placeholder="gemini-3.5-flash-lite"
+                                placeholder="gemini-4-hydrogen"
                                 className="flex-1 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                             />
                             {canFetchModels && (
