@@ -1,513 +1,446 @@
 @import "tailwindcss";
 
-/* Tailwind v4: 使用 .dark 类控制暗色模式（而非系统媒体查询），与 CSS 变量系统保持一致 */
+@font-face {
+  font-family: "Courier Prime";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/courier-prime-regular.woff2") format("woff2");
+}
+
+/* Tailwind v4: 使用 .dark 类控制暗色模式 */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-background: #f0ece5;
-  --color-surface-container-high: #fffbe7;
-  --color-on-secondary-fixed: #344429;
-  --color-on-tertiary-fixed-variant: #5b5972;
-  --color-primary-fixed: #feb294;
-  --color-primary-dim: #7c442d;
-  --color-secondary-fixed-dim: #c8dbb6;
-  --color-surface-container: #ffffff;
-  --color-tertiary: #5f5c75;
-  --color-on-background: #31332f;
-  --color-tertiary-dim: #535069;
-  --color-error: #a83836;
-  --color-surface-dim: #dadad4;
-  --color-primary-container: #feb294;
-  --color-error-dim: #67040d;
-  --color-secondary: #536446;
-  --color-surface-tint: #8a5038;
-  --color-secondary-fixed: #d6e9c3;
-  --color-on-primary-container: #63301b;
-  --color-on-secondary: #edffda;
-  --color-on-surface: #31332f;
-  --color-secondary-dim: #48583b;
-  --color-on-surface-variant: #6e706b;
-  --color-on-tertiary: #fcf7ff;
-  --color-on-primary-fixed-variant: #6d3923;
-  --color-primary-fixed-dim: #eea587;
-  --color-on-error-container: #6e0a12;
-  --color-surface-container-highest: #e3e3dc;
-  --color-surface: #fbf9f5;
-  --color-outline: #55564f;
-  --color-tertiary-container: #e3dffd;
-  --color-tertiary-fixed-dim: #d5d1ee;
-  --color-on-secondary-container: #303e25;
-  --color-on-error: #fff7f6;
-  --color-surface-container-lowest: #ffffff;
-  --color-secondary-container: #d6e9c3;
-  --color-outline-variant: #5c5044;
-  --color-inverse-on-surface: #9e9d99;
-  --color-on-secondary-fixed-variant: #506043;
-  --color-error-container: #fa746f;
-  --color-on-primary-fixed: #491d09;
-  --color-tertiary-fixed: #e3dffd;
-  --color-on-tertiary-container: #514f67;
-  --color-surface-container-low: #e3ded5;
-  --color-surface-bright: #fbf9f5;
-  --color-inverse-primary: #feb294;
-  --color-on-tertiary-fixed: #3f3d54;
-  --color-inverse-surface: #0e0e0d;
-  --color-primary: #8a5038;
-  --color-on-primary: #fff7f5;
-  --color-surface-variant: #e3e3dc;
+  /* ── 浅色主题：复古旧报牛皮纸 × 浓焙咖啡棕墨（全站单色系统一，靠版式与图形区分模块） ── */
+  --color-background: #e9e0d2;
+  --color-surface: #efe7da;
+  --color-surface-bright: #f6f0e6;
+  --color-surface-dim: #d6cab8;
+  --color-surface-container-lowest: #f5efe4;
+  --color-surface-container-low: #e3d8c7;
+  --color-surface-container: #eee5d6;
+  --color-surface-container-high: #dfd3c0;
+  --color-surface-container-highest: #d4c6b0;
+  --color-surface-variant: #dfd4c3;
 
-  --font-headline: "Noto Sans SC", sans-serif;
-  --font-body: "Noto Sans SC", sans-serif;
-  --font-label: "Inter", sans-serif;
+  --color-on-background: #3d2b1f;
+  --color-on-surface: #3d2b1f;
+  --color-on-surface-variant: #5e493a;
+  --color-outline: #7d6756;
+  --color-outline-variant: #b5a18c;
 
-  /* 全局字号 +2px（基准 16px → 18px，其余同比） */
-  --text-xs: 0.875rem;    /* 12→14px */
-  --text-sm: 1rem;        /* 14→16px */
-  --text-base: 1.125rem;  /* 16→18px */
-  --text-lg: 1.25rem;     /* 18→20px */
-  --text-xl: 1.375rem;    /* 20→22px */
-  --text-2xl: 1.625rem;   /* 24→26px */
-  --text-3xl: 2rem;       /* 30→32px */
-  --text-4xl: 2.375rem;   /* 36→38px */
+  /* Primary: 浓焙深褐铅字墨色（复刻参考海报标题与折角主色） */
+  --color-primary: #543928;
+  --color-primary-dim: #3d281b;
+  --color-on-primary: #f6efe4;
+  --color-primary-container: #dfd2c0;
+  --color-on-primary-container: #362215;
+  --color-primary-fixed: #dfd2c0;
+  --color-primary-fixed-dim: #cfbda6;
+  --color-on-primary-fixed: #29190f;
+  --color-on-primary-fixed-variant: #4f3524;
+  --color-surface-tint: #543928;
+  --color-inverse-primary: #cfb293;
+
+  /* Secondary: 暖棕铜版线色 */
+  --color-secondary: #7a5c43;
+  --color-secondary-dim: #614732;
+  --color-on-secondary: #f7f1e7;
+  --color-secondary-container: #e3d6c4;
+  --color-on-secondary-container: #3b2a1b;
+  --color-secondary-fixed: #e3d6c4;
+  --color-secondary-fixed-dim: #d4c3ac;
+  --color-on-secondary-fixed: #291c11;
+  --color-on-secondary-fixed-variant: #543e2b;
+
+  /* Tertiary: 同色系浅焙茶褐（保持全站单色体系纯粹） */
+  --color-tertiary: #6e5846;
+  --color-tertiary-dim: #574435;
+  --color-on-tertiary: #f7f2ea;
+  --color-tertiary-container: #e2d7cb;
+  --color-on-tertiary-container: #33261c;
+  --color-tertiary-fixed: #e2d7cb;
+  --color-tertiary-fixed-dim: #cfc1b2;
+  --color-on-tertiary-fixed: #241a12;
+  --color-on-tertiary-fixed-variant: #4a392c;
+
+  --color-error: #8f3d32;
+  --color-error-dim: #732e25;
+  --color-on-error: #fbf3f1;
+  --color-error-container: #ebd4d0;
+  --color-on-error-container: #4a1913;
+
+  --color-inverse-surface: #261b14;
+  --color-inverse-on-surface: #eadfd0;
+
+  /* ── 汇文系列字体体系（优先命中本地汇文字体，远端自动回退分片 WebFont） ── */
+  --font-headline: "汇文明朝体", "Huiwen-mincho", "Songti SC", "STSong", serif;
+  --font-body: "汇文仿宋", "Huiwen-Fangsong", "汇文明朝体", "Huiwen-mincho", "FangSong", serif;
+  --font-label: "汇文港黑", "Huiwen-HKHei", "汇文仿宋", "Huiwen-Fangsong", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "Courier Prime", "汇文仿宋", "Huiwen-Fangsong", ui-monospace, monospace;
+
+  /* 克制、干练的刊物级字号比例 */
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 1.875rem;   /* 30px */
+  --text-4xl: 2.25rem;    /* 36px */
+
+  /* 全站彻底零圆角：利落裁切报刊版面 */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
 }
 
-/* 全局字体渲染优化（对 Tauri WebView2 尤为重要） */
+/* ── 深色主题：深焙胡桃木 × 柔和奶褐 × 苔灰绿 ── */
+.dark {
+  --color-background: #141210;
+  --color-surface: #171512;
+  --color-surface-bright: #26231e;
+  --color-surface-dim: #0f0e0c;
+  --color-surface-container-lowest: #0e0d0b;
+  --color-surface-container-low: #1b1815;
+  --color-surface-container: #211e1a;
+  --color-surface-container-high: #2b2722;
+  --color-surface-container-highest: #36312a;
+  --color-surface-variant: #2d2923;
+
+  --color-on-background: #e8e1d5;
+  --color-on-surface: #e8e1d5;
+  --color-on-surface-variant: #a69c8e;
+  --color-outline: #7d7468;
+  --color-outline-variant: #3d3730;
+
+  --color-primary: #c7a682;
+  --color-primary-dim: #b08e69;
+  --color-on-primary: #21180e;
+  --color-primary-container: #3b2e20;
+  --color-on-primary-container: #f0dfc8;
+
+  --color-secondary: #b89f7d;
+  --color-secondary-dim: #9e8564;
+  --color-on-secondary: #21190e;
+  --color-secondary-container: #362c1e;
+  --color-on-secondary-container: #ebe0cf;
+
+  --color-tertiary: #96a68a;
+  --color-tertiary-dim: #7c8c70;
+  --color-on-tertiary: #161f12;
+  --color-tertiary-container: #273222;
+  --color-on-tertiary-container: #d7e2cf;
+
+  --color-error: #d68276;
+  --color-error-dim: #b8665a;
+  --color-on-error: #29100c;
+  --color-error-container: #45201b;
+  --color-on-error-container: #f5d5d0;
+
+  --color-inverse-surface: #f3efe6;
+  --color-inverse-on-surface: #2b2620;
+}
+
+/* 全局字体抗锯齿与纸张基底 */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-@layer utilities {
-  .paper-texture {
-      background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCJimgmJNfC_2oKt5YeyXkcGOVmYuZAFHJpIz6PG68gt_4e0bgML2fhpiF7rIxYmd_BTcf17Xmpve05L62Ckt-v6KzdigZR6-sjFr5VBoFQL_M1BhbdJBnrQ0RY-g_zoZGB-YLLAaT9P0hMssm2XIscJjT5OTCqmzvBsd4e3A1bDImyivn5ipBOV9kposA_pS6IdOqfw_c4KdSW-IdLlYz91CdH3BFNezbr8xyrVPRYpjzSSrE2VLkewQ2nH4oYapbH-0eyE3Lfa6Q)
-  }
-  .glass-panel {
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px)
-  }
-  .custom-shadow {
-      box-shadow: 0 10px 30px -5px rgba(49, 51, 47, 0.04), 0 20px 60px -10px rgba(49, 51, 47, 0.08)
-  }
-  /* Bento card glow effects */
-  .bento-glow-amber:hover  { box-shadow: 0 0 50px -12px rgba(251, 177, 72, 0.22); }
-  .bento-glow-green:hover  { box-shadow: 0 0 50px -12px rgba(52, 211, 153, 0.22); }
-  .bento-glow-rose:hover   { box-shadow: 0 0 50px -12px rgba(251, 113, 133, 0.22); }
-  .bento-glow-violet:hover { box-shadow: 0 0 50px -12px rgba(167, 139, 250, 0.22); }
-  .bento-glow-blue:hover   { box-shadow: 0 0 50px -12px rgba(147, 197, 253, 0.22); }
-  .bento-glow-fuchsia:hover{ box-shadow: 0 0 50px -12px rgba(240, 171, 252, 0.22); }
-  /* Toast entrance — gentle fade + slide up */
-  .animate-toast-in {
-      animation: toast-in 0.2s ease-out forwards;
-  }
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
 }
 
-/* ── Dark mode token overrides ── */
-.dark {
-  --color-background: #100e0d;
-  --color-surface: #100e0d;
-  --color-surface-dim: #100e0d;
-  --color-surface-bright: #2f2b2a;
-  --color-surface-container-lowest: #000000;
-  --color-surface-container-low: #151312;
-  --color-surface-container: #1c1918;
-  --color-surface-container-high: #1e1f29;
-  --color-surface-container-highest: #282523;
-  --color-surface-variant: #282523;
-  --color-on-surface: #f5f0ed;
-  --color-on-surface-variant: #afaaa8;
-  --color-on-background: #f5f0ed;
-  --color-outline: #797473;
-  --color-outline-variant: #4b4746;
-  --color-primary: #7f90ff;
-  --color-on-primary: #39008c;
-  --color-primary-container: #8455ef;
-  --color-primary-dim: #8455ef;
-  --color-secondary: #69f6b8;
-  --color-on-secondary: #005a3c;
-  --color-secondary-container: #006c49;
-  --color-tertiary: #ffb148;
-  --color-on-tertiary: #573500;
-  --color-tertiary-container: #f8a010;
-  --color-tertiary-dim: #e79400;
-  --color-error: #ff6e84;
-  --color-inverse-surface: #fff8f5;
-  --color-inverse-on-surface: #585453;
+@layer utilities {
+  .paper-grain {
+    /* 纯净纸面，不叠加细格底纹 */
+  }
 
-  /* ── Reversed built-in palette: 50↔950, 100↔900, 200↔800, 300↔700, 400↔600 ── */
+  .glass-panel {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
 
-  /* fuchsia */
-  --color-fuchsia-50:  #4a044e;
-  --color-fuchsia-100: #701a75;
-  --color-fuchsia-200: #86198f;
-  --color-fuchsia-300: #b029a9;
-  --color-fuchsia-400: #b44bdd;
-  --color-fuchsia-600: #e879f9;
-  --color-fuchsia-700: #f0abfc;
-  --color-fuchsia-800: #fae8ff;
-  --color-fuchsia-900: #fdf4ff;
-  --color-fuchsia-950: #fdf4ff;
+  /* 报刊双横线报头（上粗下细经典铅印线） */
+  .broadsheet-masthead-rule {
+    border-top: 2px solid color-mix(in srgb, var(--color-on-surface) 75%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-on-surface) 28%, transparent);
+  }
 
-  /* purple */
-  --color-purple-50:  #3b0764;
-  --color-purple-100: #581c87;
-  --color-purple-200: #6b21a8;
-  --color-purple-300: #7e22ce;
-  --color-purple-400: #9333ea;
-  --color-purple-600: #c084fc;
-  --color-purple-700: #d8b4fe;
-  --color-purple-800: #f3e8ff;
-  --color-purple-900: #faf5ff;
-  --color-purple-950: #faf5ff;
+  /* 报刊整版外框与分栏线 */
+  .broadsheet-frame {
+    border-top: 2px solid color-mix(in srgb, var(--color-on-surface) 65%, transparent);
+    border-bottom: 2px solid color-mix(in srgb, var(--color-on-surface) 65%, transparent);
+    border-left: 1px solid color-mix(in srgb, var(--color-on-surface) 28%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--color-on-surface) 28%, transparent);
+  }
 
-  /* violet */
-  --color-violet-50:  #2e1065;
-  --color-violet-100: #4c1d95;
-  --color-violet-200: #5b21b6;
-  --color-violet-300: #6d28d9;
-  --color-violet-400: #7c3aed;
-  --color-violet-600: #a78bfa;
-  --color-violet-700: #c4b5fd;
-  --color-violet-800: #ede9fe;
-  --color-violet-900: #f5f3ff;
-  --color-violet-950: #f5f3ff;
+  .broadsheet-rule {
+    border-color: color-mix(in srgb, var(--color-on-surface) 24%, transparent);
+  }
 
-  /* rose */
-  --color-rose-50:  #4c0519;
-  --color-rose-100: #881337;
-  --color-rose-200: #9f1239;
-  --color-rose-300: #be123c;
-  --color-rose-400: #e11d48;
-  --color-rose-500: #ff4670;
-  --color-rose-600: #fb7185;
-  --color-rose-700: #fda4af;
-  --color-rose-800: #ffe4e6;
-  --color-rose-900: #fff1f2;
-  --color-rose-950: #fff1f2;
+  /* 剪报卡片（零圆角、无漂浮阴影、实线墨框） */
+  .index-card {
+    background-color: var(--color-surface-container);
+    border: 1px solid color-mix(in srgb, var(--color-on-surface) 22%, transparent);
+    border-radius: 0px !important;
+    box-shadow: none;
+    transition: background-color 0.16s ease, border-color 0.16s ease;
+  }
+  .index-card:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 65%, var(--color-on-surface));
+  }
+  .dark .index-card {
+    border-color: color-mix(in srgb, var(--color-outline-variant) 95%, transparent);
+    box-shadow: none;
+  }
+  .dark .index-card:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 65%, var(--color-outline-variant));
+  }
 
-  /* red */
-  --color-red-50:  #450a0a;
-  --color-red-100: #7f1d1d;
-  --color-red-200: #991b1b;
-  --color-red-300: #b91c1c;
-  --color-red-400: #dc2626;
-  --color-red-600: #f87171;
-  --color-red-700: #fca5a5;
-  --color-red-800: #fee2e2;
-  --color-red-900: #fef2f2;
-  --color-red-950: #fef2f2;
+  /* 写作稿纸（零圆角报刊版心页） */
+  .manuscript-sheet {
+    background-color: var(--color-surface-container-lowest);
+    border: 1px solid color-mix(in srgb, var(--color-on-surface) 24%, transparent);
+    border-top: 2px solid color-mix(in srgb, var(--color-on-surface) 65%, transparent);
+    border-radius: 0px !important;
+    box-shadow: none;
+  }
+  .dark .manuscript-sheet {
+    background-color: #191715;
+    border-color: color-mix(in srgb, var(--color-outline-variant) 90%, transparent);
+    border-top: 2px solid color-mix(in srgb, var(--color-primary) 65%, transparent);
+    box-shadow: none;
+  }
 
-  /* orange */
-  --color-orange-50:  #431407;
-  --color-orange-100: #7c2d12;
-  --color-orange-200: #9a3412;
-  --color-orange-300: #c2410c;
-  --color-orange-400: #ea580c;
-  --color-orange-600: #fb923c;
-  --color-orange-700: #fdba74;
-  --color-orange-800: #ffedd5;
-  --color-orange-900: #fff7ed;
-  --color-orange-950: #fff7ed;
+  /* 打字机金属铭牌（黑底黄铜刻字） */
+  .brass-nameplate {
+    background: linear-gradient(180deg, #1b1916 0%, #0f0e0c 100%);
+    color: #ccb07a;
+    border: 1px solid #7d6840;
+    box-shadow: inset 0 1px 0 rgba(255, 235, 190, 0.14), 0 1px 3px rgba(0, 0, 0, 0.45);
+    font-family: var(--font-mono);
+    letter-spacing: 0.22em;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.85);
+  }
 
-  /* amber */
-  --color-amber-50:  #451a03;
-  --color-amber-100: #78350f;
-  --color-amber-200: #92400e;
-  --color-amber-300: #b45309;
-  --color-amber-400: #d97706;
-  --color-amber-600: #fbbf24;
-  --color-amber-700: #fcd34d;
-  --color-amber-800: #fef3c7;
-  --color-amber-900: #fffbeb;
-  --color-amber-950: #fffbeb;
+  /* 柔和克制的双平行细线 */
+  .poster-double-rule {
+    height: 5px;
+    border-top: 1.5px solid color-mix(in srgb, var(--color-on-surface) 38%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-on-surface) 22%, transparent);
+  }
 
-  /* sky */
-  --color-sky-50:  #082f49;
-  --color-sky-100: #0c4a6e;
-  --color-sky-200: #075985;
-  --color-sky-300: #0369a1;
-  --color-sky-400: #0284c7;
-  --color-sky-600: #38bdf8;
-  --color-sky-700: #7dd3fc;
-  --color-sky-800: #e0f2fe;
-  --color-sky-900: #f0f9ff;
-  --color-sky-950: #f0f9ff;
+  /* 统一单色纸面（移除多色系背景，依靠线条、框型与版画插图区分模块） */
+  .washi-words,
+  .washi-dream,
+  .washi-character,
+  .washi-free,
+  .washi-scene,
+  .washi-challenge {
+    background-color: transparent;
+    border-color: color-mix(in srgb, var(--color-on-surface) 28%, transparent);
+  }
+  .washi-words:hover,
+  .washi-dream:hover,
+  .washi-character:hover,
+  .washi-free:hover,
+  .washi-scene:hover,
+  .washi-challenge:hover {
+    background-color: color-mix(in srgb, var(--color-surface-bright) 55%, transparent);
+  }
+  .dark .washi-words,
+  .dark .washi-dream,
+  .dark .washi-character,
+  .dark .washi-free,
+  .dark .washi-scene,
+  .dark .washi-challenge {
+    background-color: transparent;
+    border-color: color-mix(in srgb, var(--color-outline-variant) 85%, transparent);
+  }
+  .dark .washi-words:hover,
+  .dark .washi-dream:hover,
+  .dark .washi-character:hover,
+  .dark .washi-free:hover,
+  .dark .washi-scene:hover,
+  .dark .washi-challenge:hover {
+    background-color: rgba(255, 245, 230, 0.03);
+  }
 
-  /* blue */
-  --color-blue-50:  #172554;
-  --color-blue-100: #1e3a8a;
-  --color-blue-200: #1e40af;
-  --color-blue-300: #1d4ed8;
-  --color-blue-400: #2563eb;
-  --color-blue-600: #60a5fa;
-  --color-blue-700: #93c5fd;
-  --color-blue-800: #dbeafe;
-  --color-blue-900: #eff6ff;
-  --color-blue-950: #eff6ff;
+  .custom-shadow {
+    box-shadow: 0 8px 24px -6px rgba(28, 26, 23, 0.08), 0 2px 6px -1px rgba(28, 26, 23, 0.05);
+  }
 
-  /* teal */
-  --color-teal-50:  #042f2e;
-  --color-teal-100: #134e4a;
-  --color-teal-200: #115e59;
-  --color-teal-300: #0f766e;
-  --color-teal-400: #0d9488;
-  --color-teal-600: #2dd4bf;
-  --color-teal-700: #5eead4;
-  --color-teal-800: #ccfbf1;
-  --color-teal-900: #f0fdfa;
-  --color-teal-950: #f0fdfa;
-
-  /* emerald */
-  --color-emerald-50:  #022c22;
-  --color-emerald-100: #064e3b;
-  --color-emerald-200: #065f46;
-  --color-emerald-300: #047857;
-  --color-emerald-400: #059669;
-  --color-emerald-600: #34d399;
-  --color-emerald-700: #6ee7b7;
-  --color-emerald-800: #d1fae5;
-  --color-emerald-900: #ecfdf5;
-  --color-emerald-950: #ecfdf5;
-
-  /* green */
-  --color-green-50:  #052e16;
-  --color-green-100: #14532d;
-  --color-green-200: #166534;
-  --color-green-300: #15803d;
-  --color-green-400: #16a34a;
-  --color-green-600: #4ade80;
-  --color-green-700: #86efac;
-  --color-green-800: #dcfce7;
-  --color-green-900: #f0fdf4;
-  --color-green-950: #f0fdf4;
-
-  /* stone */
-  --color-stone-50:  #1c1917;
-  --color-stone-100: #292524;
-  --color-stone-200: #44403c;
-  --color-stone-300: #57534e;
-  --color-stone-400: #78716c;
-  --color-stone-600: #a8a29e;
-  --color-stone-700: #d6d3d1;
-  --color-stone-800: #f5f5f4;
-  --color-stone-900: #fafaf9;
-  --color-stone-950: #fafaf9;
+  .animate-toast-in {
+    animation: toast-in 0.2s ease-out forwards;
+  }
 }
 
 .dark .custom-shadow {
-  box-shadow: 0 10px 30px -5px rgba(0,0,0,0.3), 0 20px 60px -10px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.45), 0 4px 12px -2px rgba(0, 0, 0, 0.35);
+}
+
+/* ── 灵感宫殿多选：朱砂印记双线装订框（取代霓虹跑马灯） ── */
+.palace-selected-frame {
+  border-color: var(--color-primary) !important;
+  box-shadow:
+    0 0 0 1px var(--color-primary),
+    4px 5px 0px color-mix(in srgb, var(--color-primary) 22%, transparent) !important;
 }
 
 /* ── Custom scrollbar ── */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-outline-variant);
-  border-radius: 9999px;
-  opacity: 0.5;
+  background: color-mix(in srgb, var(--color-outline) 45%, transparent);
+  border-radius: 0px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-outline);
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-outline-variant) transparent;
+  scrollbar-color: color-mix(in srgb, var(--color-outline) 45%, transparent) transparent;
 }
 
 /* ── Safe area for iOS ── */
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-
 .safe-area-top {
   padding-top: env(safe-area-inset-top, 0px);
 }
 
-.dark .bento-glow-amber:hover  { box-shadow: 0 0 50px -8px rgba(255, 177, 72, 0.18); }
-.dark .bento-glow-green:hover  { box-shadow: 0 0 50px -8px rgba(105, 246, 184, 0.18); }
-.dark .bento-glow-rose:hover   { box-shadow: 0 0 50px -8px rgba(255, 100, 120, 0.18); }
-.dark .bento-glow-violet:hover { box-shadow: 0 0 50px -8px rgba(186, 158, 255, 0.18); }
-.dark .bento-glow-blue:hover   { box-shadow: 0 0 50px -8px rgba(147, 197, 253, 0.18); }
-.dark .bento-glow-fuchsia:hover{ box-shadow: 0 0 50px -8px rgba(240, 171, 252, 0.18); }
-
-/* Word card dark-mode glow — keyed by word category */
-.dark .word-glow-indigo  { border-color: rgba(129, 140, 248, 0.22) !important; box-shadow: 0 0 26px rgba(129, 140, 248, 0.09); }
-.dark .word-glow-amber   { border-color: rgba(255, 177,  72, 0.22) !important; box-shadow: 0 0 26px rgba(255, 177,  72, 0.09); }
-.dark .word-glow-emerald { border-color: rgba(105, 246, 184, 0.22) !important; box-shadow: 0 0 26px rgba(105, 246, 184, 0.09); }
-.dark .word-glow-pink    { border-color: rgba(244, 114, 182, 0.22) !important; box-shadow: 0 0 26px rgba(244, 114, 182, 0.09); }
-.dark .word-glow-cyan    { border-color: rgba(103, 232, 249, 0.22) !important; box-shadow: 0 0 26px rgba(103, 232, 249, 0.09); }
-.dark .word-glow-violet  { border-color: rgba(186, 158, 255, 0.22) !important; box-shadow: 0 0 26px rgba(186, 158, 255, 0.09); }
-.dark .word-glow-orange  { border-color: rgba(253, 186, 116, 0.22) !important; box-shadow: 0 0 26px rgba(253, 186, 116, 0.09); }
-.dark .word-glow-teal    { border-color: rgba( 94, 234, 212, 0.22) !important; box-shadow: 0 0 26px rgba( 94, 234, 212, 0.09); }
-.dark .word-glow-stone   { border-color: rgba(120, 113, 108, 0.28) !important; }
-
 @keyframes toast-in {
-  from { opacity: 0; transform: translate(-50%, 10px); }
+  from { opacity: 0; transform: translate(-50%, 8px); }
   to   { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* ── 灵感宫殿卡片多选环绕彩色边框动画 ── */
-@property --palace-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-@keyframes palace-border-spin {
-  to { --palace-angle: 360deg; }
-}
-.palace-selected-ring {
-  background: conic-gradient(
-    from var(--palace-angle),
-    transparent 0deg,
-    #f59e0b 25deg,
-    #ec4899 80deg,
-    #8b5cf6 140deg,
-    #3b82f6 190deg,
-    #10b981 245deg,
-    #facc15 295deg,
-    transparent 330deg,
-    transparent 360deg
-  );
-  animation: palace-border-spin 2.4s linear infinite;
-}
-.dark .palace-selected-ring {
-  background: conic-gradient(
-    from var(--palace-angle),
-    transparent 0deg,
-    #fbbf24 25deg,
-    #f472b6 80deg,
-    #a78bfa 140deg,
-    #60a5fa 190deg,
-    #34d399 245deg,
-    #fde047 295deg,
-    transparent 330deg,
-    transparent 360deg
-  );
-}
-
-/* ── Bento 卡片 hover 旋转彩色渐变边框（1px 弧形环，outset 方案） ── */
-.bento-ring-wrapper {
-  position: relative;
-}
-.bento-ring-wrapper::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: calc(1rem + 2px);
-  background: conic-gradient(
-    from var(--palace-angle),
-    transparent 0deg,
-    #f59e0b 25deg,
-    #ec4899 80deg,
-    #8b5cf6 140deg,
-    #3b82f6 190deg,
-    #10b981 245deg,
-    #facc15 295deg,
-    transparent 330deg,
-    transparent 360deg
-  );
-  animation: palace-border-spin 3s linear infinite;
-  opacity: 0;
-  transition: opacity 0.25s ease-out;
-  z-index: 0;
-  pointer-events: none;
-}
-.bento-ring-wrapper:hover::before {
-  opacity: 1;
-}
-
-/* ── MDEditor light mode ── */
+/* ── MDEditor：纯净文学稿纸化（严格对齐输入层与渲染层字距行距，防止光标偏移） ── */
 .w-md-editor {
   background-color: transparent !important;
   box-shadow: none !important;
   border: none !important;
-}
-.w-md-editor-toolbar {
-  background-color: rgba(240, 236, 229, 0.65) !important;
-  border-color: rgba(92, 80, 68, 0.1) !important;
-}
-.w-md-editor-toolbar li > button {
-  color: #6e706b !important;
-}
-.w-md-editor-toolbar li > button:hover {
-  color: #31332f !important;
-  background-color: #ece7e0 !important;
-}
-.w-md-editor-text-input::placeholder,
-.w-md-editor-text-pre > code .token.plaintext {
-  color: #a4a6a1 !important;
-  opacity: 1 !important;
+  color: var(--color-on-surface) !important;
+  --md-editor-font-family: "汇文仿宋", "Huiwen-Fangsong", "汇文明朝体", "Huiwen-mincho", serif !important;
 }
 
-/* ── MDEditor dark mode ── */
-.dark .w-md-editor {
+/* 默认隐藏后台感工具栏；当外层开启 .md-toolbar-visible 时才优雅浮现 */
+.markdown-editor-container:not(.md-toolbar-visible) .w-md-editor-toolbar {
+  display: none !important;
+}
+
+.w-md-editor-toolbar {
+  background-color: color-mix(in srgb, var(--color-surface-container-low) 75%, transparent) !important;
+  border-bottom: 1px dashed color-mix(in srgb, var(--color-outline-variant) 65%, transparent) !important;
+  padding: 6px 8px !important;
+  margin-bottom: 8px !important;
+}
+.w-md-editor-toolbar li > button {
+  color: var(--color-on-surface-variant) !important;
+  border-radius: 0px !important;
+}
+.w-md-editor-toolbar li > button:hover {
+  color: var(--color-primary) !important;
+  background-color: var(--color-surface-container-high) !important;
+}
+
+.w-md-editor-content,
+.w-md-editor-area {
   background-color: transparent !important;
-  color: #f5f0ed !important;
-  border: none !important;
-  box-shadow: none !important;
 }
-.dark .w-md-editor-text-input,
-.dark .w-md-editor-text-pre > code,
-.dark .w-md-editor-text {
-  color: #f5f0ed !important;
-  caret-color: #f5f0ed !important;
-  -webkit-text-fill-color: #f5f0ed !important;
+
+.w-md-editor-text {
+  padding: 4px 0 !important;
 }
-.dark .w-md-editor-toolbar {
-  background-color: transparent !important;
-  border-color: rgba(75, 71, 70, 0.3) !important;
+
+.w-md-editor-text-input,
+.w-md-editor-text-pre,
+.w-md-editor-text-pre > code {
+  font-family: "汇文仿宋", "Huiwen-Fangsong", "汇文明朝体", "Huiwen-mincho", serif !important;
+  font-size: 19px !important;
+  line-height: 1.95 !important;
+  letter-spacing: 0.02em !important;
 }
-.dark .w-md-editor-toolbar li > button {
-  color: #afaaa8 !important;
+
+.w-md-editor-text-input {
+  color: var(--color-on-surface) !important;
+  caret-color: var(--color-primary) !important;
+  -webkit-text-fill-color: var(--color-on-surface) !important;
 }
-.dark .w-md-editor-toolbar li > button:hover {
-  color: #f5f0ed !important;
-  background-color: #1c1918 !important;
+
+.w-md-editor-text-pre > code,
+.w-md-editor-text-pre > code .token {
+  color: var(--color-on-surface) !important;
 }
-.dark .w-md-editor-text-input::placeholder {
-  color: #797473 !important;
-  -webkit-text-fill-color: #797473 !important;
-  opacity: 1 !important;
+
+.w-md-editor-text-pre > code .token.title,
+.w-md-editor-text-pre > code .token.bold {
+  color: var(--color-on-surface) !important;
+  font-weight: 700 !important;
+}
+
+.w-md-editor-text-pre > code .token.punctuation {
+  color: var(--color-outline) !important;
+}
+
+.w-md-editor-text-input::placeholder {
+  color: var(--color-outline) !important;
+  -webkit-text-fill-color: var(--color-outline) !important;
+  opacity: 0.65 !important;
 }
 
 @layer base {
   ::placeholder {
-      color: #b2b2ad;
-      opacity: 0.6
+    color: var(--color-outline);
+    opacity: 0.6;
   }
 }
 
-.dark ::placeholder {
-  color: #797473;
-  opacity: 1;
-}
-
-/* ── Card 3D Flip Effects (slots-inspired animation) ── */
+/* ── 词卡 3D 机械翻牌动效 ── */
 .card-perspective {
   perspective: 1000px;
 }
 .card-flipping {
-  animation: card-flip-3d 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: card-flip-3d 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes card-flip-3d {
-  0% { transform: rotateY(0deg); }
-  50% { transform: rotateY(90deg); opacity: 0; }
-  50.1% { transform: rotateY(-90deg); opacity: 0; }
-  100% { transform: rotateY(0deg); opacity: 1; }
+  0%   { transform: rotateX(0deg); }
+  50%  { transform: rotateX(90deg); opacity: 0.15; }
+  50.1%{ transform: rotateX(-90deg); opacity: 0.15; }
+  100% { transform: rotateX(0deg); opacity: 1; }
 }
 
-/* ── Jiggle animation for unopened daily box ── */
-@keyframes daily-box-jiggle {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(-3deg) scale(1.03); }
-  75% { transform: rotate(3deg) scale(1.03); }
+/* ── 打字机退纸与字锤微动效 ── */
+@keyframes paper-eject {
+  0%   { transform: translateY(18px); opacity: 0.4; }
+  65%  { transform: translateY(-4px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
 }
-.animate-jiggle {
-  animation: daily-box-jiggle 0.6s ease-in-out infinite alternate;
+.animate-paper-eject {
+  animation: paper-eject 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes lever-return {
+  0%   { transform: rotate(0deg) translateX(0); }
+  35%  { transform: rotate(-6deg) translateX(6px); }
+  100% { transform: rotate(0deg) translateX(0); }
+}
+.animate-lever-return {
+  animation: lever-return 0.36s cubic-bezier(0.22, 1, 0.36, 1);
 }

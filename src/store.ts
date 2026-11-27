@@ -48,6 +48,12 @@ interface AppState {
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
 
+  // Typewriter sound & mechanical dock
+  soundEnabled: boolean;
+  setSoundEnabled: (v: boolean) => void;
+  machineDockOpen: boolean;
+  setMachineDockOpen: (v: boolean) => void;
+
   // Streak
   streak: number;
   lastActiveDate: string;
@@ -153,6 +159,11 @@ export const useStore = create<AppState>()(
       sidebarCollapsed: false,
       toggleSidebar: () => set(s => ({ sidebarCollapsed: !s.sidebarCollapsed })),
 
+      soundEnabled: true,
+      setSoundEnabled: (v) => set({ soundEnabled: v }),
+      machineDockOpen: true,
+      setMachineDockOpen: (v) => set({ machineDockOpen: v }),
+
       streak: 0,
       lastActiveDate: '',
       updateStreak: () => {
@@ -245,6 +256,8 @@ export const useStore = create<AppState>()(
         wordCount: s.wordCount,
         timerDuration: s.timerDuration,
         sidebarCollapsed: s.sidebarCollapsed,
+        soundEnabled: s.soundEnabled,
+        machineDockOpen: s.machineDockOpen,
         streak: s.streak,
         lastActiveDate: s.lastActiveDate,
         aiConfig: s.aiConfig,

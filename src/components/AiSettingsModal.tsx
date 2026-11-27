@@ -17,50 +17,51 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
 
     if (!isOpen) return null;
 
-    // 本地服务（如 Ollama）不用 Key 也能列模型
     const canFetchModels = !!store.aiConfig.apiKey || /\/\/(localhost|127\.0\.0\.1)[:/]/.test(store.aiConfig.apiBase);
 
     return (
-        <div 
-            className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm"
+        <div
+            className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-[2px]"
             onClick={onClose}
         >
-            <div 
-                className="bg-surface border border-outline-variant/20 rounded-t-2xl sm:rounded-lg shadow-2xl w-full sm:max-w-lg p-6 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto"
+            <div
+                className="manuscript-sheet paper-grain rounded-t-lg sm:rounded-sm w-full sm:max-w-lg p-6 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
             >
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center space-x-2">
-                        <Bot size={26} className="text-primary" />
+                <div className="flex justify-between items-center pb-4 mb-5 border-b border-dashed border-outline-variant/65">
+                    <div className="flex items-center gap-2">
+                        <Bot size={20} className="text-primary" />
                         <h2 className="font-headline text-xl font-bold text-on-surface">AI 设置</h2>
                     </div>
-                    <button 
-                        onClick={onClose} 
-                        className="p-1 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
+                    <button
+                        onClick={onClose}
+                        className="p-1.5 rounded-sm hover:bg-surface-container transition-colors text-outline hover:text-on-surface cursor-pointer"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                 </div>
 
                 <div className="space-y-5">
                     {/* Enable toggle */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between p-3 bg-surface-container border border-outline-variant/55 rounded-sm">
                         <div>
-                            <p className="font-label text-sm font-medium text-on-surface">启用 AI 功能</p>
-                            <p className="text-xs text-on-surface-variant">开启后可使用 AI 生成灵感、续写等辅助功能</p>
+                            <p className="font-label text-sm font-medium text-on-surface">启用 AI 辅助</p>
+                            <p className="text-xs text-on-surface-variant mt-0.5">开启后可使用点拨、出题、顺势续写与审读批注</p>
                         </div>
                         <button
                             onClick={() => store.setAiEnabled(!store.aiEnabled)}
-                            className={`relative w-11 h-6 rounded-full transition-colors ${store.aiEnabled ? 'bg-primary' : 'bg-outline-variant/40'}`}
+                            className={`relative w-11 h-6 border border-on-surface/25 transition-colors cursor-pointer ${store.aiEnabled ? 'bg-primary' : 'bg-surface-container-high'}`}
                         >
-                            <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${store.aiEnabled ? 'translate-x-5' : ''}`} />
+                            <span className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 bg-surface-container-lowest border border-on-surface/20 transition-transform ${store.aiEnabled ? 'translate-x-5' : ''}`} />
                         </button>
                     </div>
 
                     {/* Preset */}
                     <div>
-                        <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">快速选择</label>
-                        <div className="flex gap-2 flex-wrap">
+                        <label className="font-mono text-[11px] font-bold text-outline uppercase tracking-widest mb-2 block">
+                            PROVIDER PRESETS · 服务商预设
+                        </label>
+                        <div className="flex gap-1.5 flex-wrap">
                             {API_PRESETS.map(p => (
                                 <button
                                     key={p.label}
@@ -68,10 +69,11 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                         store.switchAiProvider(p.base, p.model);
                                         setAiTestStatus('idle');
                                     }}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-label border transition-colors ${store.aiConfig.apiBase === p.base
-                                            ? 'bg-primary/10 border-primary/30 text-primary font-medium'
-                                            : 'bg-surface-container border-outline-variant/20 text-on-surface-variant hover:bg-surface-container-high'
-                                        }`}
+                                    className={`px-3 py-1.5 rounded-sm text-xs font-label border transition-colors cursor-pointer ${
+                                        store.aiConfig.apiBase === p.base
+                                            ? 'bg-primary text-on-primary border-primary font-medium'
+                                            : 'bg-surface-container border-outline-variant/60 text-on-surface-variant hover:border-secondary'
+                                    }`}
                                 >
                                     {p.label}
                                 </button>
@@ -81,39 +83,45 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
 
                     {/* API Base */}
                     <div>
-                        <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">API 地址</label>
+                        <label className="font-mono text-[11px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
+                            API ENDPOINT · 接口地址
+                        </label>
                         <input
                             type="url"
                             value={store.aiConfig.apiBase}
                             onChange={e => { store.setAiConfig({ apiBase: e.target.value }); setAiTestStatus('idle'); }}
                             placeholder="https://generativelanguage.googleapis.com/v1beta/openai"
-                            className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                            className="w-full px-3 py-2 bg-surface-container border border-outline-variant/60 rounded-sm font-mono text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                         />
                     </div>
 
                     {/* API Key */}
                     <div>
-                        <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">API Key</label>
+                        <label className="font-mono text-[11px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
+                            API KEY · 密钥
+                        </label>
                         <input
                             type="password"
                             value={store.aiConfig.apiKey}
                             onChange={e => { store.setAiConfig({ apiKey: e.target.value }); setAiTestStatus('idle'); }}
                             placeholder="粘贴 API Key"
-                            className="w-full px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                            className="w-full px-3 py-2 bg-surface-container border border-outline-variant/60 rounded-sm font-mono text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                         />
-                        <p className="text-[13px] text-on-surface-variant mt-1">密钥只存在这台设备的浏览器里，只会发给上面这个服务商</p>
+                        <p className="text-xs font-label text-outline mt-1.5">密钥仅保存在本机浏览器本地，直连你所填写的服务商接口。</p>
                     </div>
 
                     {/* Model */}
                     <div>
-                        <label className="font-label text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2 block">模型</label>
+                        <label className="font-mono text-[11px] font-bold text-outline uppercase tracking-widest mb-1.5 block">
+                            MODEL · 模型型号
+                        </label>
                         <div className="flex flex-col sm:flex-row gap-2 mb-2">
                             <input
                                 type="text"
                                 value={store.aiConfig.model}
                                 onChange={e => { store.setAiConfig({ model: e.target.value }); setAiTestStatus('idle'); }}
                                 placeholder="gemini-4-hydrogen"
-                                className="flex-1 px-3 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
+                                className="flex-1 px-3 py-2 bg-surface-container border border-outline-variant/60 rounded-sm font-mono text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none transition-colors"
                             />
                             {canFetchModels && (
                                 <button
@@ -126,23 +134,23 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                         finally { setAiModelsLoading(false); }
                                     }}
                                     disabled={aiModelsLoading}
-                                    title={store.aiConfig.apiKey ? '获取该 Key 可用的模型列表' : '获取本地可用模型列表'}
-                                    className="px-3 py-2 border border-outline-variant/30 rounded-lg text-xs font-label text-on-surface-variant hover:bg-surface-container-high transition-colors disabled:opacity-50 whitespace-nowrap"
+                                    className="px-3 py-2 border border-outline-variant/60 rounded-sm text-xs font-label text-on-surface-variant hover:border-secondary hover:text-on-surface transition-colors disabled:opacity-50 whitespace-nowrap cursor-pointer"
                                 >
-                                    {aiModelsLoading ? '获取中…' : '可用模型'}
+                                    {aiModelsLoading ? '拉取中…' : '查询可用模型'}
                                 </button>
                             )}
                         </div>
                         {aiAvailModels.length > 0 && (
-                            <div className="max-h-32 overflow-y-auto flex flex-wrap gap-1 mb-1">
+                            <div className="max-h-32 overflow-y-auto flex flex-wrap gap-1 p-2 bg-surface-container border border-outline-variant/45 rounded-sm">
                                 {aiAvailModels.map(m => (
                                     <button
                                         key={m}
                                         onClick={() => { store.setAiConfig({ model: m }); setAiTestStatus('idle'); }}
-                                        className={`px-2 py-0.5 rounded text-[13px] font-label border transition-colors ${store.aiConfig.model === m
-                                                ? 'bg-primary/10 border-primary/30 text-primary'
-                                                : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'
-                                            }`}
+                                        className={`px-2 py-0.5 rounded-none font-mono text-[11px] border transition-colors cursor-pointer ${
+                                            store.aiConfig.model === m
+                                                ? 'bg-primary text-on-primary border-primary'
+                                                : 'border-outline-variant/50 text-on-surface-variant hover:border-secondary'
+                                        }`}
                                     >
                                         {m}
                                     </button>
@@ -152,7 +160,7 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                     </div>
 
                     {/* Test connection */}
-                    <div className="flex items-center gap-3 pt-2">
+                    <div className="flex items-center gap-3 pt-2 border-t border-dashed border-outline-variant/60">
                         <button
                             onClick={async () => {
                                 setAiTestStatus('testing');
@@ -166,23 +174,23 @@ export default function AiSettingsModal({ isOpen, onClose }: AiSettingsModalProp
                                 }
                             }}
                             disabled={aiTestStatus === 'testing'}
-                            className="flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-label font-medium hover:bg-primary-dim transition-colors disabled:opacity-50"
+                            className="flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-sm text-xs font-label font-semibold uppercase tracking-wider hover:bg-primary-dim transition-colors disabled:opacity-50 cursor-pointer"
                         >
-                            {aiTestStatus === 'testing' ? <LoaderCircle size={18} className="animate-spin" /> : <Wifi size={18} />}
+                            {aiTestStatus === 'testing' ? <LoaderCircle size={15} className="animate-spin" /> : <Wifi size={15} />}
                             <span>{aiTestStatus === 'testing' ? '测试中…' : '测试连接'}</span>
                         </button>
                         {aiTestStatus === 'success' && (
-                            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-sm font-label">
-                                <CheckCircle2 size={18} />连接成功
+                            <span className="flex items-center gap-1 text-tertiary text-xs font-label font-medium">
+                                <CheckCircle2 size={16} />连接正常
                             </span>
                         )}
                         {aiTestStatus === 'fail' && (
-                            <div className="flex flex-col gap-1">
-                                <span className="flex items-center gap-1 text-red-600 dark:text-red-400 text-sm font-label">
-                                    <AlertCircle size={18} />连接失败
+                            <div className="flex flex-col gap-0.5">
+                                <span className="flex items-center gap-1 text-error text-xs font-label font-medium">
+                                    <AlertCircle size={16} />连接失败
                                 </span>
                                 {aiTestError && (
-                                    <span className="text-[13px] text-red-500/80 dark:text-red-400/70 font-mono break-all max-w-xs">{aiTestError}</span>
+                                    <span className="text-[11px] text-error/85 font-mono break-all max-w-xs">{aiTestError}</span>
                                 )}
                             </div>
                         )}

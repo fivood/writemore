@@ -33,8 +33,8 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Google Fonts CSS + 字体文件：Cache First（缓存优先，有缓存直接返回，无缓存才请求并写入）
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+  // WebFont CSS + 字体分片：Cache First
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com' || url.hostname === 'cdn.jsdelivr.net') {
     e.respondWith(
       caches.open(FONT_CACHE).then(cache =>
         cache.match(e.request).then(cached => {

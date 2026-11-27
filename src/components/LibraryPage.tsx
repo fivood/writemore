@@ -83,45 +83,45 @@ function ImportPreviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-surface-container rounded-lg w-full max-w-3xl mx-4 max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-[2px]" onClick={onClose}>
+      <div className="manuscript-sheet paper-grain rounded-sm w-full max-w-3xl mx-4 max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div className="p-6 pb-4 border-b border-outline-variant/15">
+        <div className="p-6 pb-4 border-b border-dashed border-outline-variant/65">
           <h3 className="font-headline text-xl font-bold text-on-surface flex items-center space-x-2 mb-4">
-            <Download size={26} className="text-primary" />
-            <span>导入预览</span>
+            <Download size={22} className="text-primary" />
+            <span>词条导入预览</span>
           </h3>
 
           {/* Summary pills */}
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => toggleByStatus('new', true)}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1 rounded-sm text-xs font-label font-medium bg-tertiary-container/70 text-tertiary border border-tertiary/35 hover:opacity-90 transition-opacity cursor-pointer"
             >
-              <PlusCircle size={16} />
+              <PlusCircle size={14} />
               <span>新词条: {newWords.length}</span>
             </button>
             {duplicates.length > 0 && (
               <button
                 onClick={() => toggleByStatus('duplicate', false)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition-colors"
+                className="flex items-center space-x-1.5 px-3 py-1 rounded-sm text-xs font-label font-medium bg-secondary-container/70 text-secondary border border-secondary/35 hover:opacity-90 transition-opacity cursor-pointer"
               >
-                <Copy size={16} />
+                <Copy size={14} />
                 <span>重复: {duplicates.length}</span>
               </button>
             )}
             {conflicts.length > 0 && (
               <button
                 onClick={() => toggleByStatus('conflict', true)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors"
+                className="flex items-center space-x-1.5 px-3 py-1 rounded-sm text-xs font-label font-medium bg-error-container/70 text-error border border-error/35 hover:opacity-90 transition-opacity cursor-pointer"
               >
-                <AlertTriangle size={16} />
+                <AlertTriangle size={14} />
                 <span>分类冲突: {conflicts.length}</span>
               </button>
             )}
             {unknownCategories.length > 0 && (
-              <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium bg-purple-50 text-purple-700 border border-purple-200">
-                <Tag size={16} />
+              <div className="flex items-center space-x-1.5 px-3 py-1 rounded-sm text-xs font-label font-medium bg-surface-container-high text-on-surface border border-outline-variant/60">
+                <Tag size={14} />
                 <span>新分类: {unknownCategories.join('、')}</span>
               </div>
             )}
@@ -550,138 +550,137 @@ export default function LibraryPage() {
   };
 
   return (
-    <main className="flex-1 bg-surface relative overflow-y-auto p-4 md:p-8 lg:p-12">
+    <main className="flex-1 relative overflow-y-auto p-4 md:p-8 lg:p-12">
       <div className="max-w-6xl mx-auto pb-20">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <h2 className="font-headline text-2xl md:text-3xl font-black text-on-surface flex items-center space-x-3">
-            <BookOpen size={30} className="text-primary" />
-            <span>词库管理</span>
-          </h2>
+        {/* 报刊版头 */}
+        <div className="broadsheet-masthead-rule py-4 mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h2 className="font-headline text-2xl md:text-3xl font-bold text-on-surface flex items-center gap-2.5">
+              <BookOpen size={24} className="text-primary" />
+              <span>词库管理</span>
+            </h2>
+          </div>
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-sm text-xs font-label font-medium bg-surface-container border border-outline-variant/60 text-on-surface-variant hover:border-secondary hover:text-on-surface transition-all cursor-pointer"
             >
-              <Download size={18} />
+              <Download size={14} />
               <span>导入</span>
             </button>
             <input ref={fileInputRef} type="file" accept=".json,.md,.txt" className="hidden" onChange={handleImport} />
             {/* Export dropdown */}
             <div className="relative group">
               <button
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
+                className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-sm text-xs font-label font-medium bg-surface-container border border-outline-variant/60 text-on-surface-variant hover:border-secondary hover:text-on-surface transition-all cursor-pointer"
               >
-                <Upload size={18} />
+                <Upload size={14} />
                 <span>导出</span>
-                <ChevronDown size={14} className="ml-0.5" />
+                <ChevronDown size={13} className="ml-0.5" />
               </button>
-              <div className="absolute right-0 top-full mt-1 bg-surface-container-high rounded-lg border border-outline-variant/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 w-40">
+              <div className="absolute right-0 top-full mt-1 bg-surface-container rounded-sm border border-outline-variant/75 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 w-40">
                 <button
                   onClick={handleExport}
-                  className="w-full text-left px-4 py-2.5 text-xs font-label text-on-surface-variant hover:bg-surface-container-highest rounded-t-lg flex items-center space-x-2 transition-colors"
+                  className="w-full text-left px-3.5 py-2 text-xs font-label text-on-surface-variant hover:bg-surface-container-high flex items-center space-x-2 transition-colors cursor-pointer"
                 >
-                  <span className="text-[12px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">JSON</span>
-                  <span>导出为 .json</span>
+                  <span className="font-mono text-[10px] font-bold text-secondary bg-secondary-container/70 px-1.5 py-0.5 rounded-none">JSON</span>
+                  <span>导出 .json</span>
                 </button>
                 <button
                   onClick={handleExportMd}
-                  className="w-full text-left px-4 py-2.5 text-xs font-label text-on-surface-variant hover:bg-surface-container-highest rounded-b-lg flex items-center space-x-2 border-t border-outline-variant/15 transition-colors"
+                  className="w-full text-left px-3.5 py-2 text-xs font-label text-on-surface-variant hover:bg-surface-container-high flex items-center space-x-2 border-t border-outline-variant/40 transition-colors cursor-pointer"
                 >
-                  <span className="text-[12px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">MD</span>
-                  <span>导出为 .md</span>
+                  <span className="font-mono text-[10px] font-bold text-primary bg-primary-container/70 px-1.5 py-0.5 rounded-none">MD</span>
+                  <span>导出 .md</span>
                 </button>
               </div>
             </div>
             <button
               onClick={openAddModal}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-primary text-white hover:bg-primary-dim transition-all"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-sm text-xs font-label font-semibold bg-primary text-on-primary hover:bg-primary-dim transition-all cursor-pointer"
             >
-              <Plus size={18} />
+              <Plus size={14} />
               <span>添加词条</span>
             </button>
             <button
               onClick={() => setShowCategoryModal(true)}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-sm text-xs font-label font-medium bg-surface-container border border-outline-variant/60 text-on-surface-variant hover:border-secondary transition-all cursor-pointer"
             >
-              <Tag size={18} />
+              <Tag size={14} />
               <span>新增分类</span>
             </button>
             <button
               onClick={openManageCategoryModal}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-label font-medium bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-sm text-xs font-label font-medium bg-surface-container border border-outline-variant/60 text-on-surface-variant hover:border-secondary transition-all cursor-pointer"
             >
-              <Pencil size={18} />
-              <span>管理自定义分类</span>
+              <Pencil size={14} />
+              <span>管理分类</span>
             </button>
-          </div>
-
-          <div className="md:ml-auto md:max-w-[440px] px-3 py-2 rounded-lg border border-outline-variant/20 bg-surface-container-low/60 text-[12px] font-label text-on-surface-variant leading-relaxed flex items-start gap-2">
-            <Info size={15} className="mt-0.5 shrink-0 text-primary" />
-            <div>
-              <p>导入格式支持 `.json` / `.md` / `.txt`，每行一条。</p>
-              <p className="mt-0.5">示例：`[意象]（余晖）：（傍晚天空残留的光）` 或 `[动作] 奔跑：快速移动`</p>
-            </div>
           </div>
         </div>
 
+        <div className="mb-5 px-4 py-2.5 rounded-sm border border-dashed border-outline-variant/60 bg-surface-container/60 text-xs font-label text-on-surface-variant leading-relaxed flex items-center gap-2">
+          <Info size={14} className="shrink-0 text-secondary" />
+          <span>支持导入 <code className="font-mono">.json</code> / <code className="font-mono">.md</code> / <code className="font-mono">.txt</code>（每行一条，如 <code className="font-mono">[意象] 余晖：傍晚天空残留的光</code>）。</span>
+        </div>
+
         {/* Stats bar */}
-        <div className="flex items-center flex-wrap gap-3 mb-6 p-4 bg-surface-container-low/60 rounded-lg border border-outline-variant/15">
+        <div className="flex items-center flex-wrap gap-3 mb-5 px-4 py-2.5 bg-surface-container rounded-sm border border-outline-variant/55">
           <button
             onClick={() => setSourceFilter('all')}
-            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'all' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
+            className={`flex items-center space-x-1.5 text-xs font-label px-2.5 py-1 rounded-sm transition-colors cursor-pointer ${sourceFilter === 'all' ? 'bg-primary text-on-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
           >
-            <BookOpen size={20} className="text-primary" />
-            <span className="font-bold">{stats.total}</span>
+            <BookOpen size={14} />
+            <span className="font-mono font-bold">{stats.total}</span>
             <span>总计</span>
           </button>
-          <div className="h-4 w-px bg-outline-variant/30" />
+          <div className="h-3.5 w-px bg-outline-variant/45" />
           <button
             onClick={() => setSourceFilter('builtin')}
-            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'builtin' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
+            className={`flex items-center space-x-1.5 text-xs font-label px-2.5 py-1 rounded-sm transition-colors cursor-pointer ${sourceFilter === 'builtin' ? 'bg-primary text-on-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
           >
-            <Package size={20} className="text-amber-500" />
-            <span className="font-bold">{stats.builtin}</span>
+            <Package size={14} />
+            <span className="font-mono font-bold">{stats.builtin}</span>
             <span>内置</span>
           </button>
-          <div className="h-4 w-px bg-outline-variant/30" />
+          <div className="h-3.5 w-px bg-outline-variant/45" />
           <button
             onClick={() => setSourceFilter('user')}
-            className={`flex items-center space-x-2 text-sm font-label px-3 py-1 rounded-md transition-colors ${sourceFilter === 'user' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-high/50'}`}
+            className={`flex items-center space-x-1.5 text-xs font-label px-2.5 py-1 rounded-sm transition-colors cursor-pointer ${sourceFilter === 'user' ? 'bg-primary text-on-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
           >
-            <User size={20} className="text-green-500" />
-            <span className="font-bold">{stats.user}</span>
-            <span>自定义</span>
+            <User size={14} />
+            <span className="font-mono font-bold">{stats.user}</span>
+            <span>自建</span>
           </button>
           {stats.disabled > 0 && (
             <>
-              <div className="h-4 w-px bg-outline-variant/30" />
-              <div className="flex items-center space-x-2 text-sm font-label text-stone-400 dark:text-on-surface-variant">
-                <EyeOff size={20} />
-                <span className="font-bold">{stats.disabled}</span>
-                <span>已禁用</span>
+              <div className="h-3.5 w-px bg-outline-variant/45" />
+              <div className="flex items-center space-x-1.5 text-xs font-label text-outline">
+                <EyeOff size={14} />
+                <span className="font-mono font-bold">{stats.disabled}</span>
+                <span>已停用</span>
               </div>
             </>
           )}
         </div>
 
         {/* Category filter pills */}
-        <div className="flex flex-wrap gap-2 mb-5">
+        <div className="flex flex-wrap gap-1.5 mb-5">
           {categoryOptions.map(c => {
             return (
               <button
                 key={c}
                 onClick={() => { setCategoryFilter(c); setPage(0); }}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-label font-medium border transition-all ${
+                className={`flex items-center space-x-1.5 px-3 py-1 rounded-sm text-xs font-label font-medium border transition-all cursor-pointer ${
                   categoryFilter === c
-                    ? 'bg-primary text-white border-primary'
-                    : 'bg-surface-container text-on-surface-variant border-outline-variant/30 hover:border-outline-variant'
+                    ? 'bg-primary text-on-primary border-primary'
+                    : 'bg-surface-container text-on-surface-variant border-outline-variant/55 hover:border-secondary'
                 }`}
               >
-                {c !== 'all' && (() => { const CatIcon = getCategoryIcon(c); return <CatIcon size={16} />; })()}
+                {c !== 'all' && (() => { const CatIcon = getCategoryIcon(c); return <CatIcon size={13} />; })()}
                 <span>{c === 'all' ? '全部类型' : c}</span>
                 {c !== 'all' && (
-                  <span className="opacity-70">({stats.categoryCounts.get(c) || 0})</span>
+                  <span className="font-mono text-[10px] opacity-75">({stats.categoryCounts.get(c) || 0})</span>
                 )}
               </button>
             );
@@ -689,18 +688,18 @@ export default function LibraryPage() {
         </div>
 
         {/* Search bar */}
-        <div className="relative mb-6">
-          <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 dark:text-outline pointer-events-none" />
+        <div className="relative mb-5">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
           <input
             type="text"
-            placeholder="搜索词条或释义..."
+            placeholder="检索活字词条或释义…"
             value={searchQuery}
             onChange={e => { setSearchQuery(e.target.value); setPage(0); }}
-            className="w-full pl-10 pr-4 py-2.5 bg-surface-container rounded-lg border border-outline-variant/30 text-sm font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+            className="w-full pl-9 pr-4 py-2 bg-surface-container rounded-sm border border-outline-variant/60 text-xs font-label text-on-surface placeholder:text-outline focus:outline-none focus:border-primary transition-colors"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant">
-              <X size={18} />
+            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface">
+              <X size={15} />
             </button>
           )}
         </div>
@@ -739,46 +738,46 @@ export default function LibraryPage() {
             <p className="text-stone-500 dark:text-on-surface-variant font-label">没有找到匹配的词条</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+          <div className="broadsheet-frame grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 bg-surface-container/60">
             {paginated.map(w => (
               <div
                 key={w.id}
-                className={`group relative bg-surface-container p-3 rounded-lg border transition-all hover:-translate-y-0.5 hover:bg-surface-container-high ${
-                  w.enabled === false ? 'opacity-40 border-outline-variant/20' : 'border-outline-variant/15'
+                className={`group relative p-3.5 border-b border-r border-on-surface/20 hover:bg-surface-container transition-colors ${
+                  w.enabled === false ? 'opacity-40' : ''
                 }`}
               >
                 {/* Top-right actions (hover) */}
-                <div className="absolute top-1.5 right-1.5 flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-2 right-2 flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleToggleEnabled(w)}
-                    className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-on-surface-variant transition-colors"
-                    title={w.enabled !== false ? '禁用' : '启用'}
+                    className="p-0.5 rounded-sm hover:bg-surface-container-high text-outline hover:text-on-surface transition-colors cursor-pointer"
+                    title={w.enabled !== false ? '停用' : '启用'}
                   >
-                    {w.enabled !== false ? <Eye size={16} /> : <EyeOff size={16} />}
+                    {w.enabled !== false ? <Eye size={14} /> : <EyeOff size={14} />}
                   </button>
                   {w.source === 'user' && (
                     <>
                       <button
                         onClick={() => openEditModal(w)}
-                        className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-primary transition-colors"
+                        className="p-0.5 rounded-sm hover:bg-surface-container-high text-outline hover:text-primary transition-colors cursor-pointer"
                         title="编辑"
                       >
-                        <Pencil size={16} />
+                        <Pencil size={14} />
                       </button>
                       <button
                         onClick={() => handleDeleteWord(w)}
-                        className="p-0.5 rounded hover:bg-surface-container-high text-outline hover:text-red-500 transition-colors"
+                        className="p-0.5 rounded-sm hover:bg-surface-container-high text-outline hover:text-error transition-colors cursor-pointer"
                         title="删除"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={14} />
                       </button>
                     </>
                   )}
                 </div>
 
                 {/* Category badge */}
-                <span className={`inline-block px-1.5 py-0.5 text-[14px] font-label font-bold rounded border tracking-wider mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['意象'] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>
-                  {(() => { const CatIcon = getCategoryIcon(w.category); return <CatIcon size={14} className="inline-block align-middle mr-0.5" />; })()}{w.category}
+                <span className={`inline-block px-1.5 py-0.5 text-[11px] font-label font-semibold rounded-none border mb-2 ${CATEGORY_COLORS[w.category] || CATEGORY_COLORS['all']}`}>
+                  {(() => { const CatIcon = getCategoryIcon(w.category); return <CatIcon size={11} className="inline-block align-middle mr-0.5" />; })()}{w.category}
                 </span>
 
                 {/* Word text */}
@@ -786,13 +785,13 @@ export default function LibraryPage() {
 
                 {/* Explanation */}
                 {w.explanation && (
-                  <p className="text-[13px] text-on-surface-variant leading-relaxed line-clamp-2">{w.explanation}</p>
+                  <p className="text-xs font-body text-on-surface-variant leading-relaxed line-clamp-2">{w.explanation}</p>
                 )}
 
                 {/* Source badge */}
                 {w.source === 'user' && (
                   <div className="mt-2">
-                    <span className="text-[10px] font-label font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-100 uppercase tracking-wider">自定义</span>
+                    <span className="font-mono text-[10px] font-bold text-tertiary bg-tertiary-container/60 px-1.5 py-0.5 rounded-none border border-tertiary/30 uppercase tracking-wider">CUSTOM</span>
                   </div>
                 )}
               </div>

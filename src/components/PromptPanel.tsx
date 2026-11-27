@@ -1,74 +1,127 @@
-import { X, Sparkles, Star, RefreshCw, Dices, User, Mountain, CircleHelp, Lock, LockOpen, LoaderCircle, Plus } from 'lucide-react';
+import {
+    X, Sparkles, Star, RefreshCw, Dices, User, Mountain, CircleHelp,
+    Lock, LockOpen, LoaderCircle, Plus, ArrowLeft, ChevronsLeft, Bot, MoonStar, PencilLine,
+} from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useStore } from '../store';
-import { CHARACTER_LAYERS, pickGenre } from '../inspire';
+import { CHARACTER_LAYERS, pickGenre, pickScene } from '../inspire';
 import type { PromptFavorite } from '../types';
-import { drawNewWords, pickNextChallenge, pickNextCharacterPrompt, toggleWordSetFavorite } from '../lib/session';
+import { backToHome, drawNewWords, pickNextChallenge, pickNextCharacterPrompt, toggleWordSetFavorite } from '../lib/session';
 import { isPromptFavorited, togglePromptFavorite } from '../lib/drafts';
-import { CHARACTER_LAYER_STYLE, GENRE_STYLE, WORD_CARD_STYLE } from '../ui/meta';
+import { WORD_CARD_STYLE } from '../ui/meta';
 import type { AiAssist } from './useAiAssist';
+import ModeSidebar from './ModeSidebar';
 
-/** 桌面端是编辑器左边一栏；手机上点「灵感」从右侧滑出，带遮罩 */
-function Panel({ open, onClose, children }: { open: boolean; onClose: () => void; children: ReactNode }) {
+function DeskDrawer({
+    open,
+    collapsed,
+    onClose,
+    onCollapseDesktop,
+    libraryOpen,
+    onToggleLibrary,
+    children,
+}: {
+    open: boolean;
+    collapsed: boolean;
+    onClose: () => void;
+    onCollapseDesktop: () => void;
+    libraryOpen: boolean;
+    onToggleLibrary: () => void;
+    children: ReactNode;
+}) {
     return (
         <>
             {open && (
                 <div
-                    className="md:hidden fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+                    className="md:hidden fixed inset-0 z-[55] bg-black/45 backdrop-blur-[2px] transition-opacity duration-300"
                     onClick={onClose}
                 />
             )}
-            <section className={`${open
-                ? 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] bg-surface-container-low shadow-2xl translate-x-0'
-                : 'fixed right-0 top-0 bottom-0 w-[85%] max-w-[360px] z-[60] translate-x-full md:translate-x-0'
-            } transition-transform duration-300 ease-in-out overflow-y-auto pt-4 px-4 pb-20 md:relative md:block md:w-80 md:bg-surface-container-low md:overflow-y-auto md:shrink-0 md:border-r md:border-outline-variant/10 md:z-auto`}>
-                <div className="p-5 md:p-8 flex flex-col space-y-6">
-                    <button onClick={onClose} className="md:hidden mb-2 flex items-center gap-1 text-sm text-on-surface-variant"><X size={18} />收起</button>
-                    {children}
+            <aside
+                className={`${
+                    open
+                        ? 'fixed right-0 top-0 bottom-0 w-[88%] max-w-[340px] z-[60] translate-x-0 shadow-2xl'
+                        : 'fixed right-0 top-0 bottom-0 w-[88%] max-w-[340px] z-[60] translate-x-full'
+                } ${
+                    collapsed
+                        ? 'md:w-0 md:opacity-0 md:overflow-hidden md:border-r-0 md:p-0'
+                        : 'md:relative md:translate-x-0 md:w-[320px] md:opacity-100 md:border-r md:border-outline-variant/55'
+                } bg-surface-container-low/95 dark:bg-[#171513] transition-all duration-300 ease-in-out overflow-y-auto shrink-0 md:z-auto flex flex-col`}
+            >
+                <div className="p-5 pb-24 md:pb-8 flex-1 flex flex-col justify-between gap-6">
+                    <div className="space-y-5">
+                        <div className="flex items-center justify-between pb-3 border-b border-dashed border-outline-variant/60">
+                            <button
+                                onClick={backToHome}
+                                className="inline-flex items-center gap-1.5 text-xs font-label text-on-surface-variant hover:text-primary transition-colors group cursor-pointer"
+                            >
+                                <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+                                <span>返回首页</span>
+                            </button>
+
+                            <button
+                                onClick={onCollapseDesktop}
+                                title="收起侧栏"
+                                className="hidden md:inline-flex items-center gap-1 text-xs font-label text-outline hover:text-on-surface transition-colors cursor-pointer"
+                            >
+                                <ChevronsLeft size={15} />
+                                <span>收起</span>
+                            </button>
+
+                            <button
+                                onClick={onClose}
+                                className="md:hidden inline-flex items-center gap-1 text-xs font-label text-on-surface-variant hover:text-on-surface"
+                            >
+                                <X size={16} />
+                                <span>收起</span>
+                            </button>
+                        </div>
+
+                        {children}
+                    </div>
+
+                    <ModeSidebar libraryOpen={libraryOpen} onToggleLibrary={onToggleLibrary} />
                 </div>
-            </section>
+            </aside>
         </>
     );
 }
 
-const TONE = {
-    rose: {
-        chip: 'bg-rose-100/80 dark:bg-rose-500/10 border-rose-200/50 dark:border-rose-400/20 text-rose-600 dark:text-rose-400',
-        label: 'text-rose-600 dark:text-rose-400',
-        active: 'bg-rose-50 dark:bg-rose-500/10 border-rose-300/70 dark:border-rose-400/30 text-rose-900 dark:text-rose-200',
-    },
-    fuchsia: {
-        chip: 'bg-fuchsia-100/80 dark:bg-fuchsia-500/10 border-fuchsia-200/50 dark:border-fuchsia-400/20 text-fuchsia-600 dark:text-fuchsia-400',
-        label: 'text-fuchsia-600 dark:text-fuchsia-400',
-        active: 'bg-fuchsia-50 dark:bg-fuchsia-500/10 border-fuchsia-300/70 dark:border-fuchsia-400/30 text-fuchsia-900 dark:text-fuchsia-200',
-    },
-};
-type Tone = keyof typeof TONE;
-
-/** AI 刚出、还没进题库的题，卡片上给一个「存进题库」 */
-function SaveToBank({ onSave, tone }: { onSave: () => void; tone: Tone }) {
+function SaveToBank({ onSave }: { onSave: () => void }) {
     return (
-        <button onClick={onSave} className={`mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[12px] font-label hover:opacity-80 transition-opacity ${TONE[tone].chip}`}>
-            <Plus size={13} />存进题库
+        <button
+            onClick={onSave}
+            className="mt-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm border border-secondary/50 bg-secondary-container/50 text-secondary text-[11px] font-label hover:opacity-85 transition-opacity cursor-pointer"
+        >
+            <Plus size={12} />存进题库
         </button>
     );
 }
 
-/** AI 一次出的几道候选：点一下换成这道来写，不会存进题库 */
-function CandidateList<T extends { id: string; text: string }>({ items, currentId, onPick, tone }: {
-    items: T[]; currentId: string; onPick: (item: T) => void; tone: Tone;
+function CandidateList<T extends { id: string; text: string }>({
+    items,
+    currentId,
+    onPick,
+}: {
+    items: T[];
+    currentId: string;
+    onPick: (item: T) => void;
 }) {
     if (items.length < 2) return null;
     return (
         <div className="space-y-1.5">
-            <p className={`text-[12px] font-label uppercase tracking-widest flex items-center gap-1 ${TONE[tone].label}`}>
-                <Sparkles size={14} />AI 出的几道，点一下换着写
+            <p className="font-label text-xs text-secondary flex items-center gap-1">
+                <Sparkles size={12} />AI 候选题目（点选切换）
             </p>
             {items.map(item => (
                 <button
                     key={item.id}
                     onClick={() => onPick(item)}
-                    className={`w-full text-left px-3 py-2 rounded-lg border text-sm leading-relaxed transition-colors ${item.id === currentId ? TONE[tone].active : 'border-outline-variant/20 text-on-surface-variant hover:bg-surface-container'}`}
+                    className={`w-full text-left px-3 py-2 rounded-sm border text-xs font-body leading-relaxed transition-colors cursor-pointer ${
+                        item.id === currentId
+                            ? 'bg-primary-container/55 border-primary/50 text-on-surface font-medium'
+                            : 'bg-surface-container border-outline-variant/45 text-on-surface-variant hover:border-secondary/50'
+                    }`}
                 >
                     {item.text}
                 </button>
@@ -79,7 +132,6 @@ function CandidateList<T extends { id: string; text: string }>({ items, currentI
 
 type FavoriteEntry = Omit<PromptFavorite, 'id' | 'createdAt'>;
 
-/** 当前题目有没有收藏 + 切换收藏 */
 function usePromptFavorite(entry: FavoriteEntry | null, label: string) {
     const showToast = useStore(s => s.showToast);
     const [fav, setFav] = useState({ id: '', on: false });
@@ -106,264 +158,471 @@ function usePromptFavorite(entry: FavoriteEntry | null, label: string) {
     return { on: fav.id === id && fav.on, toggle };
 }
 
-/** 写作页的提示卡：词卡 / 场景 / 挑战题 / 角色题 */
-export default function PromptPanel({ ai, mobileOpen, onClose }: { ai: AiAssist; mobileOpen: boolean; onClose: () => void }) {
+function BonusDispatchWords() {
+    const words = useStore(s => s.currentWords);
+    if (words.length === 0) return null;
+    return (
+        <div className="p-3 rounded-sm bg-surface-container border border-dashed border-secondary/55">
+            <p className="font-label text-xs text-secondary mb-2">今日盲盒词条</p>
+            <div className="flex flex-wrap gap-1.5">
+                {words.map(w => (
+                    <span
+                        key={w.id}
+                        title={w.explanation || undefined}
+                        className="px-2.5 py-0.5 bg-surface-container-lowest border border-outline-variant/60 rounded-none text-sm font-headline font-bold text-on-surface"
+                    >
+                        {w.text}
+                    </span>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default function PromptPanel({
+    ai,
+    mobileOpen,
+    onClose,
+    libraryOpen,
+    onToggleLibrary,
+}: {
+    ai: AiAssist;
+    mobileOpen: boolean;
+    onClose: () => void;
+    libraryOpen: boolean;
+    onToggleLibrary: () => void;
+}) {
     const store = useStore();
     const scene = store.currentScene;
     const challenge = store.currentChallenge;
     const character = store.currentCharacterPrompt;
     const characterLayer = character && CHARACTER_LAYERS.find(l => l.id === character.layer);
-    const sceneFav = usePromptFavorite(scene && {
-        module: 'scene', itemId: scene.id, title: scene.title, description: scene.description, tags: scene.tags, isAi: scene.id.startsWith('ai_'),
-    }, '场景题目');
-    const challengeFav = usePromptFavorite(challenge && {
-        module: 'challenge', itemId: challenge.id, title: challenge.text, isAi: challenge.id.startsWith('ai_'),
-    }, '挑战题目');
-    const characterFav = usePromptFavorite(character && {
-        module: 'character', itemId: character.id, title: character.text,
-        description: characterLayer ? `维度：${characterLayer.name}` : undefined, isAi: character.id.startsWith('ai_'),
-    }, '人物题目');
+
+    const sceneFav = usePromptFavorite(
+        scene && {
+            module: 'scene',
+            itemId: scene.id,
+            title: scene.title,
+            description: scene.description,
+            tags: scene.tags,
+            isAi: scene.id.startsWith('ai_'),
+        },
+        '场景题目'
+    );
+    const challengeFav = usePromptFavorite(
+        challenge && {
+            module: 'challenge',
+            itemId: challenge.id,
+            title: challenge.text,
+            isAi: challenge.id.startsWith('ai_'),
+        },
+        '挑战题目'
+    );
+    const characterFav = usePromptFavorite(
+        character && {
+            module: 'character',
+            itemId: character.id,
+            title: character.text,
+            description: characterLayer ? `维度：${characterLayer.name}` : undefined,
+            isAi: character.id.startsWith('ai_'),
+        },
+        '人物题目'
+    );
 
     return (
-        <>
+        <DeskDrawer
+            open={mobileOpen}
+            collapsed={store.sidebarCollapsed}
+            onClose={onClose}
+            onCollapseDesktop={store.toggleSidebar}
+            libraryOpen={libraryOpen}
+            onToggleLibrary={onToggleLibrary}
+        >
+            {/* ── 词汇灵感 ── */}
             {store.writingMode === 'words' && (
-                <Panel open={mobileOpen} onClose={onClose}>
-                        <div className="mb-2">
-                            <div className="flex justify-between items-center mb-1">
-                                <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">词汇灵感</span>
-                                <div className="flex space-x-1">
-                                    <button onClick={toggleWordSetFavorite} className="p-1 hover:bg-surface-container rounded group transition-all" title="收藏">
-                                        <Star size={20} className={`transition-colors ${store.isCurrentWordSetFavorite ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
-                                    </button>
-                                    <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一组 (Space)" onClick={drawNewWords}>
-                                        <Dices size={20} className="text-outline group-hover:text-primary transition-colors" />
-                                    </button>
-                                </div>
-                            </div>
-                            <h3 className="font-headline text-2xl text-on-surface">写作灵感</h3>
-                        </div>
-
-                        {store.currentWords.length > 0 && (
-                            <div className={`flex items-center space-x-2 px-4 py-3 rounded-lg border ${store.drawnGenre ? (GENRE_STYLE[store.drawnGenre]?.bg ?? 'bg-stone-100 border-stone-200') : 'bg-surface-container-high border-outline-variant/30'}`}>
-                                {(() => {
-                                    const GenreIcon = (store.drawnGenre && GENRE_STYLE[store.drawnGenre]?.Icon) || Sparkles;
-                                    return <GenreIcon size={20} />;
-                                })()}
-                                <div className="flex-1">
-                                    <p className="text-[12px] font-label uppercase tracking-widest text-on-surface-variant">写作风格</p>
-                                    <p className="font-headline font-bold text-base leading-tight">{store.drawnGenre || '不限风格'}</p>
-                                </div>
-                                <button onClick={() => store.setDrawnGenre(pickGenre())} className="p-1 rounded hover:bg-surface-container transition-colors" title="换一个风格">
-                                    <RefreshCw size={18} className="text-outline" />
-                                </button>
-                                <button onClick={() => store.setDrawnGenre(null)} className="p-1 rounded hover:bg-surface-container transition-colors" title="清除风格约束">
-                                    <X size={18} className="text-outline" />
-                                </button>
-                            </div>
-                        )}
-
-                        {/* AI 写作引导 */}
-                        {store.aiEnabled && store.currentWords.length > 0 && (
-                            <div className="bg-amber-50/60 dark:bg-amber-500/5 border border-amber-200/40 dark:border-amber-400/10 rounded-lg p-3">
-                                {ai.wordHint ? (
-                                    <div>
-                                        <p className="text-[12px] font-label uppercase tracking-widest text-amber-600 dark:text-amber-500 mb-1.5 flex items-center gap-1">
-                                            <Sparkles size={14} />AI 灵感引导
-                                        </p>
-                                        <p className="text-sm text-amber-900 dark:text-amber-600 leading-relaxed">{ai.wordHint}</p>
-                                    </div>
-                                ) : (
-                                    <button
-                                        onClick={ai.wordHintRun}
-                                        disabled={ai.wordHintLoading}
-                                        className="w-full flex items-center justify-center gap-1.5 py-1 text-xs font-label text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 transition-colors disabled:opacity-50"
-                                    >
-                                        {ai.wordHintLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                                        <span>{ai.wordHintLoading ? 'AI 思考中…' : 'AI 帮我找灵感'}</span>
-                                    </button>
-                                )}
-                            </div>
-                        )}
-
-                        <div className="space-y-4">
-                            {store.currentWords.map((w, i) => {
-                                const cat = w.category || w.genres?.[0] || '意象';
-                                const catStyle = WORD_CARD_STYLE[cat] ?? WORD_CARD_STYLE['意象'];
-                                const flipping = store.wordsFlipping && !store.lockedIndices.has(i);
-                                return (
-                                    <div key={`${w.id}_${i}`} className="card-perspective">
-                                        <div className={`${catStyle.glow} bg-surface-container p-6 rounded-lg border border-outline-variant/10 custom-shadow dark:shadow-none relative overflow-hidden group transition-all hover:bg-surface-container-high ${flipping ? 'card-flipping' : ''}`}>
-                                            <div className="flex justify-between items-start mb-4 relative z-10">
-                                                <span className={`px-2 py-1 text-[12px] font-bold font-label rounded-lg tracking-wider uppercase ${catStyle.badge}`}>
-                                                    {w.category || w.genres?.[0] || '意象'}
-                                                </span>
-                                                <button onClick={() => store.toggleLock(i)} className={`text-sm transition-colors ${store.lockedIndices.has(i) ? 'text-primary' : 'text-stone-300 dark:text-outline hover:text-stone-500 dark:hover:text-on-surface-variant'}`}>
-                                                    {store.lockedIndices.has(i) ? <Lock size={16} /> : <LockOpen size={16} />}
-                                                </button>
-                                            </div>
-                                            <h4 className="font-headline text-2xl font-bold mb-3 text-stone-900 dark:text-on-surface leading-tight relative z-10">{w.text}</h4>
-                                            {w.explanation && (
-                                                <p className="text-sm text-stone-700 dark:text-on-surface-variant leading-relaxed relative z-10">{w.explanation}</p>
-                                            )}
-                                            <div className="absolute inset-0 opacity-[0.03] dark:opacity-0 pointer-events-none paper-texture"></div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </Panel>
-            )}
-
-            {/* Scene Prompt Panel */}
-            {store.writingMode === 'scene' && store.currentScene && (
-                <Panel open={mobileOpen} onClose={onClose}>
-                        <div className="mb-2">
-                            <div className="flex justify-between items-center mb-1">
-                                <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">场景描写</span>
-                            </div>
-                            <h3 className="font-headline text-2xl text-on-surface">描写挑战</h3>
-                        </div>
-
-                        <div className="bg-surface-container p-6 rounded-lg border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                            <Mountain size={34} className="text-blue-400 dark:text-[#69a8f6] mb-4 block" />
-                            <div className="flex items-start justify-between gap-3 mb-3">
-                                <h4 className="font-headline text-xl font-bold text-stone-900 dark:text-on-surface">{store.currentScene.title}</h4>
-                                <button onClick={sceneFav.toggle} className="p-1 hover:bg-surface-container rounded group transition-all" title={sceneFav.on ? '取消收藏' : '收藏题目'}>
-                                    <Star size={20} className={`transition-colors ${sceneFav.on ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
-                                </button>
-                            </div>
-                            <p className="text-sm text-stone-700 dark:text-on-surface-variant leading-relaxed mb-4">{store.currentScene.description}</p>
-                            <div className="flex flex-wrap gap-1.5">
-                                {store.currentScene.tags.map(tag => (
-                                    <span key={tag} className="px-2.5 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-700 text-[12px] font-label rounded-full border border-blue-200/50 dark:border-blue-400/20">{tag}</span>
-                                ))}
-                            </div>
-                            <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
-                        </div>
-
-                    </Panel>
-            )}
-
-            {/* Challenge Panel */}
-            {store.writingMode === 'challenge' && store.currentChallenge && (
-                <Panel open={mobileOpen} onClose={onClose}>
-                        <div className="mb-2">
-                            <div className="flex justify-between items-center mb-1">
-                                <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">写作挑战</span>
-                                <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一题" onClick={() => pickNextChallenge(store.currentChallenge?.id)}>
-                                    <RefreshCw size={20} className="text-outline group-hover:text-primary transition-colors" />
-                                </button>
-                            </div>
-                            <h3 className="font-headline text-2xl text-on-surface">习作题目</h3>
-                        </div>
-
-                        <div className="bg-surface-container p-6 rounded-lg border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                            <CircleHelp size={34} className="text-rose-400 dark:text-rose-300 mb-4 block" />
-                            <div className="flex items-start justify-between gap-3">
-                                <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentChallenge.text}</p>
-                                <button onClick={challengeFav.toggle} className="p-1 hover:bg-surface-container rounded group transition-all" title={challengeFav.on ? '取消收藏' : '收藏题目'}>
-                                    <Star size={20} className={`transition-colors ${challengeFav.on ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
-                                </button>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                {store.currentChallenge.id.startsWith('ai_') && (
-                                    <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-100/80 dark:bg-rose-500/10 border border-rose-200/50 dark:border-rose-400/20 text-[12px] font-label text-rose-600 dark:text-rose-400">
-                                        <Sparkles size={13} />AI 出题
-                                    </span>
-                                )}
-                                {ai.unsaved(store.currentChallenge.id) && <SaveToBank tone="rose" onSave={() => ai.saveToBank(store.currentChallenge!)} />}
-                            </div>
-                            <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
-                        </div>
-
-                        {/* AI 出题 */}
-                        {store.aiEnabled && (
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="font-headline font-bold text-xl text-on-surface">词汇灵感</h3>
+                        <div className="flex items-center gap-1">
                             <button
-                                onClick={ai.challengeGenerate}
-                                disabled={ai.challengeLoading}
-                                className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50/60 dark:bg-rose-500/5 border border-rose-200/40 dark:border-rose-400/10 rounded-lg text-xs font-label text-rose-700 dark:text-rose-400 hover:bg-rose-100/60 dark:hover:bg-rose-500/10 transition-colors disabled:opacity-50"
+                                onClick={toggleWordSetFavorite}
+                                className="p-1.5 rounded-sm border border-transparent hover:border-outline-variant/60 hover:bg-surface-container transition-all cursor-pointer"
+                                title="收藏这组词条"
                             >
-                                {ai.challengeLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                                <span>{ai.challengeLoading ? '出题中…' : 'AI 出一道题'}</span>
+                                <Star
+                                    size={17}
+                                    className={store.isCurrentWordSetFavorite ? 'text-secondary fill-current' : 'text-outline hover:text-secondary'}
+                                />
                             </button>
-                        )}
-                        <CandidateList tone="rose" items={ai.challengeCandidates} currentId={store.currentChallenge.id} onPick={store.setCurrentChallenge} />
-                    </Panel>
+                            <button
+                                onClick={drawNewWords}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-primary text-on-primary hover:bg-primary-dim font-label text-xs transition-colors cursor-pointer"
+                                title="换一组 (空格)"
+                            >
+                                <Dices size={14} />
+                                <span>换一组</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 写作风格 */}
+                    {store.currentWords.length > 0 && (
+                        <div className="flex items-center justify-between px-3 py-2 rounded-sm bg-surface-container border border-outline-variant/60">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <span className="font-label text-xs text-outline">风格</span>
+                                <span className="font-headline font-bold text-sm text-on-surface truncate">
+                                    {store.drawnGenre || '不限风格'}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-0.5">
+                                <button
+                                    onClick={() => store.setDrawnGenre(pickGenre())}
+                                    className="p-1 rounded-sm hover:bg-surface-container-high text-outline hover:text-on-surface transition-colors cursor-pointer"
+                                    title="随机切换风格"
+                                >
+                                    <RefreshCw size={14} />
+                                </button>
+                                {store.drawnGenre && (
+                                    <button
+                                        onClick={() => store.setDrawnGenre(null)}
+                                        className="p-1 rounded-sm hover:bg-surface-container-high text-outline hover:text-on-surface transition-colors cursor-pointer"
+                                        title="清除风格约束"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* AI 写作引导 */}
+                    {store.aiEnabled && store.currentWords.length > 0 && (
+                        <div className="bg-surface-container border border-secondary/45 rounded-sm p-3">
+                            {ai.wordHint ? (
+                                <div>
+                                    <p className="font-label text-xs text-secondary mb-1.5 flex items-center gap-1">
+                                        <Sparkles size={12} />AI 灵感点拨
+                                    </p>
+                                    <p className="text-xs font-body text-on-surface leading-relaxed">{ai.wordHint}</p>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={ai.wordHintRun}
+                                    disabled={ai.wordHintLoading}
+                                    className="w-full flex items-center justify-center gap-1.5 py-0.5 text-xs font-label text-secondary hover:text-primary transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                    {ai.wordHintLoading ? <LoaderCircle size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                                    <span>{ai.wordHintLoading ? 'AI 构思中…' : 'AI 帮我找切入点'}</span>
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {/* 词卡列表 */}
+                    <div className="space-y-3">
+                        {store.currentWords.map((w, i) => {
+                            const cat = w.category || w.genres?.[0] || '意象';
+                            const catStyle = WORD_CARD_STYLE[cat] ?? WORD_CARD_STYLE['意象'];
+                            const locked = store.lockedIndices.has(i);
+                            const flipping = store.wordsFlipping && !locked;
+                            return (
+                                <div key={`${w.id}_${i}`} className="card-perspective">
+                                    <div
+                                        className={`index-card paper-grain rounded-sm p-4 relative overflow-hidden ${
+                                            locked ? 'border-primary/65 bg-primary-container/20' : ''
+                                        } ${flipping ? 'card-flipping' : ''}`}
+                                    >
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className={`px-1.5 py-0.5 text-[11px] font-label border ${catStyle.badge}`}>
+                                                {cat}
+                                            </span>
+                                            <button
+                                                onClick={() => store.toggleLock(i)}
+                                                title={locked ? '已锁定（点击解锁）' : '锁定此词（换词时保留）'}
+                                                className={`p-1 transition-colors cursor-pointer ${
+                                                    locked
+                                                        ? 'text-primary'
+                                                        : 'text-outline hover:text-on-surface'
+                                                }`}
+                                            >
+                                                {locked ? <Lock size={14} /> : <LockOpen size={14} />}
+                                            </button>
+                                        </div>
+
+                                        <h4 className="font-headline text-xl font-bold text-on-surface leading-snug">
+                                            {w.text}
+                                        </h4>
+                                        {w.explanation && (
+                                            <p className="mt-1.5 pt-1.5 border-t border-dashed border-outline-variant/45 text-xs font-body text-on-surface-variant leading-relaxed">
+                                                {w.explanation}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             )}
 
-            {/* Character Prompt Panel */}
+            {/* ── 场景描写 ── */}
+            {store.writingMode === 'scene' && store.currentScene && (
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="font-headline font-bold text-xl text-on-surface">场景描写</h3>
+                        <button
+                            onClick={() => store.setCurrentScene(pickScene({ exclude: store.currentScene?.id }))}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-surface-container border border-outline-variant/65 hover:border-primary text-xs font-label text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+                        >
+                            <RefreshCw size={13} />
+                            <span>换一个</span>
+                        </button>
+                    </div>
+
+                    <BonusDispatchWords />
+
+                    <div className="index-card paper-grain rounded-sm p-5 relative">
+                        <div className="flex items-start justify-between gap-3 mb-2.5">
+                            <div className="flex items-center gap-2">
+                                <Mountain size={18} className="text-tertiary shrink-0" />
+                                <h4 className="font-headline text-lg font-bold text-on-surface">
+                                    {store.currentScene.title}
+                                </h4>
+                            </div>
+                            <button
+                                onClick={sceneFav.toggle}
+                                className="p-1 rounded-sm hover:bg-surface-container-high transition-colors cursor-pointer"
+                                title={sceneFav.on ? '取消收藏' : '收藏题目'}
+                            >
+                                <Star size={17} className={sceneFav.on ? 'text-secondary fill-current' : 'text-outline hover:text-secondary'} />
+                            </button>
+                        </div>
+
+                        <p className="font-body text-sm text-on-surface-variant leading-relaxed mb-4">
+                            {store.currentScene.description}
+                        </p>
+
+                        <div className="flex flex-wrap gap-1.5 pt-3 border-t border-dashed border-outline-variant/50">
+                            {store.currentScene.tags.map(tag => (
+                                <span
+                                    key={tag}
+                                    className="px-2 py-0.5 bg-surface-container-low text-on-surface-variant font-label text-[11px] rounded-none border border-outline-variant/50"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    {store.aiEnabled && (
+                        <div className="space-y-2">
+                            <div className="grid grid-cols-2 gap-2">
+                                <button
+                                    onClick={ai.sceneDeepDive}
+                                    disabled={ai.sceneLoading}
+                                    className="flex items-center justify-center gap-1 px-2.5 py-2 bg-surface-container border border-outline-variant/65 rounded-sm text-xs font-label text-on-surface-variant hover:border-secondary hover:text-on-surface transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                    {ai.sceneLoading ? <LoaderCircle size={13} className="animate-spin" /> : <Sparkles size={13} className="text-secondary" />}
+                                    <span>感官细节</span>
+                                </button>
+                                <button
+                                    onClick={ai.sceneGenerate}
+                                    disabled={ai.sceneLoading}
+                                    className="flex items-center justify-center gap-1 px-2.5 py-2 bg-surface-container border border-outline-variant/65 rounded-sm text-xs font-label text-on-surface-variant hover:border-secondary hover:text-on-surface transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                    <Bot size={13} className="text-secondary" />
+                                    <span>AI 新场景</span>
+                                </button>
+                            </div>
+                            {ai.sceneExtra && (
+                                <div className="bg-surface-container border border-secondary/45 rounded-sm p-3.5">
+                                    <p className="font-label text-xs text-secondary mb-1.5 flex items-center gap-1">
+                                        <Sparkles size={12} />感官引导
+                                    </p>
+                                    <p className="text-xs font-body text-on-surface leading-relaxed whitespace-pre-line">{ai.sceneExtra}</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* ── 写作挑战 ── */}
+            {store.writingMode === 'challenge' && store.currentChallenge && (
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="font-headline font-bold text-xl text-on-surface">写作挑战</h3>
+                        <button
+                            onClick={() => void pickNextChallenge(store.currentChallenge?.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-surface-container border border-outline-variant/65 hover:border-primary text-xs font-label text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+                        >
+                            <RefreshCw size={13} />
+                            <span>换一题</span>
+                        </button>
+                    </div>
+
+                    <BonusDispatchWords />
+
+                    <div className="index-card paper-grain rounded-sm p-5 relative">
+                        <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start gap-2.5">
+                                <CircleHelp size={18} className="text-primary shrink-0 mt-1" />
+                                <p className="font-body text-sm md:text-base text-on-surface leading-relaxed">
+                                    {store.currentChallenge.text}
+                                </p>
+                            </div>
+                            <button
+                                onClick={challengeFav.toggle}
+                                className="p-1 rounded-sm hover:bg-surface-container-high transition-colors shrink-0 cursor-pointer"
+                                title={challengeFav.on ? '取消收藏' : '收藏题目'}
+                            >
+                                <Star size={17} className={challengeFav.on ? 'text-secondary fill-current' : 'text-outline hover:text-secondary'} />
+                            </button>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                            {store.currentChallenge.id.startsWith('ai_') && (
+                                <span className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-primary/10 border border-primary/35 font-label text-[11px] text-primary">
+                                    <Sparkles size={11} />AI 出题
+                                </span>
+                            )}
+                            {ai.unsaved(store.currentChallenge.id) && (
+                                <SaveToBank onSave={() => ai.saveToBank(store.currentChallenge!)} />
+                            )}
+                        </div>
+                    </div>
+
+                    {store.aiEnabled && (
+                        <button
+                            onClick={ai.challengeGenerate}
+                            disabled={ai.challengeLoading}
+                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-surface-container border border-outline-variant/65 rounded-sm text-xs font-label text-on-surface-variant hover:border-secondary hover:text-on-surface transition-colors disabled:opacity-50 cursor-pointer"
+                        >
+                            {ai.challengeLoading ? <LoaderCircle size={14} className="animate-spin" /> : <Sparkles size={14} className="text-secondary" />}
+                            <span>{ai.challengeLoading ? '出题中…' : 'AI 出一道题'}</span>
+                        </button>
+                    )}
+
+                    <CandidateList items={ai.challengeCandidates} currentId={store.currentChallenge.id} onPick={store.setCurrentChallenge} />
+                </div>
+            )}
+
+            {/* ── 角色描写 ── */}
             {store.writingMode === 'character' && store.currentCharacterPrompt && (() => {
                 const layer = CHARACTER_LAYERS.find(l => l.id === store.currentCharacterPrompt!.layer);
                 return (
-                    <Panel open={mobileOpen} onClose={onClose}>
-                            <div className="mb-2">
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="font-label text-[12px] uppercase tracking-[0.2em] text-outline">角色描写</span>
-                                    <button className="p-1 hover:bg-surface-container rounded group transition-all" title="换一题" onClick={() => pickNextCharacterPrompt(store.currentCharacterPrompt?.id)}>
-                                        <RefreshCw size={20} className="text-outline group-hover:text-primary transition-colors" />
-                                    </button>
-                                </div>
-                                <h3 className="font-headline text-2xl text-on-surface">角色练习</h3>
-                            </div>
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <h3 className="font-headline font-bold text-xl text-on-surface">角色描写</h3>
+                            <button
+                                onClick={() => void pickNextCharacterPrompt(store.currentCharacterPrompt?.id)}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-surface-container border border-outline-variant/65 hover:border-primary text-xs font-label text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+                            >
+                                <RefreshCw size={13} />
+                                <span>换一题</span>
+                            </button>
+                        </div>
 
-                            {layer && (
-                                <div className={`flex items-start space-x-2 px-3 py-2 rounded-lg border text-xs font-label ${CHARACTER_LAYER_STYLE[layer.id].color}`}>
-                                    {(() => {
-                                        const LayerIcon = CHARACTER_LAYER_STYLE[layer.id].Icon;
-                                        return <LayerIcon size={16} className="shrink-0 mt-0.5" />;
-                                    })()}
-                                    <div className="flex flex-col min-w-0">
-                                        <span className="font-medium">{layer.name}</span>
-                                        <span className="opacity-70 leading-relaxed mt-0.5">{layer.description}</span>
-                                    </div>
+                        {layer && (
+                            <div className="px-3 py-2 rounded-sm bg-surface-container border-l-2 border-secondary border border-outline-variant/55 text-xs">
+                                <span className="font-label text-secondary font-bold">{layer.name}</span>
+                                <p className="font-body text-on-surface-variant mt-0.5 leading-relaxed">{layer.description}</p>
+                            </div>
+                        )}
+
+                        <div className="index-card paper-grain rounded-sm p-5 relative">
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-start gap-2.5">
+                                    <User size={18} className="text-secondary shrink-0 mt-1" />
+                                    <p className="font-body text-sm md:text-base text-on-surface leading-relaxed">
+                                        {store.currentCharacterPrompt.text}
+                                    </p>
                                 </div>
+                                <button
+                                    onClick={characterFav.toggle}
+                                    className="p-1 rounded-sm hover:bg-surface-container-high transition-colors shrink-0 cursor-pointer"
+                                    title={characterFav.on ? '取消收藏' : '收藏题目'}
+                                >
+                                    <Star size={17} className={characterFav.on ? 'text-secondary fill-current' : 'text-outline hover:text-secondary'} />
+                                </button>
+                            </div>
+                            {ai.unsaved(store.currentCharacterPrompt.id) && (
+                                <SaveToBank onSave={() => ai.saveToBank(store.currentCharacterPrompt!)} />
                             )}
+                        </div>
 
-                            <div className="bg-surface-container p-6 rounded-lg border border-outline-variant/10 relative overflow-hidden transition-all hover:bg-surface-container-high">
-                                <User size={30} className="text-fuchsia-400 dark:text-fuchsia-300 mb-4 block" />
-                                <div className="flex items-start justify-between gap-3">
-                                    <p className="text-base text-stone-800 dark:text-on-surface leading-relaxed font-medium">{store.currentCharacterPrompt.text}</p>
-                                    <button onClick={characterFav.toggle} className="p-1 hover:bg-surface-container rounded group transition-all" title={characterFav.on ? '取消收藏' : '收藏题目'}>
-                                        <Star size={20} className={`transition-colors ${characterFav.on ? 'text-amber-500 fill-current' : 'text-outline group-hover:text-amber-500 dark:group-hover:text-[#ffb148]'}`} />
-                                    </button>
-                                </div>
-                                {ai.unsaved(store.currentCharacterPrompt.id) && <SaveToBank tone="fuchsia" onSave={() => ai.saveToBank(store.currentCharacterPrompt!)} />}
-                                <div className="absolute inset-0 opacity-[0.03] pointer-events-none paper-texture"></div>
-                            </div>
-
-                            {/* AI 角色深挖 */}
-                            {store.aiEnabled && (
-                                <div className="space-y-2">
+                        {store.aiEnabled && (
+                            <div className="space-y-2">
+                                <div className="grid grid-cols-2 gap-2">
                                     <button
                                         onClick={ai.characterDeep}
                                         disabled={ai.characterLoading}
-                                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-lg text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
+                                        className="flex items-center justify-center gap-1 px-2.5 py-2 bg-surface-container border border-outline-variant/65 rounded-sm text-xs font-label text-on-surface-variant hover:border-secondary hover:text-on-surface transition-colors disabled:opacity-50 cursor-pointer"
                                     >
-                                        {ai.characterLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                                        <span>{ai.characterLoading ? '思考中…' : 'AI 深挖角色'}</span>
+                                        {ai.characterLoading ? <LoaderCircle size={13} className="animate-spin" /> : <Sparkles size={13} className="text-secondary" />}
+                                        <span>AI 深挖角色</span>
                                     </button>
                                     <button
                                         onClick={ai.characterGenerate}
                                         disabled={ai.characterGenLoading}
-                                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-lg text-xs font-label text-fuchsia-700 dark:text-fuchsia-400 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-500/10 transition-colors disabled:opacity-50"
+                                        className="flex items-center justify-center gap-1 px-2.5 py-2 bg-surface-container border border-outline-variant/65 rounded-sm text-xs font-label text-on-surface-variant hover:border-secondary hover:text-on-surface transition-colors disabled:opacity-50 cursor-pointer"
                                     >
-                                        {ai.characterGenLoading ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                                        <span>{ai.characterGenLoading ? '出题中…' : 'AI 出一道角色题'}</span>
+                                        {ai.characterGenLoading ? <LoaderCircle size={13} className="animate-spin" /> : <Bot size={13} className="text-secondary" />}
+                                        <span>AI 出题</span>
                                     </button>
-                                    {ai.characterExtra && (
-                                        <div className="bg-fuchsia-50/60 dark:bg-fuchsia-500/5 border border-fuchsia-200/40 dark:border-fuchsia-400/10 rounded-lg p-3">
-                                            <p className="text-[12px] font-label uppercase tracking-widest text-fuchsia-600 dark:text-fuchsia-600 mb-1.5 flex items-center gap-1">
-                                                <Sparkles size={14} />AI 追问
-                                            </p>
-                                            <p className="text-sm text-fuchsia-900 dark:text-fuchsia-700 leading-relaxed">{ai.characterExtra}</p>
-                                        </div>
-                                    )}
                                 </div>
-                            )}
-                            <CandidateList tone="fuchsia" items={ai.characterCandidates} currentId={store.currentCharacterPrompt.id} onPick={store.setCurrentCharacterPrompt} />
-                        </Panel>
+                                {ai.characterExtra && (
+                                    <div className="bg-surface-container border border-secondary/45 rounded-sm p-3.5">
+                                        <p className="font-label text-xs text-secondary mb-1.5 flex items-center gap-1">
+                                            <Sparkles size={12} />AI 追问
+                                        </p>
+                                        <p className="text-xs font-body text-on-surface leading-relaxed">{ai.characterExtra}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        <CandidateList items={ai.characterCandidates} currentId={store.currentCharacterPrompt.id} onPick={store.setCurrentCharacterPrompt} />
+                    </div>
                 );
             })()}
-        </>
+
+            {/* ── 梦境记录 ── */}
+            {store.writingMode === 'dream' && (
+                <div className="space-y-4">
+                    <h3 className="font-headline font-bold text-xl text-on-surface">梦境记录</h3>
+                    <div className="index-card paper-grain rounded-sm p-5 space-y-3">
+                        <div className="flex items-center gap-2 text-secondary">
+                            <MoonStar size={18} />
+                            <span className="font-headline font-bold text-sm text-on-surface">让梦指引你</span>
+                        </div>
+                        <p className="font-body text-xs text-on-surface-variant leading-relaxed border-l-2 border-secondary/50 pl-3">
+                            “梦能够到达我们的理性到达不了的地方。”
+                        </p>
+                        <ul className="font-body text-xs text-on-surface-variant space-y-1.5 pt-2 border-t border-dashed border-outline-variant/50 leading-relaxed">
+                            <li>· 先捕捉醒来时残留的第一帧画面</li>
+                            <li>· 记录梦里的光线、气味、温度与声响</li>
+                            <li>· 不必修补断裂的逻辑，忠于荒诞感</li>
+                        </ul>
+                    </div>
+                </div>
+            )}
+
+            {/* ── 自由发挥 ── */}
+            {store.writingMode === 'free' && (
+                <div className="space-y-4">
+                    <h3 className="font-headline font-bold text-xl text-on-surface">自由发挥</h3>
+                    <div className="index-card paper-grain rounded-sm p-5 space-y-2.5">
+                        <div className="flex items-center gap-2 text-tertiary">
+                            <PencilLine size={18} />
+                            <span className="font-headline font-bold text-sm text-on-surface">无拘束书写</span>
+                        </div>
+                        <p className="font-body text-xs text-on-surface-variant leading-relaxed">
+                            没有题目、没有限制。点击右上角「收起」即可隐藏侧栏，专心码字。
+                        </p>
+                    </div>
+                </div>
+            )}
+        </DeskDrawer>
     );
 }

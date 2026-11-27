@@ -8,6 +8,7 @@ import { pushDraft, SUPABASE_ENABLED } from '../services/supabase';
 import { getAllWords } from './wordLibrary';
 import { saveDraftToDb, toggleFavoriteWordSet } from './drafts';
 import { countChars, dayKey, hasMeaningfulContent } from './util';
+import { playCardShuffle, playCarriageReturn } from './soundEngine';
 
 const st = () => useStore.getState();
 
@@ -125,6 +126,7 @@ export function drawNewWords() {
     if (s.currentWords[i]) locked.set(i, s.currentWords[i]);
   });
   const words = drawWords(s.wordCount, { pool: getAllWords(), categories: s.selectedCategories, locked });
+  playCardShuffle();
   s.setWordsFlipping(true);
   setTimeout(() => {
     // 新的一组词就是新灵感，和之前打开的稿子、词组断开
@@ -146,7 +148,8 @@ export function openDailyBox() {
     ? { words, promptType: 'scene', promptData: pickScene() }
     : { words, promptType: 'challenge', promptData: pickChallenge()! });
   s.setDailyBoxOpenedDate(dayKey());
-  s.showToast('🎁 今日盲盒已拆开！');
+  playCarriageReturn(true);
+  s.showToast('📮 今日灵感电报已拆封！');
 }
 
 /** 用今天的盲盒开写 */
