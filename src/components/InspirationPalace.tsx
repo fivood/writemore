@@ -1,11 +1,11 @@
 import { useEffect, useState, useMemo } from 'react';
 import { db } from '../db';
 import { useStore } from '../store';
-import { SCENE_PROMPTS } from '../data/scenes';
-import { BUILTIN_CHALLENGES, pickRandomChallenge } from '../data/challenges';
-import { BUILTIN_CHARACTER_PROMPTS, pickRandomCharacterPrompt } from '../data/characterPrompts';
+import { SCENE_PROMPTS, BUILTIN_CHALLENGES, BUILTIN_CHARACTER_PROMPTS, pickChallenge, pickCharacterPrompt } from '../inspire';
 import type { Draft, WordSet, WritingMode } from '../types';
-import { WRITING_MODES } from '../types';
+import { WRITING_MODES } from '../ui/meta';
+import { isGhostDreamDraft } from '../lib/drafts';
+import { dayKey, downloadText } from '../lib/util';
 import { chatCompletion } from '../services/ai';
 import { buildInspirationRemixPrompt } from '../services/prompts';
 import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle, Sparkles, Download, Pencil, RefreshCw, Search, SearchX, Trash2, X, Save, ArrowUpRight, CheckSquare, Square, ListChecks, Merge, ArrowUp, ArrowDown } from 'lucide-react';
@@ -13,10 +13,6 @@ import { Dices, PencilLine, Mountain, MoonStar, CircleHelp, Users, LoaderCircle,
 interface PalaceItem {
     draft: Draft;
     wordSet?: WordSet;
-}
-
-function hasMeaningfulContent(content: string) {
-    return content.replace(/[\s\u200B-\u200D\uFEFF]/g, '').length > 0;
 }
 
 /** 推断旧稿件（无 writingMode）的真实模式：有实际词条 → words，否则 → free */
@@ -76,7 +72,7 @@ export default function InspirationPalace() {
                 const wordSet = draft.wordSetId ? await db.wordSets.get(draft.wordSetId) : undefined;
                 const mode = draft.writingMode || resolveMode(draft, wordSet);
                 // dream 空稿过滤
-                if (mode === 'dream' && !hasMeaningfulContent(draft.content) && (draft.wordCount ?? 0) === 0) continue;
+                if (isGhostDreamDraft({ ...draft, writingMode: mode })) continue;
                 result.push({ draft, wordSet });
             }
             setItems(result);
@@ -134,11 +130,11 @@ export default function InspirationPalace() {
                 } else {
                     db.challenges.get(cid).then(c => {
                         if (c) store.setCurrentChallenge(c);
-                        else store.setCurrentChallenge(pickRandomChallenge());
+                        else store.setCurrentChallenge(pickChallenge());
                     });
                 }
             } else {
-                store.setCurrentChallenge(pickRandomChallenge());
+                store.setCurrentChallenge(pickChallenge());
             }
         }
         if (mode === 'character') {
@@ -150,11 +146,11 @@ export default function InspirationPalace() {
                 } else {
                     db.characterPrompts.get(cid).then(c => {
                         if (c) store.setCurrentCharacterPrompt(c);
-                        else store.setCurrentCharacterPrompt(pickRandomCharacterPrompt());
+                        else store.setCurrentCharacterPrompt(pickCharacterPrompt());
                     });
                 }
             } else {
-                store.setCurrentCharacterPrompt(pickRandomCharacterPrompt());
+                store.setCurrentCharacterPrompt(pickCharacterPrompt());
             }
         }
         store.setActiveTab('inspire');
@@ -370,13 +366,7 @@ export default function InspirationPalace() {
             lines.push(item.draft.content || '（无内容）');
             lines.push('', '---', '');
         });
-        const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `writemore_palace_${new Date().toISOString().slice(0, 10)}.md`;
-        a.click();
-        URL.revokeObjectURL(url);
+        downloadText(`writemore_palace_${dayKey()}.md`, lines.join('\n'));
     }
 
     return (

@@ -1,4 +1,5 @@
-import type { ScenePrompt } from '../types';
+import { pickOne } from './types';
+import type { Rng, ScenePrompt } from './types';
 
 export const SCENE_PROMPTS: ScenePrompt[] = [
   // ── 自然场景 ──
@@ -113,10 +114,10 @@ export const SCENE_PROMPTS: ScenePrompt[] = [
   // ── 边缘状态 ──
   { id: 's080', title: '失眠者的凌晨五点', description: '窗外有了第一声鸟叫，天还是黑的，但已经不是彻底的黑了。你听到自己的心跳，比平时慢。', tags: ['边缘', '夜晚'] },
   { id: 's081', title: '浴缸里水快要凉透', description: '你还没动，水面有很细的纹路在扩散，那是你呼吸留下的。热气早就散了，水还是原来的形状。', tags: ['边缘', '感官'] },
-  { id: 's030', title: '散步时遇见一只流浪猫', description: '它蹲在墙角看你，不跑也不靠近。你蹲下来，你们对视了一会儿。', tags: ['日常', '温暖'] },
+  { id: 's082', title: '散步时遇见一只流浪猫', description: '它蹲在墙角看你，不跑也不靠近。你蹲下来，你们对视了一会儿。', tags: ['日常', '温暖'] },
 ];
 
-export function pickRandomScene(excludeId?: string): ScenePrompt {
-  const pool = excludeId ? SCENE_PROMPTS.filter(s => s.id !== excludeId) : SCENE_PROMPTS;
-  return pool[Math.floor(Math.random() * pool.length)];
+/** 随机一个场景，exclude 是不想重复的上一个 id */
+export function pickScene({ exclude, rng }: { exclude?: string; rng?: Rng } = {}): ScenePrompt {
+  return pickOne(SCENE_PROMPTS.filter(s => s.id !== exclude), rng) ?? SCENE_PROMPTS[0];
 }

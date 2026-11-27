@@ -3,7 +3,8 @@
  */
 
 import type { ChatMessage } from './ai';
-import type { Word, Draft } from '../types';
+import type { Word } from '../inspire';
+import type { Draft } from '../types';
 
 const SYSTEM_BASE = '你是一个中文创意写作助手，擅长文学、诗歌和小说写作。回复应简洁、有文学性、有启发性。';
 

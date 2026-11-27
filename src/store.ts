@@ -1,19 +1,20 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Genre, WordCategory, WordCount, Theme, TimerDuration, Word, WritingMode, ScenePrompt } from './types';
-import type { WritingChallenge } from './data/challenges';
-import type { CharacterPrompt, CharacterLayerId } from './data/characterPrompts';
+import type { WordCategory, Word, ScenePrompt, WritingChallenge, CharacterPrompt, CharacterLayerId, Genre } from './inspire';
+import type { WordCount, Theme, TimerDuration, WritingMode } from './types';
 import type { AIConfig } from './services/ai';
+import { dayKey } from './lib/util';
+
+/** 今日盲盒：三个词 + 一道场景或挑战题 */
+export type DailyBox = { words: Word[] } & (
+  | { promptType: 'scene'; promptData: ScenePrompt }
+  | { promptType: 'challenge'; promptData: WritingChallenge }
+);
 
 interface AppState {
   // Theme
   theme: Theme;
   setTheme: (t: Theme) => void;
-
-  // Genre filter (used by pickRandomGenre for style banner)
-  selectedGenres: Genre[];
-  toggleGenre: (g: Genre) => void;
-  setSelectedGenres: (g: Genre[]) => void;
 
   // Category filter (controls which word types are drawn)
   selectedCategories: WordCategory[];
@@ -46,14 +47,6 @@ interface AppState {
   // Sidebar
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
-
-  // Split ratio
-  splitRatio: number;
-  setSplitRatio: (r: number) => void;
-
-  // Focus mode
-  focusMode: boolean;
-  setFocusMode: (f: boolean) => void;
 
   // Streak
   streak: number;
@@ -88,10 +81,6 @@ interface AppState {
   selectedCharacterLayer: CharacterLayerId | null;
   setSelectedCharacterLayer: (l: CharacterLayerId | null) => void;
 
-  // Font size
-  fontSize: 'small' | 'medium' | 'large';
-  setFontSize: (s: 'small' | 'medium' | 'large') => void;
-
   // AI settings
   aiConfig: AIConfig;
   setAiConfig: (c: Partial<AIConfig>) => void;
@@ -105,24 +94,27 @@ interface AppState {
   // Daily box
   dailyBoxOpenedDate: string | null;
   setDailyBoxOpenedDate: (d: string | null) => void;
-  dailyBoxData: any | null;
-  setDailyBoxData: (data: any | null) => void;
+  dailyBoxData: DailyBox | null;
+  setDailyBoxData: (data: DailyBox | null) => void;
+
+  // 以下不持久化
+  toast: string;
+  showToast: (msg: string) => void;
+  /** AI 写后反馈，保存草稿时会附在正文后面 */
+  aiFeedback: string;
+  setAiFeedback: (f: string) => void;
+  /** 换词时词卡正在翻转 */
+  wordsFlipping: boolean;
+  setWordsFlipping: (f: boolean) => void;
 }
 
-const today = () => new Date().toISOString().slice(0, 10);
+let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
       theme: 'light',
       setTheme: (t) => set({ theme: t === 'dark' ? 'dark' : 'light' }),
-
-      selectedGenres: [],
-      toggleGenre: (g) => {
-        const cur = get().selectedGenres;
-        set({ selectedGenres: cur.includes(g) ? cur.filter(x => x !== g) : [...cur, g] });
-      },
-      setSelectedGenres: (g) => set({ selectedGenres: g }),
 
       selectedCategories: [],
       toggleCategory: (c) => {
@@ -139,7 +131,7 @@ export const useStore = create<AppState>()(
       setCurrentWords: (w) => set({ currentWords: w }),
       toggleLock: (i) => {
         const s = new Set(get().lockedIndices);
-        s.has(i) ? s.delete(i) : s.add(i);
+        if (s.has(i)) s.delete(i); else s.add(i);
         set({ lockedIndices: s });
       },
       clearLocks: () => set({ lockedIndices: new Set() }),
@@ -157,19 +149,13 @@ export const useStore = create<AppState>()(
       sidebarCollapsed: false,
       toggleSidebar: () => set(s => ({ sidebarCollapsed: !s.sidebarCollapsed })),
 
-      splitRatio: 0.4,
-      setSplitRatio: (r) => set({ splitRatio: r }),
-
-      focusMode: false,
-      setFocusMode: (f) => set({ focusMode: f }),
-
       streak: 0,
       lastActiveDate: '',
       updateStreak: () => {
-        const d = today();
+        const d = dayKey();
         const last = get().lastActiveDate;
         if (last === d) return;
-        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        const yesterday = dayKey(Date.now() - 86400000);
         set({
           streak: last === yesterday ? get().streak + 1 : 1,
           lastActiveDate: d,
@@ -201,9 +187,6 @@ export const useStore = create<AppState>()(
       selectedCharacterLayer: null,
       setSelectedCharacterLayer: (l) => set({ selectedCharacterLayer: l }),
 
-      fontSize: 'medium',
-      setFontSize: (s) => set({ fontSize: s }),
-
       aiConfig: { apiKey: '', apiBase: 'https://api.openai.com/v1', model: 'gpt-4o-mini' },
       setAiConfig: (c) => set(s => ({ aiConfig: { ...s.aiConfig, ...c } })),
       aiEnabled: false,
@@ -216,17 +199,28 @@ export const useStore = create<AppState>()(
       setDailyBoxOpenedDate: (d) => set({ dailyBoxOpenedDate: d }),
       dailyBoxData: null,
       setDailyBoxData: (data) => set({ dailyBoxData: data }),
+
+      toast: '',
+      showToast: (msg) => {
+        clearTimeout(toastTimer);
+        set({ toast: msg });
+        toastTimer = setTimeout(() => set({ toast: '' }), 2500);
+      },
+      aiFeedback: '',
+      setAiFeedback: (f) => set({ aiFeedback: f }),
+      wordsFlipping: false,
+      setWordsFlipping: (f) => set({ wordsFlipping: f }),
     }),
     {
       name: 'writemore-store',
       version: 2,
-      migrate: (persistedState: any, version) => {
-        if (!persistedState || typeof persistedState !== 'object') return persistedState;
-        if (version < 2 && persistedState.theme === 'system') {
+      migrate: (persistedState, version) => {
+        const st = persistedState as Partial<Record<keyof AppState, unknown>> | null;
+        if (st && typeof st === 'object' && version < 2 && st.theme === 'system') {
           const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-          return { ...persistedState, theme: prefersDark ? 'dark' : 'light' };
+          return { ...st, theme: prefersDark ? 'dark' : 'light' } as AppState;
         }
-        return persistedState;
+        return st as AppState;
       },
       // Always start at the home screen, never resume mid-session on reload.
       // This runs synchronously during store hydration, so the very first render
@@ -236,15 +230,12 @@ export const useStore = create<AppState>()(
       },
       partialize: (s) => ({
         theme: s.theme,
-        selectedGenres: s.selectedGenres,
         selectedCategories: s.selectedCategories,
         wordCount: s.wordCount,
         timerDuration: s.timerDuration,
         sidebarCollapsed: s.sidebarCollapsed,
-        splitRatio: s.splitRatio,
         streak: s.streak,
         lastActiveDate: s.lastActiveDate,
-        fontSize: s.fontSize,
         aiConfig: s.aiConfig,
         aiEnabled: s.aiEnabled,
         cloudUser: s.cloudUser,
